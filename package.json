@@ -1,0 +1,14 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "dependencies": {
+    "elm-webpack-loader": "^4.4.0",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.9.5"
+  },
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack -p --config webpack.config.production.js",
+    "test" : "echo 'no tests'"
+  }
+}
