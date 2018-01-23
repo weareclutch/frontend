@@ -22,7 +22,7 @@ getHomePage =
             apiUrl ++ "/pages/?type=home.HomePage&fields=*"
     in
         Http.send AddPage <|
-            Http.get url decodePageResults
+            Http.get url (decodePageResults decodeHomeContent)
 
 
 getCasePage : Int -> Cmd Msg
@@ -32,18 +32,38 @@ getCasePage id =
             apiUrl ++ "/pages/" ++ (toString id)
     in
         Http.send AddPage <|
-            Http.get url decodePage
+            Http.get url (decodePage decodeCaseContent)
 
 
-decodePage : Decode.Decoder Page
-decodePage =
-    Decode.map2 Page
+decodePage : Decode.Decoder ContentType -> Decode.Decoder Page
+decodePage decoder =
+    Decode.map3 Page
         (Decode.field "id" Decode.int)
         (Decode.field "title" Decode.string)
+        decoder
 
 
-decodePageResults : Decode.Decoder Page
-decodePageResults =
+decodePageResults : Decode.Decoder ContentType -> Decode.Decoder Page
+decodePageResults decoder =
     Decode.field "items" <|
         Decode.index 0 <|
-            decodePage
+            decodePage decoder
+
+
+decodeHomeContent : Decode.Decoder ContentType
+decodeHomeContent =
+    Decode.map HomePage <|
+        Decode.map HomeContent <|
+            Decode.field "cases" <|
+                Decode.list <|
+                    Decode.at [ "value", "url" ] Decode.string
+
+
+decodeCaseContent : Decode.Decoder ContentType
+decodeCaseContent =
+    Decode.map CasePage <|
+        Decode.map3 CaseContent
+            (Decode.field "caption" Decode.string)
+            (Decode.field "release_date" Decode.string)
+            (Decode.field "website_url" Decode.string)
+

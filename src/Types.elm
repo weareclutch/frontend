@@ -26,4 +26,22 @@ type Route
 type alias Page =
     { id : Int
     , title : String
+    , content : ContentType
     }
+
+type ContentType
+    = HomePage HomeContent
+    | CasePage CaseContent
+
+
+type alias HomeContent =
+    { cases : List String
+    }
+
+type alias CaseContent =
+    { caption : String
+    , releaseDate : String
+    , websiteUrl : String
+    }
+
+

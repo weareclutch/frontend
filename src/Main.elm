@@ -47,7 +47,7 @@ update msg model =
                 pages =
                     Dict.insert page.id page model.pages
             in
-                ( { model | pages = pages }, Cmd.none )
+                Debug.log "modell" ( { model | pages = pages }, Cmd.none )
 
         AddPage (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
