@@ -4,11 +4,14 @@ import Types exposing (..)
 import Navigation exposing (Location)
 import Routing exposing (parseLocation, getCommand)
 import Html.Styled exposing (..)
+import Dict exposing (Dict)
 
 
 initModel : Route -> Model
 initModel route =
-    { route = route }
+    { route = route
+    , pages = Dict.empty
+    }
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -39,12 +42,25 @@ update msg model =
         ChangeLocation path ->
             ( model, Navigation.newUrl path )
 
+        AddPage (Ok page) ->
+            let
+                pages =
+                    Dict.insert page.id page model.pages
+            in
+                ( { model | pages = pages }, Cmd.none )
+
+        AddPage (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
     case model.route of
         HomeRoute ->
             div [] [ text "home" ]
+
+        CaseRoute id title ->
+            div [] [ text "case page" ]
 
         NotFoundRoute ->
             div [] [ text "404" ]
