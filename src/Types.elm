@@ -8,12 +8,16 @@ import Dict exposing (Dict)
 type Msg
     = OnLocationChange Location
     | ChangeLocation String
-    | AddPage (Result Http.Error Page)
+    | OpenPage (Result Http.Error Page)
+    | OpenCase (Result Http.Error Page)
 
 
 type alias Model =
     { route : Route
-    , pages : Dict Int Page
+    , pages : Dict String Page
+    , activePage : PageType
+    , cases : Dict Int Page
+    , activeCase : Maybe Int
     }
 
 
@@ -26,8 +30,13 @@ type Route
 type alias Page =
     { id : Int
     , title : String
+    , pageType : PageType
     , content : ContentType
     }
+
+type PageType
+    = Home
+    | Case
 
 type ContentType
     = HomePage HomeContent

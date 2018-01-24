@@ -3,7 +3,10 @@ module Routing exposing (..)
 import Types exposing (..)
 import Navigation exposing (Location)
 import UrlParser exposing (..)
-import Api exposing (getHomePage, getCasePage)
+import Api exposing (getPage, getPageById)
+import Task
+import Http
+import Dict
 
 
 matchers : Parser (Route -> a) a
@@ -18,10 +21,24 @@ getCommand : Route -> Model -> Cmd Msg
 getCommand route model =
     case route of
         HomeRoute ->
-            getHomePage
+            case Dict.get (toString Home) model.pages of
+                Just page ->
+                    Task.succeed (Ok page)
+                        |> Task.perform OpenPage
 
-        CaseRoute id _ ->
-            getCasePage id
+                Nothing -> 
+                    getPage Home
+                        |> Http.send OpenPage
+
+        CaseRoute id title ->
+            case Dict.get id model.cases of
+                Just page ->
+                    Task.succeed (Ok page)
+                        |> Task.perform OpenCase
+
+                Nothing ->
+                    getPageById Case id
+                        |> Http.send OpenCase
 
         _ ->
             Cmd.none
@@ -35,3 +52,4 @@ parseLocation location =
 
         Nothing ->
             NotFoundRoute
+

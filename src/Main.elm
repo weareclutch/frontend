@@ -11,6 +11,9 @@ initModel : Route -> Model
 initModel route =
     { route = route
     , pages = Dict.empty
+    , activePage = Home
+    , cases = Dict.empty
+    , activeCase = Nothing
     }
 
 
@@ -42,14 +45,35 @@ update msg model =
         ChangeLocation path ->
             ( model, Navigation.newUrl path )
 
-        AddPage (Ok page) ->
+        OpenPage (Ok page) ->
             let
                 pages =
-                    Dict.insert page.id page model.pages
+                    Dict.insert (toString page.pageType) page model.pages
             in
-                Debug.log "modell" ( { model | pages = pages }, Cmd.none )
+                ( { model
+                    | pages = pages
+                    , activePage = page.pageType
+                  }
+                , Cmd.none
+                )
 
-        AddPage (Err err) ->
+        OpenPage (Err err) ->
+            Debug.log (toString err) ( model, Cmd.none )
+
+        OpenCase (Ok page) ->
+            let
+                cases =
+                    Dict.insert page.id page model.cases
+            in
+                ( { model
+                    | cases = cases
+                    , activeCase = Just page.id
+                  }
+                , Cmd.none
+                )
+                
+
+        OpenCase (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
 
 
