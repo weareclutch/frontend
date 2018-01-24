@@ -26,7 +26,7 @@ getCommand route model =
                     Task.succeed (Ok page)
                         |> Task.perform OpenPage
 
-                Nothing -> 
+                Nothing ->
                     getPage Home
                         |> Http.send OpenPage
 
@@ -52,4 +52,3 @@ parseLocation location =
 
         Nothing ->
             NotFoundRoute
-

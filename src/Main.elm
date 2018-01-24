@@ -5,6 +5,9 @@ import Navigation exposing (Location)
 import Routing exposing (parseLocation, getCommand)
 import Html.Styled exposing (..)
 import Dict exposing (Dict)
+import UI.Wrapper
+import UI.Navigation
+import UI.Case
 
 
 initModel : Route -> Model
@@ -53,6 +56,7 @@ update msg model =
                 ( { model
                     | pages = pages
                     , activePage = page.pageType
+                    , activeCase = Nothing
                   }
                 , Cmd.none
                 )
@@ -71,7 +75,6 @@ update msg model =
                   }
                 , Cmd.none
                 )
-                
 
         OpenCase (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
@@ -79,15 +82,10 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    case model.route of
-        HomeRoute ->
-            div [] [ text "home" ]
-
-        CaseRoute id title ->
-            div [] [ text "case page" ]
-
-        NotFoundRoute ->
-            div [] [ text "404" ]
+    UI.Wrapper.view model
+        [ UI.Navigation.view
+        , UI.Case.view model
+        ]
 
 
 subscriptions : Model -> Sub Msg

@@ -34,9 +34,11 @@ type alias Page =
     , content : ContentType
     }
 
+
 type PageType
     = Home
     | Case
+
 
 type ContentType
     = HomePage HomeContent
@@ -47,10 +49,9 @@ type alias HomeContent =
     { cases : List String
     }
 
+
 type alias CaseContent =
     { caption : String
     , releaseDate : String
     , websiteUrl : String
     }
-
-

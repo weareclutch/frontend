@@ -15,37 +15,33 @@ apiUrl =
     siteUrl ++ "/api/v2"
 
 
-
-
-getUrlAndDecoder : PageType -> Maybe Int -> (String, Decode.Decoder Page)
+getUrlAndDecoder : PageType -> Maybe Int -> ( String, Decode.Decoder Page )
 getUrlAndDecoder pageType id =
     let
-        (typeString, decoder) =
+        ( typeString, decoder ) =
             case pageType of
                 Home ->
-                    ("home.HomePage", decodeHomeContent)
+                    ( "home.HomePage", decodeHomeContent )
 
                 Case ->
-                    ("case.CasePage", decodeCaseContent)
+                    ( "case.CasePage", decodeCaseContent )
 
         url =
             case id of
                 Just id ->
-                    apiUrl ++ "/pages/?type=" ++ typeString ++ "&fields=*"
-
-                Nothing ->
                     apiUrl ++ "/pages/?type=" ++ typeString ++ "&fields=*" ++ "&id=" ++ (toString id)
 
+                Nothing ->
+                    apiUrl ++ "/pages/?type=" ++ typeString ++ "&fields=*"
     in
-        (url, decodePageResults decoder)
+        ( url, decodePageResults decoder )
 
 
 getPage : PageType -> Http.Request Page
 getPage pageType =
     let
-        (url, decoder) =
+        ( url, decoder ) =
             getUrlAndDecoder pageType Nothing
-
     in
         Http.get url decoder
 
@@ -53,14 +49,10 @@ getPage pageType =
 getPageById : PageType -> Int -> Http.Request Page
 getPageById pageType id =
     let
-        (url, decoder) =
+        ( url, decoder ) =
             getUrlAndDecoder pageType <| Just id
-
     in
         Http.get url decoder
-
-
-
 
 
 decodePageResults : Decode.Decoder ContentType -> Decode.Decoder Page
@@ -69,31 +61,31 @@ decodePageResults decoder =
         Decode.index 0 <|
             decodePage decoder
 
+
 decodePage : Decode.Decoder ContentType -> Decode.Decoder Page
 decodePage decoder =
     Decode.map4 Page
         (Decode.field "id" Decode.int)
         (Decode.field "title" Decode.string)
-        (Decode.at ["meta", "type"] decodePageType)
+        (Decode.at [ "meta", "type" ] decodePageType)
         decoder
-
 
 
 decodePageType : Decode.Decoder PageType
 decodePageType =
     Decode.string
-        |> Decode.andThen (\str ->
-            case str of
-                "home.HomePage" ->
-                    Decode.succeed Home
+        |> Decode.andThen
+            (\str ->
+                case str of
+                    "home.HomePage" ->
+                        Decode.succeed Home
 
-                "case.CasePage" ->
-                    Decode.succeed Case
+                    "case.CasePage" ->
+                        Decode.succeed Case
 
-                _ ->
-                    Decode.fail "Unknown page type"
-        )
-
+                    _ ->
+                        Decode.fail "Unknown page type"
+            )
 
 
 decodeHomeContent : Decode.Decoder ContentType
@@ -112,4 +104,3 @@ decodeCaseContent =
             (Decode.field "caption" Decode.string)
             (Decode.field "release_date" Decode.string)
             (Decode.field "website_url" Decode.string)
-
