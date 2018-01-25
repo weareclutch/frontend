@@ -8,6 +8,7 @@ import Dict exposing (Dict)
 import UI.Wrapper
 import UI.Navigation
 import UI.Case
+import UI.Page
 
 
 initModel : Route -> Model
@@ -85,6 +86,7 @@ view model =
     UI.Wrapper.view model
         [ UI.Navigation.view
         , UI.Case.view model
+        , UI.Page.view model
         ]
 
 

@@ -41,12 +41,12 @@ type PageType
 
 
 type ContentType
-    = HomePage HomeContent
-    | CasePage CaseContent
+    = HomeContentType HomeContent
+    | CaseContentType CaseContent
 
 
 type alias HomeContent =
-    { cases : List String
+    { cases : List Page
     }
 
 

@@ -90,16 +90,17 @@ decodePageType =
 
 decodeHomeContent : Decode.Decoder ContentType
 decodeHomeContent =
-    Decode.map HomePage <|
+    Decode.map HomeContentType <|
         Decode.map HomeContent <|
             Decode.field "cases" <|
                 Decode.list <|
-                    Decode.at [ "value", "url" ] Decode.string
+                    Decode.field "value" <|
+                        decodePage decodeCaseContent
 
 
 decodeCaseContent : Decode.Decoder ContentType
 decodeCaseContent =
-    Decode.map CasePage <|
+    Decode.map CaseContentType <|
         Decode.map3 CaseContent
             (Decode.field "caption" Decode.string)
             (Decode.field "release_date" Decode.string)

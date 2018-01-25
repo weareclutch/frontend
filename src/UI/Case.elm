@@ -21,11 +21,21 @@ view model =
         |> Maybe.andThen (\id -> Dict.get id model.cases)
         |> Maybe.andThen
             (\page ->
-                Just <| caseView page
+                case Dict.get (toString model.activePage) model.pages of
+                    Just _ ->
+                        Nothing
+
+                    Nothing ->
+                        Just <| caseView page True
             )
         |> Maybe.withDefault (div [] [])
 
 
-caseView : Page -> Html msg
-caseView page =
-    div [] [ text "case page" ]
+caseView : Page -> Bool -> Html msg
+caseView page active =
+    case active of
+        True ->
+            div [] [ text "active case page" ]
+
+        False ->
+            div [] [ text "!active case page" ]
