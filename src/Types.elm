@@ -10,7 +10,7 @@ type Msg
     | ChangeLocation String
     | OpenPage (Result Http.Error Page)
     | OpenCase (Result Http.Error Page)
-    | SetCasePosition ( Int, Int )
+    | SetCasePosition ( Float, Float )
 
 
 type alias Model =
@@ -19,7 +19,7 @@ type alias Model =
     , activePage : PageType
     , cases : Dict Int Page
     , activeCase : Maybe Int
-    , casePosition : ( Int, Int )
+    , casePosition : ( Float, Float )
     }
 
 

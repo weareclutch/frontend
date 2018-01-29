@@ -15,8 +15,8 @@ decodePosition position =
     let
         decoder =
             Decode.map2 (,)
-                (Decode.field "x" Decode.int)
-                (Decode.field "y" Decode.int)
+                (Decode.field "x" Decode.float)
+                (Decode.field "y" Decode.float)
 
         result =
             Decode.decodeValue decoder position

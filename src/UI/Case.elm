@@ -29,29 +29,36 @@ outerWrapper active =
                 ++ extraStyle
 
 
-wrapper : Bool -> ( Int, Int ) -> List (Attribute msg) -> List (Html msg) -> Html msg
+wrapper : Bool -> ( Float, Float ) -> List (Attribute msg) -> List (Html msg) -> Html msg
 wrapper active ( x, y ) =
     let
         extraStyle =
             if active then
-                [ width (vw 100)
+                [ overflowY scroll
+                , width (vw 100)
                 , height (vh 100)
-                , overflowY scroll
-                , top (px <| toFloat -y)
-                , left (px <| toFloat -x)
+                , transforms
+                    [ translate2
+                        (px -x)
+                        (px -y)
+                    , translateZ zero
+                    ]
+                , property "transition" "all 0.28s ease-in"
                 ]
             else
-                [ width (px 300)
+                [ overflow hidden
+                , width (px 300)
                 , height (px 300)
-                , overflow hidden
                 ]
     in
         styled div <|
             [ backgroundColor (hex "bbfaaa")
-            , property "transition" "all 0.4s ease-in-out"
-            , top zero
-            , left zero
+            , property "transition" "all 0.28s ease-out"
             , position relative
+            , width (px 300)
+            , height (px 300)
+            , property "will-change" "width, height, transform"
+            , transform <| translateZ zero
             ]
                 ++ extraStyle
 
@@ -76,7 +83,7 @@ view model =
         |> Maybe.withDefault (outerWrapper False [] [])
 
 
-caseView : Page -> ( Int, Int ) -> Bool -> Html Msg
+caseView : Page -> ( Float, Float ) -> Bool -> Html Msg
 caseView page position active =
     let
         className =
@@ -94,9 +101,4 @@ caseView page position active =
         wrapper active
             position
             attributes
-            [ loremIpsum
-            , loremIpsum
-            , loremIpsum
-            , loremIpsum
-            , loremIpsum
-            ]
+            []

@@ -46,7 +46,7 @@ view model =
             wrapper False [] [ text "not loaded" ]
 
 
-homePage : HomeContent -> Maybe Int -> ( Int, Int ) -> Html Msg
+homePage : HomeContent -> Maybe Int -> ( Float, Float ) -> Html Msg
 homePage content activeCase position =
     let
         cases =
