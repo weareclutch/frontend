@@ -52,9 +52,8 @@ wrapper active ( x, y ) =
                 ]
     in
         styled div <|
-            [ backgroundColor (hex "bbfaaa")
+            [ position relative
             , property "transition" "all 0.28s ease-out"
-            , position relative
             , width (px 300)
             , height (px 300)
             , property "will-change" "width, height, transform"
@@ -101,4 +100,48 @@ caseView page position active =
         wrapper active
             position
             attributes
-            []
+            [ header page.title
+            , body
+                [ loremIpsum
+                , loremIpsum
+                ]
+            ]
+
+
+header : String -> Html msg
+header title =
+    let
+        wrapper =
+            styled div <|
+                [ height (pct 100)
+                , width (pct 100)
+                , backgroundColor (hex "000")
+                ]
+
+        titleWrapper =
+            styled h2 <|
+                [ color (hex "fff")
+                , position absolute
+                , bottom (px 20)
+                , left (px 20)
+                , fontSize (px 48)
+                ]
+
+    in
+        wrapper []
+            [ titleWrapper [] [ text title ] 
+            ]
+
+
+
+body : List (Html msg) -> Html msg
+body children =
+    let
+        wrapper =
+            styled div <|
+                [ backgroundColor (hex "fff")
+                , padding (px 80)
+                ]
+
+    in
+        wrapper [] children

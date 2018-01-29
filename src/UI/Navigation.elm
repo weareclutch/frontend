@@ -22,5 +22,4 @@ view : Html Msg
 view =
     wrapper []
         [ UI.Common.link "/" [ text "home" ]
-        , UI.Common.link "/6/lorem" [ text "casepage" ]
         ]

@@ -21,12 +21,13 @@ wrapper locked =
                 ]
     in
         styled div <|
-            [ backgroundColor (hex "aabbff")
+            [ backgroundColor (hex "fff")
             , height (vh 100)
             , width (vw 100)
             , position absolute
             , top zero
             , left zero
+            , padding (px 80)
             ]
                 ++ extraStyles
 
