@@ -9,6 +9,7 @@ import UI.Wrapper
 import UI.Navigation
 import UI.Case
 import UI.Page
+import Ports
 
 
 initModel : Route -> Model
@@ -18,6 +19,7 @@ initModel route =
     , activePage = Home
     , cases = Dict.empty
     , activeCase = Nothing
+    , casePosition = ( 0, 0 )
     }
 
 
@@ -74,11 +76,14 @@ update msg model =
                     | cases = cases
                     , activeCase = Just page.id
                   }
-                , Cmd.none
+                , Ports.getCasePosition page.id
                 )
 
         OpenCase (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
+
+        SetCasePosition position ->
+            ( { model | casePosition = position }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -92,7 +97,7 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    Ports.newCasePosition Ports.decodePosition
 
 
 main : Program Never Model Msg

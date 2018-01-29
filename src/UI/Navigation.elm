@@ -10,7 +10,11 @@ import UI.Common exposing (link)
 wrapper : List (Attribute msg) -> List (Html msg) -> Html msg
 wrapper =
     styled div
-        [ backgroundColor (hex "bbaaff")
+        [ border3 (px 1) solid (hex "bbaaff")
+        , position absolute
+        , bottom zero
+        , right zero
+        , zIndex (int 100)
         ]
 
 

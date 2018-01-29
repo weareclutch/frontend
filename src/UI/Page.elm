@@ -3,17 +3,32 @@ module UI.Page exposing (view)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled)
-import UI.Common exposing (link)
+import Html.Styled.Attributes exposing (styled, class)
+import UI.Common exposing (link, loremIpsum)
 import UI.Case
 import Dict
 
 
-wrapper : List (Attribute msg) -> List (Html msg) -> Html msg
-wrapper =
-    styled div
-        [ backgroundColor (hex "aabbff")
-        ]
+wrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
+wrapper locked =
+    let
+        extraStyles =
+            if locked then
+                [ overflow hidden
+                ]
+            else
+                [ overflow auto
+                ]
+    in
+        styled div <|
+            [ backgroundColor (hex "aabbff")
+            , height (vh 100)
+            , width (vw 100)
+            , position absolute
+            , top zero
+            , left zero
+            ]
+                ++ extraStyles
 
 
 view : Model -> Html Msg
@@ -22,17 +37,17 @@ view model =
         Just page ->
             case page.content of
                 HomeContentType data ->
-                    homePage data model.activeCase
+                    homePage data model.activeCase model.casePosition
 
                 _ ->
-                    wrapper [] [ text "uknown pagetype" ]
+                    wrapper False [] [ text "uknown pagetype" ]
 
         Nothing ->
-            wrapper [] [ text "not loaded" ]
+            wrapper False [] [ text "not loaded" ]
 
 
-homePage : HomeContent -> Maybe Int -> Html Msg
-homePage content activeCase =
+homePage : HomeContent -> Maybe Int -> ( Int, Int ) -> Html Msg
+homePage content activeCase position =
     let
         cases =
             content.cases
@@ -41,10 +56,19 @@ homePage content activeCase =
                         activeCase
                             |> Maybe.andThen (\activeCase -> Just (activeCase == page.id))
                             |> Maybe.withDefault False
-                            |> UI.Case.caseView page
+                            |> UI.Case.caseView page position
                     )
+
+        locked =
+            activeCase
+                |> Maybe.map (\activeCase -> True)
+                |> Maybe.withDefault False
     in
-        wrapper []
-            [ text "homepage"
+        wrapper locked
+            [ class "home" ]
+            [ loremIpsum
+            , loremIpsum
             , div [] cases
+            , loremIpsum
+            , loremIpsum
             ]

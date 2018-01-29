@@ -13,6 +13,11 @@ globalStyle =
         [ selector "body"
             [ fontFamilies [ "sans-serif" ]
             , margin zero
+            , padding zero
+            , overflow hidden
+            , height (vh 100)
+            , width (vw 100)
+            , border3 (px 1) solid (hex "f00")
             ]
         , selector "html"
             [ boxSizing borderBox
