@@ -20,6 +20,7 @@ initModel route =
     , cases = Dict.empty
     , activeCase = Nothing
     , casePosition = ( 0, 0 )
+    , menuActive = False
     }
 
 
@@ -85,13 +86,16 @@ update msg model =
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
 
+        ToggleMenu ->
+            ( { model | menuActive = not model.menuActive }, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
     UI.Wrapper.view model
         [ UI.Navigation.view
         , UI.Case.view model
-        , UI.Page.view model
+        , UI.Page.container model
         ]
 
 

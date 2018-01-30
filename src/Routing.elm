@@ -14,21 +14,30 @@ matchers =
     oneOf
         [ map HomeRoute top
         , map CaseRoute (int </> string)
+        , map ServicesRoute (s "services")
         ]
+
+
+getPageTask : Model -> PageType -> Cmd Msg
+getPageTask model pageType =
+    case Dict.get (toString pageType) model.pages of
+        Just page ->
+            Task.succeed (Ok page)
+                |> Task.perform OpenPage
+
+        Nothing ->
+            getPage pageType
+                |> Http.send OpenPage
 
 
 getCommand : Route -> Model -> Cmd Msg
 getCommand route model =
     case route of
-        HomeRoute ->
-            case Dict.get (toString Home) model.pages of
-                Just page ->
-                    Task.succeed (Ok page)
-                        |> Task.perform OpenPage
+        ServicesRoute ->
+            getPageTask model Services
 
-                Nothing ->
-                    getPage Home
-                        |> Http.send OpenPage
+        HomeRoute ->
+            getPageTask model Home
 
         CaseRoute id title ->
             case Dict.get id model.cases of

@@ -1,75 +1,105 @@
-module UI.Page exposing (view)
+module UI.Page exposing (container)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, class)
-import UI.Common exposing (link, loremIpsum)
-import UI.Case
+import Html.Styled.Attributes exposing (styled)
+import UI.Pages.Home
+import UI.Pages.Services
 import Dict
 
 
-wrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
-wrapper locked =
+containerWrapper : List (Attribute msg) -> List (Html msg) -> Html msg
+containerWrapper =
+    styled div <|
+        [ backgroundColor (hex "f5f5f5")
+        , height (vh 100)
+        , width (vw 100)
+        , position absolute
+        , top zero
+        , left zero
+        ]
+
+
+container : Model -> Html Msg
+container model =
+    containerWrapper []
+        [ pageView model
+            (if model.activePage == Home then
+                0
+             else
+                -1
+            )
+            Home
+        , pageView model
+            (if model.activePage == Services then
+                0
+             else
+                -1
+            )
+            Services
+        ]
+
+
+pageWrapper : Int -> Bool -> Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
+pageWrapper depth locked menuActive =
     let
-        extraStyles =
+        lockStyle =
             if locked then
-                [ overflow hidden
+                overflow hidden
+            else
+                overflow auto
+
+        transformStyle =
+            if menuActive then
+                [ transforms
+                    [ translate2
+                        (px 0)
+                        (px <| toFloat <| 100 * depth + 100)
+                    , scale <| 0.1 * (toFloat depth) + 0.94
+                    ]
                 ]
             else
-                [ overflow auto
-                ]
+                [ transforms [] ]
+
+        extraStyles =
+            lockStyle :: transformStyle ++ []
     in
         styled div <|
             [ backgroundColor (hex "fff")
+            , boxShadow4 zero (px 10) (px 25) (rgba 0 0 0 0.1)
             , height (vh 100)
             , width (vw 100)
             , position absolute
             , top zero
             , left zero
-            , padding (px 80)
+            , zIndex (int <| 10 + depth)
+            , property "transition" "all 0.28s ease-in-out"
             ]
                 ++ extraStyles
 
 
-view : Model -> Html Msg
-view model =
-    case Dict.get (toString model.activePage) model.pages of
-        Just page ->
-            case page.content of
-                HomeContentType data ->
-                    homePage data model.activeCase model.casePosition
-
-                _ ->
-                    wrapper False [] [ text "uknown pagetype" ]
-
-        Nothing ->
-            wrapper False [] [ text "not loaded" ]
-
-
-homePage : HomeContent -> Maybe Int -> ( Float, Float ) -> Html Msg
-homePage content activeCase position =
+pageView : Model -> Int -> PageType -> Html Msg
+pageView model depth pageType =
     let
-        cases =
-            content.cases
-                |> List.map
-                    (\page ->
-                        activeCase
-                            |> Maybe.andThen (\activeCase -> Just (activeCase == page.id))
-                            |> Maybe.withDefault False
-                            |> UI.Case.caseView page position
-                    )
-
         locked =
-            activeCase
+            model.activeCase
                 |> Maybe.map (\activeCase -> True)
                 |> Maybe.withDefault False
+
+        page =
+            case pageType of
+                Home ->
+                    model.pages
+                        |> Dict.get (toString Home)
+                        |> UI.Pages.Home.view model
+
+                Services ->
+                    model.pages
+                        |> Dict.get (toString Services)
+                        |> UI.Pages.Services.view
+
+                _ ->
+                    text "unknown type"
     in
-        wrapper locked
-            [ class "home" ]
-            [ loremIpsum
-            , loremIpsum
-            , div [] cases
-            , loremIpsum
-            , loremIpsum
-            ]
+        pageWrapper depth locked model.menuActive [] [ page ]

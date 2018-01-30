@@ -11,6 +11,7 @@ type Msg
     | OpenPage (Result Http.Error Page)
     | OpenCase (Result Http.Error Page)
     | SetCasePosition ( Float, Float )
+    | ToggleMenu
 
 
 type alias Model =
@@ -20,11 +21,13 @@ type alias Model =
     , cases : Dict Int Page
     , activeCase : Maybe Int
     , casePosition : ( Float, Float )
+    , menuActive : Bool
     }
 
 
 type Route
     = HomeRoute
+    | ServicesRoute
     | CaseRoute Int String
     | NotFoundRoute
 
@@ -39,12 +42,14 @@ type alias Page =
 
 type PageType
     = Home
+    | Services
     | Case
 
 
 type ContentType
     = HomeContentType HomeContent
     | CaseContentType CaseContent
+    | ServicesContentType ServicesContent
 
 
 type alias HomeContent =
@@ -56,4 +61,9 @@ type alias CaseContent =
     { caption : String
     , releaseDate : String
     , websiteUrl : String
+    }
+
+
+type alias ServicesContent =
+    { caption : String
     }

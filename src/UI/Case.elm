@@ -126,12 +126,10 @@ header title =
                 , left (px 20)
                 , fontSize (px 48)
                 ]
-
     in
         wrapper []
-            [ titleWrapper [] [ text title ] 
+            [ titleWrapper [] [ text title ]
             ]
-
 
 
 body : List (Html msg) -> Html msg
@@ -142,6 +140,5 @@ body children =
                 [ backgroundColor (hex "fff")
                 , padding (px 80)
                 ]
-
     in
         wrapper [] children

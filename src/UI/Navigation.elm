@@ -4,6 +4,7 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (styled)
+import Html.Styled.Events exposing (onClick)
 import UI.Common exposing (link)
 
 
@@ -21,5 +22,8 @@ wrapper =
 view : Html Msg
 view =
     wrapper []
-        [ UI.Common.link "/" [ text "home" ]
+        [ div [ onClick ToggleMenu ] [ text "M" ]
+        , UI.Common.link "/" [ text "home" ]
+        , text " - "
+        , UI.Common.link "/services" [ text "services" ]
         ]

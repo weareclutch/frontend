@@ -26,6 +26,9 @@ getUrlAndDecoder pageType id =
                 Case ->
                     ( "case.CasePage", decodeCaseContent )
 
+                Services ->
+                    ( "service.ServicesPage", decodeServicesContent )
+
         url =
             case id of
                 Just id ->
@@ -83,6 +86,9 @@ decodePageType =
                     "case.CasePage" ->
                         Decode.succeed Case
 
+                    "service.ServicesPage" ->
+                        Decode.succeed Services
+
                     _ ->
                         Decode.fail "Unknown page type"
             )
@@ -105,3 +111,10 @@ decodeCaseContent =
             (Decode.field "caption" Decode.string)
             (Decode.field "release_date" Decode.string)
             (Decode.field "website_url" Decode.string)
+
+
+decodeServicesContent : Decode.Decoder ContentType
+decodeServicesContent =
+    Decode.map ServicesContentType <|
+        Decode.map ServicesContent
+            (Decode.field "caption" Decode.string)
