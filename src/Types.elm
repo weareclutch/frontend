@@ -19,7 +19,7 @@ type alias Model =
     , pages : Dict String Page
     , activePage : PageType
     , cases : Dict Int Page
-    , activeCase : Maybe Int
+    , activeCase : Maybe Page
     , casePosition : ( Float, Float )
     , menuActive : Bool
     }
@@ -28,6 +28,8 @@ type alias Model =
 type Route
     = HomeRoute
     | ServicesRoute
+    | CultureRoute
+    | ContactRoute
     | CaseRoute Int String
     | NotFoundRoute
 
@@ -43,6 +45,8 @@ type alias Page =
 type PageType
     = Home
     | Services
+    | Culture
+    | Contact
     | Case
 
 

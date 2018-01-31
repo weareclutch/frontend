@@ -6,6 +6,8 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (styled)
 import UI.Pages.Home
 import UI.Pages.Services
+import UI.Pages.Culture
+import UI.Pages.Contact
 import Dict
 
 
@@ -21,24 +23,28 @@ containerWrapper =
         ]
 
 
+pageOrder : List PageType
+pageOrder =
+    [ Services
+    , Culture
+    , Contact
+    , Home
+    ]
+
+
 container : Model -> Html Msg
 container model =
-    containerWrapper []
-        [ pageView model
-            (if model.activePage == Home then
-                0
-             else
-                -1
-            )
-            Home
-        , pageView model
-            (if model.activePage == Services then
-                0
-             else
-                -1
-            )
-            Services
-        ]
+    let
+        pages =
+            pageOrder
+              |> List.indexedMap (,)
+              |> List.map 
+                  (\(index, pageType) ->
+                      pageView model (index - 4) pageType
+                  )
+
+    in
+        containerWrapper [] pages
 
 
 pageWrapper : Int -> Bool -> Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -50,12 +56,18 @@ pageWrapper depth locked menuActive =
             else
                 overflow auto
 
+        opacityStyle =
+            if depth > 0 then
+                opacity (int 0)
+            else
+                opacity (int 1)
+
         transformStyle =
             if menuActive then
                 [ transforms
                     [ translate2
                         (px 0)
-                        (px <| toFloat <| 100 * depth + 100)
+                        (px <| toFloat <| 100 * depth + 200)
                     , scale <| 0.1 * (toFloat depth) + 0.94
                     ]
                 ]
@@ -63,7 +75,7 @@ pageWrapper depth locked menuActive =
                 [ transforms [] ]
 
         extraStyles =
-            lockStyle :: transformStyle ++ []
+            lockStyle :: opacityStyle :: transformStyle ++ []
     in
         styled div <|
             [ backgroundColor (hex "fff")
@@ -99,7 +111,18 @@ pageView model depth pageType =
                         |> Dict.get (toString Services)
                         |> UI.Pages.Services.view
 
+                Culture ->
+                    model.pages
+                        |> Dict.get (toString Culture)
+                        |> UI.Pages.Culture.view
+
+                Contact ->
+                    model.pages
+                        |> Dict.get (toString Contact)
+                        |> UI.Pages.Contact.view
+
                 _ ->
                     text "unknown type"
     in
         pageWrapper depth locked model.menuActive [] [ page ]
+

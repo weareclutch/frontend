@@ -65,7 +65,6 @@ wrapper active ( x, y ) =
 view : Model -> Html Msg
 view model =
     model.activeCase
-        |> Maybe.andThen (\id -> Dict.get id model.cases)
         |> Maybe.andThen
             (\page ->
                 case Dict.get (toString model.activePage) model.pages of

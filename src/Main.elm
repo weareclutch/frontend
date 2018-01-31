@@ -75,7 +75,7 @@ update msg model =
             in
                 ( { model
                     | cases = cases
-                    , activeCase = Just page.id
+                    , activeCase = Just page
                   }
                 , Ports.getCasePosition page.id
                 )

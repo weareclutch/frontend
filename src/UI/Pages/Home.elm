@@ -2,10 +2,8 @@ module UI.Pages.Home exposing (view)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
-import Css exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
 import UI.Case
-import UI.Common exposing (loremIpsum)
 
 
 view : Model -> Maybe Page -> Html Msg
@@ -39,7 +37,7 @@ renderHomeContent model content =
                 |> List.map
                     (\page ->
                         model.activeCase
-                            |> Maybe.andThen (\activeCase -> Just (activeCase == page.id))
+                            |> Maybe.andThen (\activeCase -> Just (activeCase.id == page.id))
                             |> Maybe.withDefault False
                             |> UI.Case.caseView page model.casePosition
                     )

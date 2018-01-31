@@ -15,6 +15,8 @@ matchers =
         [ map HomeRoute top
         , map CaseRoute (int </> string)
         , map ServicesRoute (s "services")
+        , map CultureRoute (s "culture")
+        , map ContactRoute (s "contact")
         ]
 
 
@@ -38,6 +40,12 @@ getCommand route model =
 
         HomeRoute ->
             getPageTask model Home
+
+        CultureRoute ->
+            getPageTask model Culture
+
+        ContactRoute ->
+            getPageTask model Contact
 
         CaseRoute id title ->
             case Dict.get id model.cases of

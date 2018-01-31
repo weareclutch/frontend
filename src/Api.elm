@@ -29,6 +29,12 @@ getUrlAndDecoder pageType id =
                 Services ->
                     ( "service.ServicesPage", decodeServicesContent )
 
+                Culture ->
+                    ( "culture.CulturePage", decodeServicesContent )
+
+                Contact ->
+                    ( "contact.ContactPage", decodeServicesContent )
+
         url =
             case id of
                 Just id ->
@@ -88,6 +94,12 @@ decodePageType =
 
                     "service.ServicesPage" ->
                         Decode.succeed Services
+
+                    "culture.CulturePage" ->
+                        Decode.succeed Culture
+
+                    "contact.ContactPage" ->
+                        Decode.succeed Contact
 
                     _ ->
                         Decode.fail "Unknown page type"

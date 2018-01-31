@@ -26,4 +26,8 @@ view =
         , UI.Common.link "/" [ text "home" ]
         , text " - "
         , UI.Common.link "/services" [ text "services" ]
+        , text " - "
+        , UI.Common.link "/culture" [ text "culture" ]
+        , text " - "
+        , UI.Common.link "/contact" [ text "contact" ]
         ]
