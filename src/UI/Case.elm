@@ -6,6 +6,7 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
 import UI.Common exposing (addLink, loremIpsum)
 import Dict
+import UI.Blocks
 
 
 outerWrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -100,10 +101,7 @@ caseView page position active =
             position
             attributes
             [ header page.title
-            , body
-                [ loremIpsum
-                , loremIpsum
-                ]
+            , body page.content
             ]
 
 
@@ -131,13 +129,15 @@ header title =
             ]
 
 
-body : List (Html msg) -> Html msg
-body children =
+body : ContentType -> Html msg
+body content =
     let
         wrapper =
             styled div <|
                 [ backgroundColor (hex "fff")
                 , padding (px 80)
                 ]
+
     in
-        wrapper [] children
+        wrapper [] []
+

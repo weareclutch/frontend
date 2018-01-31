@@ -119,10 +119,11 @@ decodeHomeContent =
 decodeCaseContent : Decode.Decoder ContentType
 decodeCaseContent =
     Decode.map CaseContentType <|
-        Decode.map3 CaseContent
+        Decode.map4 CaseContent
             (Decode.field "caption" Decode.string)
             (Decode.field "release_date" Decode.string)
             (Decode.field "website_url" Decode.string)
+            (Decode.maybe <| Decode.field "body" decodeBlocks)
 
 
 decodeServicesContent : Decode.Decoder ContentType
@@ -130,3 +131,34 @@ decodeServicesContent =
     Decode.map ServicesContentType <|
         Decode.map ServicesContent
             (Decode.field "caption" Decode.string)
+
+
+decodeBlocks : Decode.Decoder (List Block)
+decodeBlocks =
+    Decode.list <|
+        Decode.field "value" <|
+            Decode.oneOf
+                [ decodeRichText
+                , decodeQuote
+                ]
+
+decodeRichText : Decode.Decoder Block
+decodeRichText =
+    Decode.string
+        |> Decode.andThen
+            (\string ->
+                Decode.succeed <| RichTextBlock string
+            )
+
+decodeQuote : Decode.Decoder Block
+decodeQuote =
+    Decode.map2 Quote
+        (Decode.field "text" Decode.string)
+        (Decode.maybe <| Decode.field "name" Decode.string)
+        |> Decode.andThen
+            (\quote ->
+                Decode.succeed <| QuoteBlock quote
+            )
+        
+  
+

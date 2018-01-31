@@ -65,9 +65,22 @@ type alias CaseContent =
     { caption : String
     , releaseDate : String
     , websiteUrl : String
+    , body : Maybe (List Block)
     }
 
 
 type alias ServicesContent =
     { caption : String
     }
+
+
+type Block
+    = RichTextBlock String
+    | QuoteBlock Quote
+
+
+type alias Quote =
+    { text : String
+    , name : Maybe String
+    }
+
