@@ -6,9 +6,9 @@ import Routing exposing (parseLocation, getCommand)
 import Html.Styled exposing (..)
 import Dict exposing (Dict)
 import UI.Wrapper
-import UI.Navigation
-import UI.Case
-import UI.Page
+-- import UI.Navigation
+-- import UI.Case
+-- import UI.Page
 import Ports
 
 
@@ -16,7 +16,7 @@ initModel : Route -> Model
 initModel route =
     { route = route
     , pages = Dict.empty
-    , activePage = Home
+    , activePage = Nothing
     , cases = Dict.empty
     , activeCase = Nothing
     , casePosition = ( 0, 0 )
@@ -53,13 +53,8 @@ update msg model =
             ( model, Navigation.newUrl path )
 
         OpenPage (Ok page) ->
-            let
-                pages =
-                    Dict.insert (toString page.pageType) page model.pages
-            in
-                ( { model
-                    | pages = pages
-                    , activePage = page.pageType
+             ( { model
+                    | activePage = Just page
                     , activeCase = Nothing
                   }
                 , Cmd.none
@@ -69,16 +64,12 @@ update msg model =
             Debug.log (toString err) ( model, Cmd.none )
 
         OpenCase (Ok page) ->
-            let
-                cases =
-                    Dict.insert page.id page model.cases
-            in
-                ( { model
-                    | cases = cases
-                    , activeCase = Just page
-                  }
-                , Ports.getCasePosition page.id
-                )
+               ( { model
+                  | activeCase = Just page
+                 }
+                 , Cmd.none
+                 -- , Ports.getCasePosition page.id
+               )
 
         OpenCase (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
@@ -93,10 +84,11 @@ update msg model =
 view : Model -> Html Msg
 view model =
     UI.Wrapper.view model
-        [ UI.Navigation.view
-        , UI.Case.view model
-        , UI.Page.container model
-        ]
+        []
+        -- [ UI.Navigation.view
+        -- , UI.Case.view model
+        -- , UI.Page.container model
+        -- ]
 
 
 subscriptions : Model -> Sub Msg

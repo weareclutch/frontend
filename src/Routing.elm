@@ -20,9 +20,9 @@ matchers =
         ]
 
 
-getPageTask : Model -> PageType -> Cmd Msg
+getPageTask : Model -> String -> Cmd Msg
 getPageTask model pageType =
-    case Dict.get (toString pageType) model.pages of
+    case Dict.get pageType model.pages of
         Just page ->
             Task.succeed (Ok page)
                 |> Task.perform OpenPage
@@ -36,16 +36,16 @@ getCommand : Route -> Model -> Cmd Msg
 getCommand route model =
     case route of
         ServicesRoute ->
-            getPageTask model Services
+            getPageTask model "service.ServicesPage"
 
         HomeRoute ->
-            getPageTask model Home
+            getPageTask model "home.HomePage"
 
         CultureRoute ->
-            getPageTask model Culture
+            getPageTask model "culture.CulturePage"
 
         ContactRoute ->
-            getPageTask model Contact
+            getPageTask model "contact.ContactPage"
 
         CaseRoute id title ->
             case Dict.get id model.cases of
@@ -54,7 +54,7 @@ getCommand route model =
                         |> Task.perform OpenCase
 
                 Nothing ->
-                    getPageById Case id
+                    getPageById "case.CasePage" id
                         |> Http.send OpenCase
 
         _ ->

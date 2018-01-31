@@ -15,120 +15,81 @@ apiUrl =
     siteUrl ++ "/api/v2"
 
 
-getUrlAndDecoder : PageType -> Maybe Int -> ( String, Decode.Decoder Page )
-getUrlAndDecoder pageType id =
+getPage : String -> Http.Request Page
+getPage pageType =
+    getPageRequest pageType Nothing
+
+
+getPageById : String -> Int -> Http.Request Page
+getPageById pageType id =
+    getPageRequest pageType (Just id)
+
+
+getPageRequest : String -> Maybe Int -> Http.Request Page
+getPageRequest pageType id =
     let
-        ( typeString, decoder ) =
-            case pageType of
-                Home ->
-                    ( "home.HomePage", decodeHomeContent )
-
-                Case ->
-                    ( "case.CasePage", decodeCaseContent )
-
-                Services ->
-                    ( "service.ServicesPage", decodeServicesContent )
-
-                Culture ->
-                    ( "culture.CulturePage", decodeServicesContent )
-
-                Contact ->
-                    ( "contact.ContactPage", decodeServicesContent )
-
         url =
             case id of
                 Just id ->
-                    apiUrl ++ "/pages/?type=" ++ typeString ++ "&fields=*" ++ "&id=" ++ (toString id)
+                    apiUrl ++ "/pages/?type=" ++ pageType ++ "&fields=*" ++ "&id=" ++ (toString id)
 
                 Nothing ->
-                    apiUrl ++ "/pages/?type=" ++ typeString ++ "&fields=*"
+                    apiUrl ++ "/pages/?type=" ++ pageType ++ "&fields=*"
+
     in
-        ( url, decodePageResults decoder )
+        case pageType of
+            "home.HomePage" ->
+                Http.get url decodeHomeContent
+
+            "case.CasePage" ->
+                Http.get url <| decodePageResults decodeCaseContent
+
+            "service.ServicesPage" ->
+                Http.get url <| decodePageResults decodeServicesContent
+            
+            "culture.CulturePage" ->
+                Http.get url <| decodePageResults decodeServicesContent
+
+            "contact.ContactPage" ->
+                Http.get url <| decodePageResults decodeServicesContent
+
+            _ ->
+                Http.get (apiUrl ++ "/pages/") decodeServicesContent
 
 
-getPage : PageType -> Http.Request Page
-getPage pageType =
-    let
-        ( url, decoder ) =
-            getUrlAndDecoder pageType Nothing
-    in
-        Http.get url decoder
 
-
-getPageById : PageType -> Int -> Http.Request Page
-getPageById pageType id =
-    let
-        ( url, decoder ) =
-            getUrlAndDecoder pageType <| Just id
-    in
-        Http.get url decoder
-
-
-decodePageResults : Decode.Decoder ContentType -> Decode.Decoder Page
+decodePageResults : Decode.Decoder Page -> Decode.Decoder Page
 decodePageResults decoder =
     Decode.field "items" <|
         Decode.index 0 <|
-            decodePage decoder
+            decoder
 
 
-decodePage : Decode.Decoder ContentType -> Decode.Decoder Page
-decodePage decoder =
-    Decode.map4 Page
-        (Decode.field "id" Decode.int)
-        (Decode.field "title" Decode.string)
-        (Decode.at [ "meta", "type" ] decodePageType)
-        decoder
-
-
-decodePageType : Decode.Decoder PageType
-decodePageType =
-    Decode.string
-        |> Decode.andThen
-            (\str ->
-                case str of
-                    "home.HomePage" ->
-                        Decode.succeed Home
-
-                    "case.CasePage" ->
-                        Decode.succeed Case
-
-                    "service.ServicesPage" ->
-                        Decode.succeed Services
-
-                    "culture.CulturePage" ->
-                        Decode.succeed Culture
-
-                    "contact.ContactPage" ->
-                        Decode.succeed Contact
-
-                    _ ->
-                        Decode.fail "Unknown page type"
-            )
-
-
-decodeHomeContent : Decode.Decoder ContentType
+decodeHomeContent : Decode.Decoder Page
 decodeHomeContent =
-    Decode.map HomeContentType <|
+    Decode.map Home <|
         Decode.map HomeContent <|
             Decode.field "cases" <|
                 Decode.list <|
                     Decode.field "value" <|
-                        decodePage decodeCaseContent
+                        decodeCaseContent
 
 
-decodeCaseContent : Decode.Decoder ContentType
+decodeCaseContent : Decode.Decoder Page
 decodeCaseContent =
-    Decode.map CaseContentType <|
-        Decode.map4 CaseContent
+    Decode.map2 Case
+        (Decode.field "id" Decode.int)
+        (Decode.map4 CaseContent
             (Decode.field "caption" Decode.string)
             (Decode.field "release_date" Decode.string)
             (Decode.field "website_url" Decode.string)
             (Decode.maybe <| Decode.field "body" decodeBlocks)
+        )
 
 
-decodeServicesContent : Decode.Decoder ContentType
+decodeServicesContent : Decode.Decoder Page
 decodeServicesContent =
-    Decode.map ServicesContentType <|
+    Decode.map Services <|
         Decode.map ServicesContent
             (Decode.field "caption" Decode.string)
 
@@ -161,4 +122,3 @@ decodeQuote =
             )
         
   
-

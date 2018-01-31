@@ -17,7 +17,7 @@ type Msg
 type alias Model =
     { route : Route
     , pages : Dict String Page
-    , activePage : PageType
+    , activePage : Maybe Page
     , cases : Dict Int Page
     , activeCase : Maybe Page
     , casePosition : ( Float, Float )
@@ -34,26 +34,14 @@ type Route
     | NotFoundRoute
 
 
-type alias Page =
-    { id : Int
-    , title : String
-    , pageType : PageType
-    , content : ContentType
-    }
 
+type Page
+    = Home HomeContent
+    | Services ServicesContent
+    | Culture ServicesContent
+    | Contact ServicesContent
+    | Case Int CaseContent
 
-type PageType
-    = Home
-    | Services
-    | Culture
-    | Contact
-    | Case
-
-
-type ContentType
-    = HomeContentType HomeContent
-    | CaseContentType CaseContent
-    | ServicesContentType ServicesContent
 
 
 type alias HomeContent =
