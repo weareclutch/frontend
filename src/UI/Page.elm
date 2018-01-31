@@ -35,12 +35,34 @@ pageOrder =
 container : Model -> Html Msg
 container model =
     let
+        activeDepth =
+            pageOrder
+              |> List.indexedMap (,)
+              |> List.filterMap
+                  (\(index, pageType) ->
+                      if pageType == model.activePage then
+                          Just index
+                      else
+                          Nothing
+                  )
+              |> List.head
+              |> Maybe.withDefault 0
+
         pages =
             pageOrder
               |> List.indexedMap (,)
               |> List.map 
                   (\(index, pageType) ->
-                      pageView model (index - 4) pageType
+                      let
+                          depth =
+                              if index <= activeDepth then
+                                  index - activeDepth
+
+                              else
+                                  index - activeDepth - List.length pageOrder
+
+                      in
+                          pageView model depth pageType
                   )
 
     in
