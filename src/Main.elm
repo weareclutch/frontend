@@ -6,9 +6,12 @@ import Routing exposing (parseLocation, getCommand)
 import Html.Styled exposing (..)
 import Dict exposing (Dict)
 import UI.Wrapper
--- import UI.Navigation
--- import UI.Case
+import UI.Navigation
+import UI.Case
+
+
 -- import UI.Page
+
 import Ports
 
 
@@ -36,6 +39,25 @@ init location =
         ( initModel route, command )
 
 
+addToCache : Page -> Dict String Page -> Dict String Page
+addToCache page dict =
+    case page of
+        Home { pageType } ->
+            Dict.insert pageType page dict
+
+        Services { pageType } ->
+            Dict.insert pageType page dict
+
+        Culture { pageType } ->
+            Dict.insert pageType page dict
+
+        Contact { pageType } ->
+            Dict.insert pageType page dict
+
+        _ ->
+            dict
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -53,23 +75,28 @@ update msg model =
             ( model, Navigation.newUrl path )
 
         OpenPage (Ok page) ->
-             ( { model
-                    | activePage = Just page
-                    , activeCase = Nothing
-                  }
-                , Cmd.none
-                )
+            ( { model
+                | activePage = Just page
+                , activeCase = Nothing
+                , pages = addToCache page model.pages
+              }
+            , Cmd.none
+            )
 
         OpenPage (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
 
-        OpenCase (Ok page) ->
-               ( { model
-                  | activeCase = Just page
-                 }
-                 , Cmd.none
-                 -- , Ports.getCasePosition page.id
-               )
+        OpenCase (Ok content) ->
+            let
+                cases =
+                    Dict.insert content.id content model.cases
+            in
+                ( { model
+                    | cases = cases
+                    , activeCase = Just content
+                  }
+                , Ports.getCasePosition content.id
+                )
 
         OpenCase (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
@@ -84,11 +111,9 @@ update msg model =
 view : Model -> Html Msg
 view model =
     UI.Wrapper.view model
-        []
-        -- [ UI.Navigation.view
-        -- , UI.Case.view model
-        -- , UI.Page.container model
-        -- ]
+        [ UI.Navigation.view
+        , UI.Case.view model
+        ]
 
 
 subscriptions : Model -> Sub Msg

@@ -37,34 +37,31 @@ container model =
     let
         activeDepth =
             pageOrder
-              |> List.indexedMap (,)
-              |> List.filterMap
-                  (\(index, pageType) ->
-                      if pageType == model.activePage then
-                          Just index
-                      else
-                          Nothing
-                  )
-              |> List.head
-              |> Maybe.withDefault 0
+                |> List.indexedMap (,)
+                |> List.filterMap
+                    (\( index, pageType ) ->
+                        if pageType == model.activePage then
+                            Just index
+                        else
+                            Nothing
+                    )
+                |> List.head
+                |> Maybe.withDefault 0
 
         pages =
             pageOrder
-              |> List.indexedMap (,)
-              |> List.map 
-                  (\(index, pageType) ->
-                      let
-                          depth =
-                              if index <= activeDepth then
-                                  index - activeDepth
-
-                              else
-                                  index - activeDepth - List.length pageOrder
-
-                      in
-                          pageView model depth pageType
-                  )
-
+                |> List.indexedMap (,)
+                |> List.map
+                    (\( index, pageType ) ->
+                        let
+                            depth =
+                                if index <= activeDepth then
+                                    index - activeDepth
+                                else
+                                    index - activeDepth - List.length pageOrder
+                        in
+                            pageView model depth pageType
+                    )
     in
         containerWrapper [] pages
 
@@ -147,4 +144,3 @@ pageView model depth pageType =
                     text "unknown type"
     in
         pageWrapper depth locked model.menuActive [] [ page ]
-

@@ -5,8 +5,6 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
 import UI.Common exposing (addLink, loremIpsum)
-import Dict
-import UI.Blocks
 
 
 outerWrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -67,8 +65,8 @@ view : Model -> Html Msg
 view model =
     model.activeCase
         |> Maybe.andThen
-            (\page ->
-                case Dict.get (toString model.activePage) model.pages of
+            (\content ->
+                case model.activePage of
                     Just _ ->
                         Nothing
 
@@ -76,17 +74,17 @@ view model =
                         Just <|
                             outerWrapper True
                                 []
-                                [ caseView page ( 0, 0 ) True
+                                [ caseView content ( 0, 0 ) True
                                 ]
             )
         |> Maybe.withDefault (outerWrapper False [] [])
 
 
-caseView : Page -> ( Float, Float ) -> Bool -> Html Msg
-caseView page position active =
+caseView : CaseContent -> ( Float, Float ) -> Bool -> Html Msg
+caseView content position active =
     let
         className =
-            class <| "case-" ++ (toString page.id)
+            class <| "case-" ++ (toString content.id)
 
         attributes =
             if active then
@@ -95,13 +93,13 @@ caseView page position active =
             else
                 [ className
                 ]
-                    ++ (addLink <| "/" ++ (toString page.id) ++ "/lorem")
+                    ++ (addLink <| "/" ++ (toString content.id) ++ "/lorem")
     in
         wrapper active
             position
             attributes
-            [ header page.title
-            , body page.content
+            [ header content.title
+            , body content
             ]
 
 
@@ -129,7 +127,7 @@ header title =
             ]
 
 
-body : ContentType -> Html msg
+body : CaseContent -> Html msg
 body content =
     let
         wrapper =
@@ -137,7 +135,5 @@ body content =
                 [ backgroundColor (hex "fff")
                 , padding (px 80)
                 ]
-
     in
         wrapper [] []
-

@@ -9,7 +9,7 @@ type Msg
     = OnLocationChange Location
     | ChangeLocation String
     | OpenPage (Result Http.Error Page)
-    | OpenCase (Result Http.Error Page)
+    | OpenCase (Result Http.Error CaseContent)
     | SetCasePosition ( Float, Float )
     | ToggleMenu
 
@@ -18,8 +18,8 @@ type alias Model =
     { route : Route
     , pages : Dict String Page
     , activePage : Maybe Page
-    , cases : Dict Int Page
-    , activeCase : Maybe Page
+    , cases : Dict Int CaseContent
+    , activeCase : Maybe CaseContent
     , casePosition : ( Float, Float )
     , menuActive : Bool
     }
@@ -34,32 +34,38 @@ type Route
     | NotFoundRoute
 
 
-
 type Page
     = Home HomeContent
     | Services ServicesContent
     | Culture ServicesContent
     | Contact ServicesContent
-    | Case Int CaseContent
-
-
-
-type alias HomeContent =
-    { cases : List Page
-    }
+    | Case CaseContent
 
 
 type alias CaseContent =
-    { caption : String
+    { id : Int
+    , title : String
+    , caption : String
     , releaseDate : String
     , websiteUrl : String
     , body : Maybe (List Block)
     }
 
 
-type alias ServicesContent =
-    { caption : String
+type alias HomeContent =
+    { pageType : String
+    , cases : List CaseContent
     }
+
+
+type alias ServicesContent =
+    { pageType : String
+    , caption : String
+    }
+
+
+type alias TypedPage a =
+    { a | pageType : String }
 
 
 type Block
@@ -71,4 +77,3 @@ type alias Quote =
     { text : String
     , name : Maybe String
     }
-

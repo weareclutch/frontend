@@ -9,6 +9,3 @@ import Html.Styled.Attributes exposing (styled)
 streamfield : List Block -> Html msg
 streamfield blocks =
     div [] []
-
-
-

@@ -3,7 +3,7 @@ module Routing exposing (..)
 import Types exposing (..)
 import Navigation exposing (Location)
 import UrlParser exposing (..)
-import Api exposing (getPage, getPageById)
+import Api exposing (getPage, getCaseById)
 import Task
 import Http
 import Dict
@@ -54,7 +54,7 @@ getCommand route model =
                         |> Task.perform OpenCase
 
                 Nothing ->
-                    getPageById "case.CasePage" id
+                    getCaseById id
                         |> Http.send OpenCase
 
         _ ->

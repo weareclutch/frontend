@@ -35,18 +35,14 @@ getPageRequest pageType id =
 
                 Nothing ->
                     apiUrl ++ "/pages/?type=" ++ pageType ++ "&fields=*"
-
     in
         case pageType of
             "home.HomePage" ->
-                Http.get url decodeHomeContent
-
-            "case.CasePage" ->
-                Http.get url <| decodePageResults decodeCaseContent
+                Http.get url <| decodePageResults decodeHomeContent
 
             "service.ServicesPage" ->
                 Http.get url <| decodePageResults decodeServicesContent
-            
+
             "culture.CulturePage" ->
                 Http.get url <| decodePageResults decodeServicesContent
 
@@ -57,8 +53,16 @@ getPageRequest pageType id =
                 Http.get (apiUrl ++ "/pages/") decodeServicesContent
 
 
+getCaseById : Int -> Http.Request CaseContent
+getCaseById id =
+    let
+        url =
+            apiUrl ++ "/pages/?type=case.CasePage&fields=*" ++ "&id=" ++ (toString id)
+    in
+        Http.get url <| decodePageResults decodeCaseContent
 
-decodePageResults : Decode.Decoder Page -> Decode.Decoder Page
+
+decodePageResults : Decode.Decoder a -> Decode.Decoder a
 decodePageResults decoder =
     Decode.field "items" <|
         Decode.index 0 <|
@@ -68,29 +72,31 @@ decodePageResults decoder =
 decodeHomeContent : Decode.Decoder Page
 decodeHomeContent =
     Decode.map Home <|
-        Decode.map HomeContent <|
-            Decode.field "cases" <|
+        Decode.map2 HomeContent
+            (Decode.at [ "meta", "type" ] Decode.string)
+            (Decode.field "cases" <|
                 Decode.list <|
                     Decode.field "value" <|
                         decodeCaseContent
+            )
 
 
-decodeCaseContent : Decode.Decoder Page
+decodeCaseContent : Decode.Decoder CaseContent
 decodeCaseContent =
-    Decode.map2 Case
+    Decode.map6 CaseContent
         (Decode.field "id" Decode.int)
-        (Decode.map4 CaseContent
-            (Decode.field "caption" Decode.string)
-            (Decode.field "release_date" Decode.string)
-            (Decode.field "website_url" Decode.string)
-            (Decode.maybe <| Decode.field "body" decodeBlocks)
-        )
+        (Decode.field "title" Decode.string)
+        (Decode.field "caption" Decode.string)
+        (Decode.field "release_date" Decode.string)
+        (Decode.field "website_url" Decode.string)
+        (Decode.maybe <| Decode.field "body" decodeBlocks)
 
 
 decodeServicesContent : Decode.Decoder Page
 decodeServicesContent =
     Decode.map Services <|
-        Decode.map ServicesContent
+        Decode.map2 ServicesContent
+            (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "caption" Decode.string)
 
 
@@ -103,6 +109,7 @@ decodeBlocks =
                 , decodeQuote
                 ]
 
+
 decodeRichText : Decode.Decoder Block
 decodeRichText =
     Decode.string
@@ -110,6 +117,7 @@ decodeRichText =
             (\string ->
                 Decode.succeed <| RichTextBlock string
             )
+
 
 decodeQuote : Decode.Decoder Block
 decodeQuote =
@@ -120,5 +128,3 @@ decodeQuote =
             (\quote ->
                 Decode.succeed <| QuoteBlock quote
             )
-        
-  
