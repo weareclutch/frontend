@@ -23,44 +23,24 @@ containerWrapper =
         ]
 
 
-pageOrder : List PageType
+pageOrder : List String
 pageOrder =
-    [ Services
-    , Culture
-    , Contact
-    , Home
+    [ "contact.ContactPage"
+    , "culture.CulturePage"
+    , "service.ServicesPage"
+    , "home.HomePage"
     ]
 
 
 container : Model -> Html Msg
 container model =
     let
-        activeDepth =
-            pageOrder
-                |> List.indexedMap (,)
-                |> List.filterMap
-                    (\( index, pageType ) ->
-                        if pageType == model.activePage then
-                            Just index
-                        else
-                            Nothing
-                    )
-                |> List.head
-                |> Maybe.withDefault 0
-
         pages =
             pageOrder
                 |> List.indexedMap (,)
                 |> List.map
                     (\( index, pageType ) ->
-                        let
-                            depth =
-                                if index <= activeDepth then
-                                    index - activeDepth
-                                else
-                                    index - activeDepth - List.length pageOrder
-                        in
-                            pageView model depth pageType
+                        pageView model pageType (index - List.length pageOrder)
                     )
     in
         containerWrapper [] pages
@@ -75,12 +55,6 @@ pageWrapper depth locked menuActive =
             else
                 overflow auto
 
-        opacityStyle =
-            if depth > 0 then
-                opacity (int 0)
-            else
-                opacity (int 1)
-
         transformStyle =
             if menuActive then
                 [ transforms
@@ -94,7 +68,7 @@ pageWrapper depth locked menuActive =
                 [ transforms [] ]
 
         extraStyles =
-            lockStyle :: opacityStyle :: transformStyle ++ []
+            lockStyle :: transformStyle ++ []
     in
         styled div <|
             [ backgroundColor (hex "fff")
@@ -110,8 +84,8 @@ pageWrapper depth locked menuActive =
                 ++ extraStyles
 
 
-pageView : Model -> Int -> PageType -> Html Msg
-pageView model depth pageType =
+pageView : Model -> String -> Int -> Html Msg
+pageView model pageType depth =
     let
         locked =
             model.activeCase
@@ -119,28 +93,31 @@ pageView model depth pageType =
                 |> Maybe.withDefault False
 
         page =
-            case pageType of
-                Home ->
-                    model.pages
-                        |> Dict.get (toString Home)
-                        |> UI.Pages.Home.view model
+            model.pages
+                |> Dict.get pageType
+                |> Maybe.andThen
+                    (\page ->
+                        case page of
+                            Home content ->
+                                Just <| UI.Pages.Home.view model content
 
-                Services ->
-                    model.pages
-                        |> Dict.get (toString Services)
-                        |> UI.Pages.Services.view
+                            Services content ->
+                                Just <| UI.Pages.Services.view content
 
-                Culture ->
-                    model.pages
-                        |> Dict.get (toString Culture)
-                        |> UI.Pages.Culture.view
+                            Culture content ->
+                                Just <| UI.Pages.Culture.view content
 
-                Contact ->
-                    model.pages
-                        |> Dict.get (toString Contact)
-                        |> UI.Pages.Contact.view
+                            Contact content ->
+                                Just <| UI.Pages.Contact.view content
 
-                _ ->
-                    text "unknown type"
+                            _ ->
+                                Nothing
+                    )
+                |> Maybe.withDefault (text "")
     in
-        pageWrapper depth locked model.menuActive [] [ page ]
+        pageWrapper depth
+            locked
+            model.menuActive
+            []
+            [ page
+            ]

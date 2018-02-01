@@ -6,27 +6,11 @@ import Html.Styled.Attributes exposing (styled, class)
 import UI.Case
 
 
-view : Model -> Maybe Page -> Html Msg
-view model page =
-    page
-        |> Maybe.andThen
-            (\page ->
-                case page.content of
-                    HomeContentType content ->
-                        Just ( page, content )
-
-                    _ ->
-                        Nothing
-            )
-        |> Maybe.andThen
-            (\( page, content ) ->
-                Just <|
-                    div []
-                        [ text page.title
-                        , renderHomeContent model content
-                        ]
-            )
-        |> Maybe.withDefault (div [] [])
+view : Model -> HomeContent -> Html Msg
+view model content =
+    div []
+        [ renderHomeContent model content
+        ]
 
 
 renderHomeContent : Model -> HomeContent -> Html Msg

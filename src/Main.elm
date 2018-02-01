@@ -8,10 +8,7 @@ import Dict exposing (Dict)
 import UI.Wrapper
 import UI.Navigation
 import UI.Case
-
-
--- import UI.Page
-
+import UI.Page
 import Ports
 
 
@@ -112,6 +109,7 @@ view : Model -> Html Msg
 view model =
     UI.Wrapper.view model
         [ UI.Navigation.view
+        , UI.Page.container model
         , UI.Case.view model
         ]
 
