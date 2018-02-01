@@ -22,8 +22,7 @@ wrapper =
 view : Html Msg
 view =
     wrapper []
-        [ div [ onClick ToggleMenu ] [ text "M" ]
-        , UI.Common.link "/" [ text "home" ]
+        [ UI.Common.link "/" [ text "home" ]
         , text " - "
         , UI.Common.link "/services" [ text "services" ]
         , text " - "

@@ -11,18 +11,25 @@ type Msg
     | OpenPage (Result Http.Error Page)
     | OpenCase (Result Http.Error CaseContent)
     | SetCasePosition ( Float, Float )
-    | ToggleMenu
+    | CloseMenu
+    | OpenMenu MenuState
 
 
 type alias Model =
     { route : Route
     , pages : Dict String Page
-    , activePage : Maybe Page
+    , activePage : Maybe String
     , cases : Dict Int CaseContent
     , activeCase : Maybe CaseContent
     , casePosition : ( Float, Float )
-    , menuActive : Bool
+    , menuState : MenuState
     }
+
+
+type MenuState
+    = Closed
+    | OpenTop
+    | OpenBottom
 
 
 type Route

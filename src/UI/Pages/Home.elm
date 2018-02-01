@@ -4,17 +4,11 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
 import UI.Case
+import UI.Common exposing (loremIpsum)
 
 
 view : Model -> HomeContent -> Html Msg
 view model content =
-    div []
-        [ renderHomeContent model content
-        ]
-
-
-renderHomeContent : Model -> HomeContent -> Html Msg
-renderHomeContent model content =
     let
         cases =
             content.cases
@@ -26,4 +20,19 @@ renderHomeContent model content =
                             |> UI.Case.caseView page model.casePosition
                     )
     in
-        div [ class "home" ] cases
+        div [ class "home" ] <|
+            [ loremIpsum
+            , loremIpsum
+            , loremIpsum
+            , loremIpsum
+            , loremIpsum
+            , loremIpsum
+            ]
+                ++ cases
+                ++ [ loremIpsum
+                   , loremIpsum
+                   , loremIpsum
+                   , loremIpsum
+                   , loremIpsum
+                   , loremIpsum
+                   ]

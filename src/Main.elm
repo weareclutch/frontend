@@ -20,7 +20,7 @@ initModel route =
     , cases = Dict.empty
     , activeCase = Nothing
     , casePosition = ( 0, 0 )
-    , menuActive = False
+    , menuState = Closed
     }
 
 
@@ -36,23 +36,23 @@ init location =
         ( initModel route, command )
 
 
-addToCache : Page -> Dict String Page -> Dict String Page
-addToCache page dict =
+getPageType : Page -> Maybe String
+getPageType page =
     case page of
         Home { pageType } ->
-            Dict.insert pageType page dict
+            Just pageType
 
         Services { pageType } ->
-            Dict.insert pageType page dict
+            Just pageType
 
         Culture { pageType } ->
-            Dict.insert pageType page dict
+            Just pageType
 
         Contact { pageType } ->
-            Dict.insert pageType page dict
+            Just pageType
 
         _ ->
-            dict
+            Nothing
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -72,13 +72,20 @@ update msg model =
             ( model, Navigation.newUrl path )
 
         OpenPage (Ok page) ->
-            ( { model
-                | activePage = Just page
-                , activeCase = Nothing
-                , pages = addToCache page model.pages
-              }
-            , Cmd.none
-            )
+            getPageType page
+                |> Maybe.map
+                    (\pageType ->
+                        ( { model
+                            | activePage = Just pageType
+                            , activeCase = Nothing
+                            , pages =
+                                model.pages
+                                    |> Dict.insert pageType page
+                          }
+                        , Cmd.none
+                        )
+                    )
+                |> Maybe.withDefault ( model, Cmd.none )
 
         OpenPage (Err err) ->
             Debug.log (toString err) ( model, Cmd.none )
@@ -101,8 +108,11 @@ update msg model =
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
 
-        ToggleMenu ->
-            ( { model | menuActive = not model.menuActive }, Cmd.none )
+        CloseMenu ->
+            ( { model | menuState = Closed }, Cmd.none )
+
+        OpenMenu state ->
+            ( { model | menuState = state }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -116,7 +126,10 @@ view model =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Ports.newCasePosition Ports.decodePosition
+    Sub.batch
+        [ Ports.newCasePosition Ports.decodePosition
+        , Ports.changeMenu Ports.decodeDirection
+        ]
 
 
 main : Program Never Model Msg

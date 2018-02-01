@@ -3,7 +3,7 @@ module UI.Page exposing (container)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled)
+import Html.Styled.Attributes exposing (styled, class)
 import UI.Pages.Home
 import UI.Pages.Services
 import UI.Pages.Culture
@@ -35,19 +35,43 @@ pageOrder =
 container : Model -> Html Msg
 container model =
     let
+        activeDepth =
+            model.activePage
+                |> Maybe.andThen
+                    (\activePage ->
+                        pageOrder
+                            |> List.indexedMap (,)
+                            |> List.filterMap
+                                (\( index, pageType ) ->
+                                    if pageType == activePage then
+                                        Just index
+                                    else
+                                        Nothing
+                                )
+                            |> List.head
+                    )
+                |> Maybe.withDefault 0
+
         pages =
             pageOrder
                 |> List.indexedMap (,)
                 |> List.map
                     (\( index, pageType ) ->
-                        pageView model pageType (index - List.length pageOrder)
+                        let
+                            depth =
+                                if index <= activeDepth then
+                                    index - activeDepth
+                                else
+                                    index - activeDepth - List.length pageOrder
+                        in
+                            pageView model pageType depth
                     )
     in
         containerWrapper [] pages
 
 
-pageWrapper : Int -> Bool -> Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
-pageWrapper depth locked menuActive =
+pageWrapper : Int -> Bool -> MenuState -> List (Attribute msg) -> List (Html msg) -> Html msg
+pageWrapper depth locked menuState =
     let
         lockStyle =
             if locked then
@@ -56,16 +80,27 @@ pageWrapper depth locked menuActive =
                 overflow auto
 
         transformStyle =
-            if menuActive then
-                [ transforms
-                    [ translate2
-                        (px 0)
-                        (px <| toFloat <| 100 * depth + 200)
-                    , scale <| 0.1 * (toFloat depth) + 0.94
+            case menuState of
+                Closed ->
+                    [ transforms [] ]
+
+                OpenTop ->
+                    [ transforms
+                        [ translate2
+                            (px 0)
+                            (px <| toFloat <| 100 * depth + 200)
+                        , scale <| 0.1 * (toFloat depth) + 0.94
+                        ]
                     ]
-                ]
-            else
-                [ transforms [] ]
+
+                OpenBottom ->
+                    [ transforms
+                        [ translate2
+                            (px 0)
+                            (px <| toFloat <| -100 * depth - 200)
+                        , scale <| 0.1 * (toFloat depth) + 0.94
+                        ]
+                    ]
 
         extraStyles =
             lockStyle :: transformStyle ++ []
@@ -78,6 +113,7 @@ pageWrapper depth locked menuActive =
             , position absolute
             , top zero
             , left zero
+            , padding2 (px 100) zero
             , zIndex (int <| 10 + depth)
             , property "transition" "all 0.28s ease-in-out"
             ]
@@ -91,6 +127,17 @@ pageView model pageType depth =
             model.activeCase
                 |> Maybe.map (\activeCase -> True)
                 |> Maybe.withDefault False
+
+        className =
+            model.activePage
+                |> Maybe.andThen
+                    (\activePage ->
+                        if activePage == pageType then
+                            Just "page-wrapper active"
+                        else
+                            Nothing
+                    )
+                |> Maybe.withDefault "page-wrapper"
 
         page =
             model.pages
@@ -117,7 +164,7 @@ pageView model pageType depth =
     in
         pageWrapper depth
             locked
-            model.menuActive
-            []
+            model.menuState
+            [ class className ]
             [ page
             ]

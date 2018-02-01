@@ -5,6 +5,7 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
 import UI.Common exposing (addLink, loremIpsum)
+import UI.Blocks
 
 
 outerWrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -135,5 +136,15 @@ body content =
                 [ backgroundColor (hex "fff")
                 , padding (px 80)
                 ]
+
+        blocks =
+            content.body
+                |> Maybe.andThen
+                    (\body ->
+                        Just <| UI.Blocks.streamfield body
+                    )
+                |> Maybe.withDefault (text "")
     in
-        wrapper [] []
+        wrapper []
+            [ blocks
+            ]

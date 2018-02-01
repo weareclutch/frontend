@@ -1,4 +1,4 @@
-port module Ports exposing (getCasePosition, newCasePosition, decodePosition)
+port module Ports exposing (..)
 
 import Types exposing (..)
 import Json.Decode as Decode
@@ -27,3 +27,22 @@ decodePosition position =
 
             Err _ ->
                 SetCasePosition ( 0, 0 )
+
+
+port changeMenu : (String -> msg) -> Sub msg
+
+
+decodeDirection : String -> Msg
+decodeDirection direction =
+    case direction of
+        "top" ->
+            OpenMenu OpenTop
+
+        "bottom" ->
+            OpenMenu OpenBottom
+
+        "close" ->
+            CloseMenu
+
+        _ ->
+            OpenMenu OpenTop
