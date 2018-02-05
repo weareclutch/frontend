@@ -19,6 +19,7 @@ initModel route =
     , activePage = Nothing
     , cases = Dict.empty
     , activeCase = Nothing
+    , activeOverlay = Nothing
     , casePosition = ( 0, 0 )
     , menuState = Closed
     }
@@ -78,6 +79,7 @@ update msg model =
                         ( { model
                             | activePage = Just pageType
                             , activeCase = Nothing
+                            , activeOverlay = Nothing
                             , pages =
                                 model.pages
                                     |> Dict.insert pageType page
@@ -94,12 +96,21 @@ update msg model =
             let
                 cases =
                     Dict.insert content.id content model.cases
+
+                ( activeOverlay, cmd ) =
+                    case model.activeCase of
+                        Just _ ->
+                            ( model.activeOverlay, Cmd.none )
+
+                        Nothing ->
+                            ( Just content.id, Ports.getCasePosition content.id )
             in
                 ( { model
                     | cases = cases
                     , activeCase = Just content
+                    , activeOverlay = activeOverlay
                   }
-                , Ports.getCasePosition content.id
+                , cmd
                 )
 
         OpenCase (Err err) ->
@@ -120,7 +131,7 @@ view model =
     UI.Wrapper.view model
         [ UI.Navigation.view
         , UI.Page.container model
-        , UI.Case.view model
+        , UI.Case.staticView model
         ]
 
 

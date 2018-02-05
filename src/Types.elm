@@ -21,6 +21,7 @@ type alias Model =
     , activePage : Maybe String
     , cases : Dict Int CaseContent
     , activeCase : Maybe CaseContent
+    , activeOverlay : Maybe Int
     , casePosition : ( Float, Float )
     , menuState : MenuState
     }
@@ -59,6 +60,12 @@ type alias CaseContent =
     }
 
 
+type CaseState
+    = Cover
+    | Preview
+    | Open
+
+
 type alias HomeContent =
     { pageType : String
     , cases : List CaseContent
@@ -69,10 +76,6 @@ type alias ServicesContent =
     { pageType : String
     , caption : String
     }
-
-
-type alias TypedPage a =
-    { a | pageType : String }
 
 
 type Block

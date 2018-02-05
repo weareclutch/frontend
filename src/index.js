@@ -29,11 +29,11 @@ app.ports.getCasePosition.subscribe(function(id) {
     return null
   }
 
-  var caseNode = homeNode.querySelector('.case-' + id)
+  var overlayNode = homeNode.querySelector('.overlay-' + id)
 
 
-  if (caseNode) {
-    var pos = caseNode.getBoundingClientRect()
+  if (overlayNode) {
+    var pos = overlayNode.getBoundingClientRect()
     app.ports.newCasePosition.send(pos)
   }
 })

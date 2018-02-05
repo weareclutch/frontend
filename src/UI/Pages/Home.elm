@@ -12,12 +12,13 @@ view model content =
     let
         cases =
             content.cases
+                |> List.indexedMap (,)
                 |> List.map
-                    (\page ->
-                        model.activeCase
-                            |> Maybe.andThen (\activeCase -> Just (activeCase.id == page.id))
+                    (\( index, page ) ->
+                        model.activeOverlay
+                            |> Maybe.andThen (\id -> Just (id == page.id))
                             |> Maybe.withDefault False
-                            |> UI.Case.caseView page model.casePosition
+                            |> UI.Case.overlay model (List.drop index content.cases)
                     )
     in
         div [ class "home" ] <|
