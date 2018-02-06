@@ -134,43 +134,25 @@ renderCases model cases =
                     )
                 |> Maybe.withDefault 0
 
-        cachedCases =
-            cases
-                |> List.map
-                    (\content ->
-                        model.cases
-                            |> Dict.get content.id
-                            |> Maybe.withDefault content
-                    )
     in
-        if
-            (activeIndex - 2)
-                == (List.length cachedCases)
-                || (List.length cachedCases)
-                == 1
-        then
-            cachedCases
-                |> List.map
-                    (\content ->
+        cases
+            |> List.map
+                (\content ->
+                    model.cases
+                        |> Dict.get content.id
+                        |> Maybe.withDefault content
+                )
+            |> List.indexedMap (,)
+            |> List.map
+                (\(index, content) ->
+                    if index <= activeIndex then
                         caseView content Open
-                    )
-        else
-            cachedCases
-                |> List.take (activeIndex + 2)
-                |> List.reverse
-                |> List.foldl
-                    (curry
-                        (\( content, acc ) ->
-                            case acc of
-                                [] ->
-                                    [ caseView content Preview ]
+                    else if index == (activeIndex + 1) then
+                        caseView content Preview
+                    else
+                        text ""
 
-                                acc ->
-                                    (caseView content Open) :: acc
-                        )
-                    )
-                    []
-
+                )
 
 caseView : CaseContent -> CaseState -> Html Msg
 caseView content state =

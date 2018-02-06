@@ -7,7 +7,7 @@ import Types exposing (..)
 
 siteUrl : String
 siteUrl =
-    "http://127.0.0.1:8000"
+    "http://174.138.12.29"
 
 
 apiUrl : String
