@@ -75,9 +75,9 @@ pageWrapper depth locked menuState =
     let
         lockStyle =
             if locked then
-                overflow hidden
+                overflowY hidden
             else
-                overflow auto
+                overflowY scroll
 
         transformStyle =
             case menuState of
@@ -103,7 +103,10 @@ pageWrapper depth locked menuState =
                     ]
 
         extraStyles =
-            lockStyle :: transformStyle ++ []
+            lockStyle
+                :: transformStyle
+                ++ [ property "-webkit-overflow-scrolling" "touch"
+                   ]
     in
         styled div <|
             [ backgroundColor (hex "fff")

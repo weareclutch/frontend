@@ -23,17 +23,7 @@ view model content =
     in
         div [ class "home" ] <|
             [ loremIpsum
-            , loremIpsum
-            , loremIpsum
-            , loremIpsum
-            , loremIpsum
-            , loremIpsum
             ]
                 ++ cases
                 ++ [ loremIpsum
-                   , loremIpsum
-                   , loremIpsum
-                   , loremIpsum
-                   , loremIpsum
-                   , loremIpsum
                    ]

@@ -75,6 +75,23 @@ type alias HomeContent =
 type alias ServicesContent =
     { pageType : String
     , caption : String
+    , body :
+        List
+            { title : String
+            , body : String
+            , services :
+                List
+                    { text : String
+                    , service : Service
+                    }
+            }
+    }
+
+
+type alias Service =
+    { title : String
+    , body : String
+    , slides : List Image
     }
 
 
@@ -86,4 +103,10 @@ type Block
 type alias Quote =
     { text : String
     , name : Maybe String
+    }
+
+
+type alias Image =
+    { image : String
+    , caption : Maybe String
     }

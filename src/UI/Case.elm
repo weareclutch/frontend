@@ -47,7 +47,7 @@ overlayWrapper active ( x, y ) =
                 , property "transition" "all 0.28s ease-in"
                 ]
             else
-                [ overflow hidden
+                [ overflowY hidden
                 , width (px 300)
                 , height (px 300)
                 ]
@@ -59,6 +59,8 @@ overlayWrapper active ( x, y ) =
             , height (px 300)
             , property "will-change" "width, height, transform"
             , transform <| translateZ zero
+            , property "-webkit-overflow-scrolling" "touch"
+            , overflowX hidden
             ]
                 ++ extraStyle
 
@@ -133,7 +135,6 @@ renderCases model cases =
                             |> List.head
                     )
                 |> Maybe.withDefault 0
-
     in
         cases
             |> List.map
@@ -144,15 +145,15 @@ renderCases model cases =
                 )
             |> List.indexedMap (,)
             |> List.map
-                (\(index, content) ->
+                (\( index, content ) ->
                     if index <= activeIndex then
                         caseView content Open
                     else if index == (activeIndex + 1) then
                         caseView content Preview
                     else
                         text ""
-
                 )
+
 
 caseView : CaseContent -> CaseState -> Html Msg
 caseView content state =

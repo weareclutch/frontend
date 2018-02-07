@@ -95,9 +95,48 @@ decodeCaseContent =
 decodeServicesContent : Decode.Decoder Page
 decodeServicesContent =
     Decode.map Services <|
-        Decode.map2 ServicesContent
+        Decode.map3 ServicesContent
             (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "caption" Decode.string)
+            (Decode.field "body" <|
+                Decode.list <|
+                    Decode.field "value" <|
+                        Decode.map3
+                            (\title ->
+                                (\richtext ->
+                                    (\services ->
+                                        { title = title
+                                        , body = richtext
+                                        , services = services
+                                        }
+                                    )
+                                )
+                            )
+                            (Decode.field "title" Decode.string)
+                            (Decode.field "richtext" Decode.string)
+                            (Decode.field "services" <|
+                                Decode.list <|
+                                    Decode.map2
+                                        (curry (\( text, service ) -> { text = text, service = service }))
+                                        (Decode.field "text" Decode.string)
+                                        (Decode.field "service" decodeService)
+                            )
+            )
+
+
+decodeService : Decode.Decoder Service
+decodeService =
+    Decode.map3 Service
+        (Decode.field "title" Decode.string)
+        (Decode.field "body" Decode.string)
+        (Decode.field "slides" <| Decode.list decodeImage)
+
+
+decodeImage : Decode.Decoder Image
+decodeImage =
+    Decode.map2 Image
+        (Decode.field "image" Decode.string)
+        (Decode.maybe <| Decode.field "caption" Decode.string)
 
 
 decodeBlocks : Decode.Decoder (List Block)

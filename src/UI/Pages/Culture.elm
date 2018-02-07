@@ -2,8 +2,6 @@ module UI.Pages.Culture exposing (view)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
-import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, class)
 import UI.Common exposing (loremIpsum)
 
 
