@@ -9,6 +9,7 @@ import UI.Wrapper
 import UI.Navigation
 import UI.Case
 import UI.Page
+import UI.Pages.Services
 import Ports
 
 
@@ -20,6 +21,7 @@ initModel route =
     , cases = Dict.empty
     , activeCase = Nothing
     , activeOverlay = Nothing
+    , activeService = Nothing
     , casePosition = ( 0, 0 )
     , menuState = Closed
     }
@@ -80,6 +82,7 @@ update msg model =
                             | activePage = Just pageType
                             , activeCase = Nothing
                             , activeOverlay = Nothing
+                            , activeService = Nothing
                             , pages =
                                 model.pages
                                     |> Dict.insert pageType page
@@ -125,6 +128,12 @@ update msg model =
         OpenMenu state ->
             ( { model | menuState = state }, Cmd.none )
 
+        OpenService service ->
+            ( { model | activeService = Just service }, Cmd.none )
+
+        CloseService ->
+            ( { model | activeService = Nothing }, Cmd.none )
+
 
 view : Model -> Html Msg
 view model =
@@ -132,6 +141,7 @@ view model =
         [ UI.Navigation.view
         , UI.Page.container model
         , UI.Case.staticView model
+        , UI.Pages.Services.overlay model.activeService
         ]
 
 

@@ -11,6 +11,8 @@ type Msg
     | OpenPage (Result Http.Error Page)
     | OpenCase (Result Http.Error CaseContent)
     | SetCasePosition ( Float, Float )
+    | OpenService Service
+    | CloseService
     | CloseMenu
     | OpenMenu MenuState
 
@@ -22,6 +24,7 @@ type alias Model =
     , cases : Dict Int CaseContent
     , activeCase : Maybe CaseContent
     , activeOverlay : Maybe Int
+    , activeService : Maybe Service
     , casePosition : ( Float, Float )
     , menuState : MenuState
     }
