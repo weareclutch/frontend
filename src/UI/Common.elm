@@ -1,12 +1,13 @@
-module UI.Common exposing (addLink, link, loremIpsum)
+module UI.Common exposing (addLink, link, loremIpsum, image, backgroundImg)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (..)
 import Json.Decode as Decode
-import Html.Styled.Attributes exposing (styled)
+import Html.Styled.Attributes exposing (styled, src, alt)
 import Css exposing (..)
+import Api exposing (siteUrl)
 
 
 addLink : String -> List (Attribute Msg)
@@ -29,6 +30,33 @@ addLink url =
 link : String -> List (Html Msg) -> Html Msg
 link url children =
     a (addLink url) children
+
+
+image : Image -> Html msg
+image data =
+    let
+        imageUrl =
+            siteUrl ++ data.image
+    in
+        case data.caption of
+            Just caption ->
+                img [ src imageUrl, alt caption ] []
+
+            Nothing ->
+                img [ src imageUrl ] []
+    
+
+backgroundImg : Image -> Attribute msg
+backgroundImg data =
+    let
+        imageUrl =
+            siteUrl ++ data.image
+    in
+        css
+            [ backgroundImage (url imageUrl)
+            , backgroundSize cover
+            , backgroundPosition center
+            ]
 
 
 loremIpsum : Html msg

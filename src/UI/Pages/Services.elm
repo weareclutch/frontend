@@ -6,6 +6,7 @@ import UI.Common exposing (loremIpsum)
 import Html.Styled.Attributes exposing (styled)
 import Css exposing (..)
 import Html.Styled.Events exposing (onClick)
+import UI.Common exposing (backgroundImg)
 
 
 view : ServicesContent -> Html Msg
@@ -67,16 +68,31 @@ overlay service =
                 , backgroundColor (hex "fff")
                 , zIndex (int 200)
                 ]
+        slide =
+            styled div
+                [ width (px 320)
+                , height (px 200)
+                , display inlineBlock
+                ]
     in
         service
             |> Maybe.map
                 (\service ->
-                    outerWrapper []
-                        [ wrapper []
-                            [ h1 [] [ text service.title ]
-                            , p [] [ text service.body ]
-                            , button [ onClick CloseService ] [ text "close" ]
+                    let
+                        slides =
+                            service.slides
+                                |> List.map
+                                    (\image ->
+                                        slide [ backgroundImg image ] []
+                                    )
+                    in
+                        outerWrapper []
+                            [ wrapper []
+                                [ h1 [] [ text service.title ]
+                                , p [] [ text service.body ]
+                                , div [] slides
+                                , button [ onClick CloseService ] [ text "close" ]
+                                ]
                             ]
-                        ]
                 )
             |> Maybe.withDefault (text "")
