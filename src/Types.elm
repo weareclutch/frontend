@@ -48,8 +48,8 @@ type Route
 type Page
     = Home HomeContent
     | Services ServicesContent
-    | Culture ServicesContent
-    | Contact ServicesContent
+    | Culture CultureContent
+    | Contact ContactContent
     | Case CaseContent
 
 
@@ -95,6 +95,40 @@ type alias Service =
     { title : String
     , body : String
     , slides : List Image
+    }
+
+
+type alias ContactContent =
+    { pageType : String
+    , caption : String
+    , intro : String
+    , contactPeople : List Person
+    }
+
+
+type alias Person =
+    { firstName : String
+    , lastName : String
+    , jobTitle : String
+    , photo : Image
+    , email : Maybe String
+    , phone : Maybe String
+    }
+
+
+type alias CultureContent =
+    { pageType : String
+    , people : List Person
+    , cases : List CaseContent
+    , nextEvent : Maybe Event
+    , ideas : Maybe (List String)
+    }
+
+
+type alias Event =
+    { date : String
+    , title : String
+    , image : Maybe Image
     }
 
 

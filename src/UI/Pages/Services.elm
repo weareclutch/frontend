@@ -68,6 +68,7 @@ overlay service =
                 , backgroundColor (hex "fff")
                 , zIndex (int 200)
                 ]
+
         slide =
             styled div
                 [ width (px 320)

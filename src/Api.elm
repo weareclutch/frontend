@@ -44,10 +44,10 @@ getPageRequest pageType id =
                 Http.get url <| decodePageResults decodeServicesContent
 
             "culture.CulturePage" ->
-                Http.get url <| decodePageResults decodeServicesContent
+                Http.get url <| decodePageResults decodeCultureContent
 
             "contact.ContactPage" ->
-                Http.get url <| decodePageResults decodeServicesContent
+                Http.get url <| decodePageResults decodeContactContent
 
             _ ->
                 Http.get (apiUrl ++ "/pages/") decodeServicesContent
@@ -79,6 +79,25 @@ decodeHomeContent =
                     Decode.field "value" <|
                         decodeCaseContent
             )
+
+
+decodeCultureContent : Decode.Decoder Page
+decodeCultureContent =
+    Decode.map Culture <|
+        Decode.map5 CultureContent
+            (Decode.at [ "meta", "type" ] Decode.string)
+            (Decode.field "people" <| Decode.list (Decode.field "value" decodePerson))
+            (Decode.field "cases" <| Decode.list (Decode.field "value" <| decodeCaseContent))
+            (Decode.maybe <| Decode.field "next_event" decodeEvent)
+            (Decode.maybe <| Decode.field "ideas" <| Decode.list Decode.string)
+
+
+decodeEvent : Decode.Decoder Event
+decodeEvent =
+    Decode.map3 Event
+        (Decode.field "date" Decode.string)
+        (Decode.field "title" Decode.string)
+        (Decode.maybe <| Decode.field "image" decodeImage)
 
 
 decodeCaseContent : Decode.Decoder CaseContent
@@ -130,6 +149,27 @@ decodeService =
         (Decode.field "title" Decode.string)
         (Decode.field "body" Decode.string)
         (Decode.field "slides" <| Decode.list decodeImage)
+
+
+decodeContactContent : Decode.Decoder Page
+decodeContactContent =
+    Decode.map Contact <|
+        Decode.map4 ContactContent
+            (Decode.at [ "meta", "type" ] Decode.string)
+            (Decode.field "caption" Decode.string)
+            (Decode.field "intro" Decode.string)
+            (Decode.field "contact_people" <| Decode.list (Decode.field "value" decodePerson))
+
+
+decodePerson : Decode.Decoder Person
+decodePerson =
+    Decode.map6 Person
+        (Decode.field "first_name" Decode.string)
+        (Decode.field "last_name" Decode.string)
+        (Decode.field "job_title" Decode.string)
+        (Decode.field "photo" decodeImage)
+        (Decode.maybe <| Decode.field "email" Decode.string)
+        (Decode.maybe <| Decode.field "phone" Decode.string)
 
 
 decodeImage : Decode.Decoder Image

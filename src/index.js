@@ -22,14 +22,14 @@ var app = Elm.Main.embed(mountNode);
 
 
 app.ports.getCasePosition.subscribe(function(id) {
-  var homeNode = document
-    .querySelector('.home')
+  var activePage = document
+    .querySelector('.page-wrapper.active')
  
-  if (!homeNode) {
+  if (!activePage) {
     return null
   }
 
-  var overlayNode = homeNode.querySelector('.overlay-' + id)
+  var overlayNode = activePage.querySelector('.overlay-' + id)
 
 
   if (overlayNode) {

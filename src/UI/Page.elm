@@ -155,7 +155,7 @@ pageView model pageType depth =
                                 Just <| UI.Pages.Services.view content
 
                             Culture content ->
-                                Just <| UI.Pages.Culture.view content
+                                Just <| UI.Pages.Culture.view model content
 
                             Contact content ->
                                 Just <| UI.Pages.Contact.view content

@@ -4,7 +4,6 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (styled)
-import Html.Styled.Events exposing (onClick)
 import UI.Common exposing (link)
 
 

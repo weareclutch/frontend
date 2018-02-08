@@ -44,7 +44,7 @@ image data =
 
             Nothing ->
                 img [ src imageUrl ] []
-    
+
 
 backgroundImg : Image -> Attribute msg
 backgroundImg data =
