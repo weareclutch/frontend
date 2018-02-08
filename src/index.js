@@ -47,12 +47,14 @@ setTimeout(function() {
     var debounced = debounce(function() {
       if (wrapper.className.indexOf('active') === -1) return false
 
-      if (wrapper.scrollTop < offset) {
-        return app.ports.changeMenu.send('top')
-
-      } else if ((wrapper.scrollTop + window.innerHeight) > (wrapper.scrollHeight - offset)) {
-        return app.ports.changeMenu.send('bottom')
-
+      if (wrapper.className.indexOf('home') !== -1) {
+        if (wrapper.scrollTop < offset) {
+          return app.ports.changeMenu.send('top')
+        }
+      } else {
+        if ((wrapper.scrollTop + window.innerHeight) > (wrapper.scrollHeight - offset)) {
+          return app.ports.changeMenu.send('bottom')
+        }
       }
 
       return app.ports.changeMenu.send('close')

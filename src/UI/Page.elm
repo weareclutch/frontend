@@ -132,15 +132,18 @@ pageView model pageType depth =
                 |> Maybe.withDefault False
 
         className =
-            model.activePage
-                |> Maybe.andThen
-                    (\activePage ->
-                        if activePage == pageType then
-                            Just "page-wrapper active"
-                        else
-                            Nothing
-                    )
-                |> Maybe.withDefault "page-wrapper"
+            Maybe.map2
+                (,) 
+                model.activePage
+                (List.head <| String.split "." pageType)
+            |> Maybe.map
+                (\(activePage, t) ->
+                    if activePage == pageType then
+                        t ++ " page-wrapper active"
+                    else
+                        t ++ " page-wrapper"
+                )
+            |> Maybe.withDefault "page-wrapper"
 
         page =
             model.pages
@@ -168,6 +171,6 @@ pageView model pageType depth =
         pageWrapper depth
             locked
             model.menuState
-            [ class className ]
+            [ class <| className ]
             [ page
             ]
