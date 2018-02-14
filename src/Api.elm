@@ -7,7 +7,7 @@ import Types exposing (..)
 
 siteUrl : String
 siteUrl =
-    "http://174.138.12.29"
+    "https://weareclutch.nl"
 
 
 apiUrl : String

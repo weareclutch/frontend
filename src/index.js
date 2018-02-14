@@ -39,6 +39,7 @@ app.ports.getCasePosition.subscribe(function(id) {
 })
 
 
+
 var offset = 100
 setTimeout(function() {
   var pageWrappers = document.querySelectorAll('.page-wrapper')
@@ -65,3 +66,8 @@ setTimeout(function() {
 }, 2000)
 
 
+// yes this needs another solution
+setTimeout(function() {
+  var home = document.querySelector('.page-wrapper.home')
+  home.scrollTop = home.scrollHeight
+}, 800)
