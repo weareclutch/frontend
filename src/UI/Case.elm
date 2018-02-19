@@ -4,7 +4,7 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (styled, class)
-import UI.Common exposing (addLink, loremIpsum)
+import UI.Common exposing (addLink, loremIpsum, backgroundImg)
 import UI.Blocks
 import Dict
 
@@ -38,29 +38,34 @@ overlayWrapper active ( x, y ) =
                 [ overflowY scroll
                 , width (vw 100)
                 , height (vh 100)
+                , zIndex (int 10)
                 , transforms
-                    [ translate2
+                    [ translate3d
                         (px -x)
                         (px -y)
+                        zero
                     , translateZ zero
                     ]
                 , property "transition" "all 0.28s ease-in"
                 ]
             else
                 [ overflowY hidden
-                , width (px 300)
-                , height (px 300)
                 ]
     in
         styled div <|
             [ position relative
             , property "transition" "all 0.28s ease-out"
-            , width (px 300)
-            , height (px 300)
+            , width (px 660)
+            , height (px 940)
             , property "will-change" "width, height, transform"
             , transform <| translateZ zero
             , property "-webkit-overflow-scrolling" "touch"
+            , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
             , overflowX hidden
+            , zIndex (int 5)
+            , nthChild "even"
+                [ margin4 (px 120) zero (px 120) (px 380)
+                ]
             ]
                 ++ extraStyle
 
@@ -91,7 +96,7 @@ overlay model cases active =
             (\content ->
                 let
                     className =
-                        class <| "overlay-" ++ (toString content.id)
+                        class <| "overlay overlay-" ++ (toString content.id)
 
                     attributes =
                         if active then
@@ -166,24 +171,33 @@ caseView content state =
         case state of
             Open ->
                 wrapper []
-                    [ header state content.title
+                    [ header state content
                     , body content
                     ]
 
             Cover ->
                 wrapper []
-                    [ header state content.title
+                    [ header state content
                     ]
 
             Preview ->
                 wrapper (addLink <| "/" ++ (toString content.id) ++ "/lorem")
-                    [ header state content.title
+                    [ header state content
                     ]
 
 
-header : CaseState -> String -> Html msg
-header state title =
+header : CaseState -> CaseContent -> Html msg
+header state content =
     let
+        backgroundStyle =
+            content.theme.backgroundPosition
+                |> Maybe.map
+                    (\(x, y) ->
+                        property "background-position" <| x ++ " " ++ y
+                    )
+                |> Maybe.withDefault
+                        (property "background-position" "center")
+
         wrapper =
             styled div <|
                 [ height <|
@@ -192,21 +206,25 @@ header state title =
                     else
                         (pct 100)
                 , width (pct 100)
-                , backgroundColor (hex "000")
+                , backgroundColor (hex content.theme.backgroundColor)
+                , backgroundStyle
+                , property "transition" "all 0.28s ease-out"
                 , position relative
                 ]
 
         titleWrapper =
             styled h2 <|
-                [ color (hex "fff")
+                [ color (hex content.theme.textColor)
                 , position absolute
                 , bottom (px 20)
                 , left (px 20)
                 , fontSize (px 48)
                 ]
     in
-        wrapper []
-            [ titleWrapper [] [ text title ]
+        wrapper
+            [ backgroundImg content.image
+            ]
+            [ titleWrapper [] [ text content.title ]
             ]
 
 

@@ -29,6 +29,9 @@ decodePosition position =
                 SetCasePosition ( 0, 0 )
 
 
+port setScrollPosition : (Float -> msg) -> Sub msg
+
+
 port changeMenu : (String -> msg) -> Sub msg
 
 
@@ -42,7 +45,7 @@ decodeDirection direction =
             OpenMenu OpenBottom
 
         "close" ->
-            CloseMenu
+            OpenMenu Closed
 
         _ ->
             OpenMenu OpenTop

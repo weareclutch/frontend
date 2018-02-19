@@ -1,20 +1,5 @@
 'use strict';
 
-function debounce(func, wait, immediate) {
-  var timeout;
-  return function() {
-    var context = this, args = arguments;
-    var later = function() {
-      timeout = null
-      if (!immediate) func.apply(context, args)
-    }
-    var callNow = immediate && !timeout
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-    if (callNow) func.apply(context, args)
-  }
-}
-
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('elm-app');
 
@@ -38,33 +23,38 @@ app.ports.getCasePosition.subscribe(function(id) {
   }
 })
 
+var ticking = false
+var lastKnownY = 0
 
+function update() {
+  ticking = false
+  app.ports.setScrollPosition.send(lastKnownY)
+}
 
-var offset = 100
+function requestTick() {
+  if (!ticking) {
+    window.requestAnimationFrame(update)
+  }
+  ticking = true
+}
+
+function onScroll(e) {
+  lastKnownY = e.target.scrollTop
+  requestTick()
+}
+
 setTimeout(function() {
   var pageWrappers = document.querySelectorAll('.page-wrapper')
+  var caseWrappers = document.querySelectorAll('.overlay')
 
   pageWrappers.forEach(function(wrapper, index) {
-    var debounced = debounce(function() {
-      if (wrapper.className.indexOf('active') === -1) return false
+    wrapper.addEventListener('scroll', onScroll)
+  })
 
-      if (wrapper.className.indexOf('home') !== -1) {
-        if (wrapper.scrollTop < offset) {
-          return app.ports.changeMenu.send('top')
-        }
-      } else {
-        if ((wrapper.scrollTop + window.innerHeight) > (wrapper.scrollHeight - offset)) {
-          return app.ports.changeMenu.send('bottom')
-        }
-      }
-
-      return app.ports.changeMenu.send('close')
-    }, 20)
-    
-    wrapper.addEventListener('scroll', debounced)
+  caseWrappers.forEach(function(wrapper, index) {
+    wrapper.addEventListener('scroll', onScroll)
   })
 }, 2000)
-
 
 // yes this needs another solution
 setTimeout(function() {

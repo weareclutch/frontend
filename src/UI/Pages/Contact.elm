@@ -2,7 +2,6 @@ module UI.Pages.Contact exposing (view)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
-import Css exposing (..)
 import UI.Blocks exposing (richText)
 import UI.Common exposing (image)
 

@@ -1,4 +1,12 @@
-module UI.Common exposing (addLink, link, loremIpsum, image, backgroundImg)
+module UI.Common
+    exposing
+        ( addLink
+        , link
+        , loremIpsum
+        , image
+        , backgroundImg
+        , parallax
+        )
 
 import Types exposing (..)
 import Html.Styled exposing (..)
@@ -55,7 +63,6 @@ backgroundImg data =
         css
             [ backgroundImage (url imageUrl)
             , backgroundSize cover
-            , backgroundPosition center
             ]
 
 
@@ -73,4 +80,22 @@ loremIpsum =
 
            Phasellus et sapien quis tellus ultrices mattis. Sed viverra dolor at augue efficitur iaculis. Nam ultricies luctus dui sed tempus. Nam mattis tempus pretium. Sed sed quam fringilla ante euismod rhoncus. Nam magna mauris, interdum in aliquet non, imperdiet sed nibh. Nulla ut faucibus lacus, at euismod tortor. Suspendisse ac bibendum eros.
           """
+        ]
+
+
+parallax : Float -> Float -> Html msg -> Html msg
+parallax amount pageScroll element =
+    let
+        offset =
+            (-pageScroll) * amount
+
+        style =
+            Html.Styled.Attributes.style
+                [ ( "transform", "translate3d(0, " ++ (toString offset) ++ "px, 0)" ) 
+                ]
+    in
+    div [ style
+        , class ""
+        ]
+        [ element
         ]

@@ -106,6 +106,7 @@ pageWrapper depth locked menuState =
             lockStyle
                 :: transformStyle
                 ++ [ property "-webkit-overflow-scrolling" "touch"
+                   , overflowX hidden
                    ]
     in
         styled div <|
@@ -116,7 +117,6 @@ pageWrapper depth locked menuState =
             , position absolute
             , top zero
             , left zero
-            , padding2 (px 100) zero
             , zIndex (int <| 10 + depth)
             , property "transition" "all 0.28s ease-in-out"
             ]

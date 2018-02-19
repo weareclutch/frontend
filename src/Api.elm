@@ -72,13 +72,25 @@ decodePageResults decoder =
 decodeHomeContent : Decode.Decoder Page
 decodeHomeContent =
     Decode.map Home <|
-        Decode.map2 HomeContent
+        Decode.map4 HomeContent
             (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "cases" <|
                 Decode.list <|
                     Decode.field "value" <|
                         decodeCaseContent
             )
+            (Decode.map2 mapCoverContent
+                (Decode.field "text" Decode.string)
+                (Decode.field "link" Decode.string)
+            )
+            decodeTheme
+
+
+mapCoverContent : String -> String -> { text : String, link : String }
+mapCoverContent text link =
+    { text = text
+    , link = link
+    }
 
 
 decodeCultureContent : Decode.Decoder Page
@@ -102,13 +114,15 @@ decodeEvent =
 
 decodeCaseContent : Decode.Decoder CaseContent
 decodeCaseContent =
-    Decode.map6 CaseContent
+    Decode.map8 CaseContent
         (Decode.field "id" Decode.int)
         (Decode.field "title" Decode.string)
         (Decode.field "caption" Decode.string)
         (Decode.field "release_date" Decode.string)
         (Decode.field "website_url" Decode.string)
         (Decode.maybe <| Decode.field "body" decodeBlocks)
+        (Decode.field "image_src" decodeImage)
+        decodeTheme
 
 
 decodeServicesContent : Decode.Decoder Page
@@ -175,9 +189,19 @@ decodePerson =
 decodeImage : Decode.Decoder Image
 decodeImage =
     Decode.map2 Image
-        (Decode.field "image" Decode.string)
+        (Decode.field "url" Decode.string)
         (Decode.maybe <| Decode.field "caption" Decode.string)
 
+
+decodeTheme : Decode.Decoder Theme
+decodeTheme =
+    Decode.map3 Theme
+        (Decode.field "background_color" Decode.string)
+        (Decode.field "text_color" Decode.string)
+        (Decode.maybe <| Decode.map2 (,)
+            (Decode.field "background_position_x" Decode.string)
+            (Decode.field "background_position_y" Decode.string)
+        )
 
 decodeBlocks : Decode.Decoder (List Block)
 decodeBlocks =

@@ -13,8 +13,9 @@ type Msg
     | SetCasePosition ( Float, Float )
     | OpenService Service
     | CloseService
-    | CloseMenu
     | OpenMenu MenuState
+    | ToggleMenu
+    | SetPageScrollPosition Float
 
 
 type alias Model =
@@ -27,6 +28,7 @@ type alias Model =
     , activeService : Maybe Service
     , casePosition : ( Float, Float )
     , menuState : MenuState
+    , pageScrollPositions : Dict String Float
     }
 
 
@@ -60,6 +62,8 @@ type alias CaseContent =
     , releaseDate : String
     , websiteUrl : String
     , body : Maybe (List Block)
+    , image : Image
+    , theme : Theme
     }
 
 
@@ -72,6 +76,11 @@ type CaseState
 type alias HomeContent =
     { pageType : String
     , cases : List CaseContent
+    , cover :
+        { text : String
+        , link : String
+        }
+    , theme : Theme
     }
 
 
@@ -146,4 +155,10 @@ type alias Quote =
 type alias Image =
     { image : String
     , caption : Maybe String
+    }
+
+type alias Theme =
+    { backgroundColor : String
+    , textColor : String
+    , backgroundPosition : Maybe (String, String)
     }

@@ -24,6 +24,7 @@ initModel route =
     , activeService = Nothing
     , casePosition = ( 0, 0 )
     , menuState = Closed
+    , pageScrollPositions = Dict.empty
     }
 
 
@@ -122,8 +123,18 @@ update msg model =
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
 
-        CloseMenu ->
-            ( { model | menuState = Closed }, Cmd.none )
+        ToggleMenu ->
+            let
+                menuState =
+                    case model.menuState of
+                        Closed ->
+                            OpenTop
+                        OpenTop ->
+                            Closed
+                        OpenBottom ->
+                            Closed
+            in
+                ( { model | menuState = menuState }, Cmd.none )
 
         OpenMenu state ->
             ( { model | menuState = state }, Cmd.none )
@@ -133,6 +144,27 @@ update msg model =
 
         CloseService ->
             ( { model | activeService = Nothing }, Cmd.none )
+
+        SetPageScrollPosition pos ->
+            let
+                pageScrollPositions =
+                    model.activePage
+                        |> Maybe.map
+                            (\activePage ->
+                                case model.activeOverlay of
+                                    Just id ->
+                                        toString id
+
+                                    Nothing ->
+                                        activePage
+                            )
+                        |> Maybe.map
+                            (\key ->
+                                Dict.insert key pos model.pageScrollPositions
+                            )
+                        |> Maybe.withDefault model.pageScrollPositions
+            in
+                ( { model | pageScrollPositions = pageScrollPositions }, Cmd.none )
 
 
 view : Model -> Html Msg
@@ -150,6 +182,7 @@ subscriptions model =
     Sub.batch
         [ Ports.newCasePosition Ports.decodePosition
         , Ports.changeMenu Ports.decodeDirection
+        , Ports.setScrollPosition SetPageScrollPosition
         ]
 
 
