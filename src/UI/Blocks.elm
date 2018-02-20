@@ -3,7 +3,7 @@ module UI.Blocks exposing (..)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, property)
+import Html.Styled.Attributes exposing (property)
 import Json.Encode
 
 

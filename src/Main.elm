@@ -129,8 +129,10 @@ update msg model =
                     case model.menuState of
                         Closed ->
                             OpenTop
+
                         OpenTop ->
                             Closed
+
                         OpenBottom ->
                             Closed
             in
@@ -170,7 +172,7 @@ update msg model =
 view : Model -> Html Msg
 view model =
     UI.Wrapper.view model
-        [ UI.Navigation.view
+        [ UI.Navigation.view model
         , UI.Page.container model
         , UI.Case.staticView model
         , UI.Pages.Services.overlay model.activeService

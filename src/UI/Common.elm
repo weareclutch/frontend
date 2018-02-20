@@ -13,7 +13,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (..)
 import Json.Decode as Decode
-import Html.Styled.Attributes exposing (styled, src, alt)
+import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
 import Api exposing (siteUrl)
 
@@ -91,11 +91,12 @@ parallax amount pageScroll element =
 
         style =
             Html.Styled.Attributes.style
-                [ ( "transform", "translate3d(0, " ++ (toString offset) ++ "px, 0)" ) 
+                [ ( "transform", "translate3d(0, " ++ (toString offset) ++ "px, 0)" )
                 ]
     in
-    div [ style
-        , class ""
-        ]
-        [ element
-        ]
+        div
+            [ style
+            , class ""
+            ]
+            [ element
+            ]

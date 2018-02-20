@@ -3,7 +3,7 @@ module UI.Pages.Home exposing (view)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, class)
+import Html.Styled.Attributes exposing (class)
 import UI.Case
 import UI.Blocks exposing (richText)
 import Dict
@@ -16,7 +16,7 @@ view model content =
             model.pageScrollPositions
                 |> Dict.get "home.HomePage"
                 |> Maybe.withDefault 0
-    
+
         cases =
             content.cases
                 |> List.indexedMap (,)
@@ -33,6 +33,7 @@ view model content =
             [ pageWrapper cases
             , introCover pageScroll content
             ]
+
 
 pageWrapper : List (Html Msg) -> Html Msg
 pageWrapper children =
@@ -56,6 +57,7 @@ pageWrapper children =
             [ innerWrapper [] children
             ]
 
+
 logo : Html msg
 logo =
     let
@@ -74,6 +76,7 @@ logo =
     in
         wrapper [] []
 
+
 introCover : Float -> HomeContent -> Html msg
 introCover offset content =
     let
@@ -85,6 +88,7 @@ introCover offset content =
                 , position relative
                 , zIndex (int 5)
                 ]
+
         text =
             styled div
                 [ color (hex content.theme.textColor)
@@ -95,7 +99,6 @@ introCover offset content =
                 , left (pct 50)
                 , position absolute
                 ]
-
     in
         wrapper []
             [ logo

@@ -3,7 +3,7 @@ module UI.Page exposing (container)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, class)
+import Html.Styled.Attributes exposing (class)
 import UI.Pages.Home
 import UI.Pages.Services
 import UI.Pages.Culture
@@ -14,7 +14,7 @@ import Dict
 containerWrapper : List (Attribute msg) -> List (Html msg) -> Html msg
 containerWrapper =
     styled div <|
-        [ backgroundColor (hex "f5f5f5")
+        [ backgroundColor (hex "001AE0")
         , height (vh 100)
         , width (vw 100)
         , position absolute
@@ -106,6 +106,10 @@ pageWrapper depth locked menuState =
             lockStyle
                 :: transformStyle
                 ++ [ property "-webkit-overflow-scrolling" "touch"
+                   , pseudoElement "-webkit-scrollbar"
+                        [ display none
+                        ]
+                   , property "-ms-overflow-style" "none"
                    , overflowX hidden
                    ]
     in
@@ -133,17 +137,17 @@ pageView model pageType depth =
 
         className =
             Maybe.map2
-                (,) 
+                (,)
                 model.activePage
                 (List.head <| String.split "." pageType)
-            |> Maybe.map
-                (\(activePage, t) ->
-                    if activePage == pageType then
-                        t ++ " page-wrapper active"
-                    else
-                        t ++ " page-wrapper"
-                )
-            |> Maybe.withDefault "page-wrapper"
+                |> Maybe.map
+                    (\( activePage, t ) ->
+                        if activePage == pageType then
+                            t ++ " page-wrapper active"
+                        else
+                            t ++ " page-wrapper"
+                    )
+                |> Maybe.withDefault "page-wrapper"
 
         page =
             model.pages

@@ -157,8 +157,9 @@ type alias Image =
     , caption : Maybe String
     }
 
+
 type alias Theme =
     { backgroundColor : String
     , textColor : String
-    , backgroundPosition : Maybe (String, String)
+    , backgroundPosition : Maybe ( String, String )
     }

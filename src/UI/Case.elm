@@ -3,10 +3,18 @@ module UI.Case exposing (staticView, overlay)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (styled, class)
+import Html.Styled.Attributes exposing (class)
 import UI.Common exposing (addLink, loremIpsum, backgroundImg)
 import UI.Blocks
 import Dict
+
+
+overlayZoom : { time : String, delay : String, transition : String }
+overlayZoom =
+    { time = "0.4s"
+    , delay = "0.15s"
+    , transition = "ease-in-out"
+    }
 
 
 outerWrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -36,17 +44,15 @@ overlayWrapper active ( x, y ) =
         extraStyle =
             if active then
                 [ overflowY scroll
+                , pseudoElement "-webkit-scrollbar"
+                    [ display none
+                    ]
+                , property "-ms-overflow-style" "none"
                 , width (vw 100)
                 , height (vh 100)
                 , zIndex (int 10)
-                , transforms
-                    [ translate3d
-                        (px -x)
-                        (px -y)
-                        zero
-                    , translateZ zero
-                    ]
-                , property "transition" "all 0.28s ease-in"
+                , left (px -x)
+                , top (px -y)
                 ]
             else
                 [ overflowY hidden
@@ -54,10 +60,16 @@ overlayWrapper active ( x, y ) =
     in
         styled div <|
             [ position relative
-            , property "transition" "all 0.28s ease-out"
+            , property "transition" <|
+                "height " ++ overlayZoom.time ++ " " ++ overlayZoom.transition ++
+                ", top " ++ overlayZoom.time ++ " " ++ overlayZoom.transition ++
+                ", width " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition ++ 
+                ", left " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
+            , left (px 0)
+            , top (px 0)
             , width (px 660)
             , height (px 940)
-            , property "will-change" "width, height, transform"
+            , property "will-change" "width, height, top, left"
             , transform <| translateZ zero
             , property "-webkit-overflow-scrolling" "touch"
             , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
@@ -189,17 +201,8 @@ caseView content state =
 header : CaseState -> CaseContent -> Html msg
 header state content =
     let
-        backgroundStyle =
-            content.theme.backgroundPosition
-                |> Maybe.map
-                    (\(x, y) ->
-                        property "background-position" <| x ++ " " ++ y
-                    )
-                |> Maybe.withDefault
-                        (property "background-position" "center")
-
         wrapper =
-            styled div <|
+            styled div
                 [ height <|
                     if state == Preview then
                         (pct 50)
@@ -207,13 +210,13 @@ header state content =
                         (pct 100)
                 , width (pct 100)
                 , backgroundColor (hex content.theme.backgroundColor)
-                , backgroundStyle
-                , property "transition" "all 0.28s ease-out"
+                , property "transition" <|
+                    "all " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
                 , position relative
                 ]
 
         titleWrapper =
-            styled h2 <|
+            styled h2
                 [ color (hex content.theme.textColor)
                 , position absolute
                 , bottom (px 20)
@@ -221,11 +224,88 @@ header state content =
                 , fontSize (px 48)
                 ]
     in
-        wrapper
-            [ backgroundImg content.image
+        wrapper []
+            [ layerImage state content.theme content.image
+            , titleWrapper [] [ text content.title ]
             ]
-            [ titleWrapper [] [ text content.title ]
-            ]
+
+
+layerImage : CaseState -> Theme -> Image -> Html msg
+layerImage state theme image =
+    let
+        size =
+            case state of
+                Open ->
+                    [ width (px 700)
+                    , height (px 700)
+                    ]
+
+                _ ->
+                    [ width (px 500)
+                    , height (px 500)
+                    ]
+
+        positionStyles =
+            theme.backgroundPosition
+                |> Maybe.map
+                    (\( x, y ) ->
+                        let
+                            xStyle =
+                                case x of
+                                    "left" ->
+                                        [ left <|
+                                            if state == Open then
+                                                (px -100)
+                                            else
+                                                (px -200)
+
+                                        , position absolute
+                                        ]
+
+                                    "right" ->
+                                        [ right <|
+                                            if state == Open then
+                                                (px -100)
+                                            else
+                                                (px -200)
+                                        , position absolute
+                                        ]
+
+                                    _ ->
+                                        [ margin auto
+                                        , position relative
+                                        ]
+
+                            yStyle =
+                                case y of
+                                    "top" ->
+                                        [ top zero ]
+
+                                    "bottom" ->
+                                        [ bottom zero ]
+
+                                    _ ->
+                                        [ transform <|
+                                            translateY (pct -50)
+                                        , top (pct 50)
+                                        ]
+                        in
+                            xStyle ++ yStyle
+                    )
+                |> Maybe.withDefault
+                    [ top zero
+                    , left zero
+                    ]
+
+        wrapper =
+            styled div <|
+                [ property "transition" <|
+                    "all " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
+                ]
+                    ++ positionStyles
+                    ++ size
+    in
+        wrapper [ backgroundImg image ] []
 
 
 body : CaseContent -> Html Msg

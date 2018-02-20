@@ -198,10 +198,12 @@ decodeTheme =
     Decode.map3 Theme
         (Decode.field "background_color" Decode.string)
         (Decode.field "text_color" Decode.string)
-        (Decode.maybe <| Decode.map2 (,)
-            (Decode.field "background_position_x" Decode.string)
-            (Decode.field "background_position_y" Decode.string)
+        (Decode.maybe <|
+            Decode.map2 (,)
+                (Decode.field "background_position_x" Decode.string)
+                (Decode.field "background_position_y" Decode.string)
         )
+
 
 decodeBlocks : Decode.Decoder (List Block)
 decodeBlocks =
