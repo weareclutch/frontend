@@ -44,10 +44,6 @@ overlayWrapper active ( x, y ) =
         extraStyle =
             if active then
                 [ overflowY scroll
-                , pseudoElement "-webkit-scrollbar"
-                    [ display none
-                    ]
-                , property "-ms-overflow-style" "none"
                 , width (vw 100)
                 , height (vh 100)
                 , zIndex (int 10)
@@ -61,10 +57,26 @@ overlayWrapper active ( x, y ) =
         styled div <|
             [ position relative
             , property "transition" <|
-                "height " ++ overlayZoom.time ++ " " ++ overlayZoom.transition ++
-                ", top " ++ overlayZoom.time ++ " " ++ overlayZoom.transition ++
-                ", width " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition ++ 
-                ", left " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
+                "height "
+                    ++ overlayZoom.time
+                    ++ " "
+                    ++ overlayZoom.transition
+                    ++ ", top "
+                    ++ overlayZoom.time
+                    ++ " "
+                    ++ overlayZoom.transition
+                    ++ ", width "
+                    ++ overlayZoom.time
+                    ++ " "
+                    ++ overlayZoom.delay
+                    ++ " "
+                    ++ overlayZoom.transition
+                    ++ ", left "
+                    ++ overlayZoom.time
+                    ++ " "
+                    ++ overlayZoom.delay
+                    ++ " "
+                    ++ overlayZoom.transition
             , left (px 0)
             , top (px 0)
             , width (px 660)
@@ -74,6 +86,10 @@ overlayWrapper active ( x, y ) =
             , property "-webkit-overflow-scrolling" "touch"
             , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
             , overflowX hidden
+            , pseudoElement "-webkit-scrollbar"
+                [ display none
+                ]
+            , property "-ms-overflow-style" "none"
             , zIndex (int 5)
             , nthChild "even"
                 [ margin4 (px 120) zero (px 120) (px 380)
@@ -211,7 +227,12 @@ header state content =
                 , width (pct 100)
                 , backgroundColor (hex content.theme.backgroundColor)
                 , property "transition" <|
-                    "all " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
+                    "all "
+                        ++ overlayZoom.time
+                        ++ " "
+                        ++ overlayZoom.delay
+                        ++ " "
+                        ++ overlayZoom.transition
                 , position relative
                 ]
 
@@ -258,7 +279,6 @@ layerImage state theme image =
                                                 (px -100)
                                             else
                                                 (px -200)
-
                                         , position absolute
                                         ]
 
@@ -300,7 +320,12 @@ layerImage state theme image =
         wrapper =
             styled div <|
                 [ property "transition" <|
-                    "all " ++ overlayZoom.time ++ " " ++ overlayZoom.delay ++ " " ++ overlayZoom.transition
+                    "all "
+                        ++ overlayZoom.time
+                        ++ " "
+                        ++ overlayZoom.delay
+                        ++ " "
+                        ++ overlayZoom.transition
                 ]
                     ++ positionStyles
                     ++ size

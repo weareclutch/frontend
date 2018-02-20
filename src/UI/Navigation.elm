@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Events exposing (..)
 import Icons.Logo exposing (logo)
-import Icons.Menu exposing (menuToggle)
+import Icons.Menu exposing (burger, cross)
 import UI.Common exposing (addLink)
 
 
@@ -17,31 +17,51 @@ view model =
                 [ position absolute
                 , zIndex (int 100)
                 , top zero
+                , left zero
                 , width (pct 100)
-                ]
-
-        innerWrapper =
-            styled div
-                [ maxWidth (px 1280)
-                , margin4 (px 40) auto zero auto
-                , position relative
+                , backgroundColor (hex "0ff")
                 ]
 
         toggleWrapper =
             styled div
                 [ position absolute
-                , right zero
-                , top zero
-                , padding2 (px 12) (px 8)
+                , right (px 100)
+                , top (px 75)
                 , zIndex (int 110)
                 , cursor pointer
+                , padding (px 8)
+                ]
+
+        burgerWrapper =
+            styled div
+                [ position absolute
+                , top (px 12)
+                , left (px 6)
+                , property "transition" "opacity 0.2s linear"
+                , opacity <|
+                    int <|
+                        if model.menuState == Closed && model.activeOverlay == Nothing then
+                            1
+                        else
+                            0
+                ]
+
+        crossWrapper =
+            styled div
+                [ property "transition" "opacity 0.2s linear"
+                , opacity <|
+                    int <|
+                        if model.menuState /= Closed || model.activeOverlay /= Nothing then
+                            1
+                        else
+                            0
                 ]
 
         logoWrapper =
             styled div
                 [ position absolute
-                , left zero
-                , top zero
+                , left (px 100)
+                , top (px 80)
                 , zIndex (int 110)
                 , cursor pointer
                 ]
@@ -64,6 +84,8 @@ view model =
                     styled ul <|
                         [ listStyle none
                         , textAlign center
+                        , position absolute
+                        , width (pct 100)
                         , property "transition" "all 0.4s ease-in-out"
                         ]
                             ++ extraStyle
@@ -76,22 +98,27 @@ view model =
                 , margin2 zero (px 10)
                 , fontSize (px 20)
                 ]
+
+        toggleAction =
+            if model.activeOverlay == Nothing then
+                [ onClick (ToggleMenu) ]
+            else
+                addLink "/"
     in
         wrapper []
-            [ innerWrapper []
-                [ toggleWrapper [ onClick (ToggleMenu) ]
-                    [ menuToggle model.menuState
-                    ]
-                , menuWrapper model.menuState
-                    []
-                    [ menuItem [] [ text "Work" ]
-                    , menuItem [] [ text "Services" ]
-                    , menuItem [] [ text "Cultuur" ]
-                    , menuItem [] [ text "Blog" ]
-                    , menuItem [] [ text "Contact" ]
-                    ]
-                , logoWrapper (addLink "/")
-                    [ logo
-                    ]
+            [ toggleWrapper toggleAction
+                [ burgerWrapper [] [ burger ]
+                , crossWrapper [] [ cross ]
+                ]
+            , menuWrapper model.menuState
+                []
+                [ menuItem [] [ text "Work" ]
+                , menuItem [] [ text "Services" ]
+                , menuItem [] [ text "Cultuur" ]
+                , menuItem [] [ text "Blog" ]
+                , menuItem [] [ text "Contact" ]
+                ]
+            , logoWrapper (addLink "/")
+                [ logo
                 ]
             ]
