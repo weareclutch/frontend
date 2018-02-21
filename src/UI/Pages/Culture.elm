@@ -16,9 +16,8 @@ view model content =
 
         cases =
             content.cases
-                |> List.indexedMap (,)
-                |> List.map
-                    (\( index, page ) ->
+                |> List.indexedMap
+                    (\index page ->
                         model.activeOverlay
                             |> Maybe.andThen (\id -> Just (id == page.meta.id))
                             |> Maybe.withDefault False

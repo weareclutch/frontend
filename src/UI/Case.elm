@@ -71,12 +71,7 @@ overlayWrapper active ( x, y ) =
     in
         styled div <|
             [ position relative
-            , transitions
-                [ ("height", overlayZoom.time, 0, overlayZoom.transition)
-                , ("top", overlayZoom.time, 0, overlayZoom.transition)
-                , ("width", overlayZoom.time, overlayZoom.delay, overlayZoom.transition)
-                , ("left", overlayZoom.time, overlayZoom.delay, overlayZoom.transition)
-                ]
+            , transition "all" overlayZoom.time 0 overlayZoom.transition
             , left (px 0)
             , top (px 0)
             , width (pct 100)
@@ -172,9 +167,8 @@ renderCases model cases =
                         |> Dict.get content.meta.id
                         |> Maybe.withDefault content
                 )
-            |> List.indexedMap (,)
-            |> List.map
-                (\( index, content ) ->
+            |> List.indexedMap
+                (\index content ->
                     if index <= activeIndex then
                         caseView content Open
                     else if index == (activeIndex + 1) then

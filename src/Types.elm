@@ -63,6 +63,7 @@ type alias CaseContent =
         , releaseDate : String
         , websiteUrl : String
         }
+    , intro : Maybe String
     , body : Maybe (List Block)
     , image : Maybe Image
     , backgroundImage : Maybe Image
