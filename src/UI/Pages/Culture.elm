@@ -20,7 +20,7 @@ view model content =
                 |> List.map
                     (\( index, page ) ->
                         model.activeOverlay
-                            |> Maybe.andThen (\id -> Just (id == page.id))
+                            |> Maybe.andThen (\id -> Just (id == page.meta.id))
                             |> Maybe.withDefault False
                             |> UI.Case.overlay model (List.drop index content.cases)
                     )

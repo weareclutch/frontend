@@ -56,13 +56,16 @@ type Page
 
 
 type alias CaseContent =
-    { id : Int
-    , title : String
-    , caption : String
-    , releaseDate : String
-    , websiteUrl : String
+    { meta :
+        { id : Int
+        , title : String
+        , caption : String
+        , releaseDate : String
+        , websiteUrl : String
+        }
     , body : Maybe (List Block)
-    , image : Image
+    , image : Maybe Image
+    , backgroundImage : Maybe Image
     , theme : Theme
     }
 

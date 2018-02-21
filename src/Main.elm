@@ -99,7 +99,7 @@ update msg model =
         OpenCase (Ok content) ->
             let
                 cases =
-                    Dict.insert content.id content model.cases
+                    Dict.insert content.meta.id content model.cases
 
                 ( activeOverlay, cmd ) =
                     case model.activeCase of
@@ -107,7 +107,7 @@ update msg model =
                             ( model.activeOverlay, Cmd.none )
 
                         Nothing ->
-                            ( Just content.id, Ports.getCasePosition content.id )
+                            ( Just content.meta.id, Ports.getCasePosition content.meta.id )
             in
                 ( { model
                     | cases = cases

@@ -114,14 +114,26 @@ decodeEvent =
 
 decodeCaseContent : Decode.Decoder CaseContent
 decodeCaseContent =
-    Decode.map8 CaseContent
-        (Decode.field "id" Decode.int)
-        (Decode.field "title" Decode.string)
-        (Decode.field "caption" Decode.string)
-        (Decode.field "release_date" Decode.string)
-        (Decode.field "website_url" Decode.string)
+    Decode.map5 CaseContent
+        (Decode.map5 (,,,,)
+            (Decode.field "id" Decode.int)
+            (Decode.field "title" Decode.string)
+            (Decode.field "caption" Decode.string)
+            (Decode.field "release_date" Decode.string)
+            (Decode.field "website_url" Decode.string)
+            |> Decode.map
+                (\( id, title, caption, releaseDate, websiteUrl ) ->
+                    { id = id
+                    , title = title
+                    , caption = caption
+                    , releaseDate = releaseDate
+                    , websiteUrl = websiteUrl
+                    }
+                )
+        )
         (Decode.maybe <| Decode.field "body" decodeBlocks)
-        (Decode.field "image_src" decodeImage)
+        (Decode.maybe <| Decode.field "image_src" decodeImage)
+        (Decode.maybe <| Decode.field "background_image_src" decodeImage)
         decodeTheme
 
 
@@ -131,29 +143,26 @@ decodeServicesContent =
         Decode.map3 ServicesContent
             (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "caption" Decode.string)
-            (Decode.field "body" <|
-                Decode.list <|
-                    Decode.field "value" <|
-                        Decode.map3
-                            (\title ->
-                                (\richtext ->
-                                    (\services ->
-                                        { title = title
-                                        , body = richtext
-                                        , services = services
-                                        }
-                                    )
-                                )
-                            )
-                            (Decode.field "title" Decode.string)
-                            (Decode.field "richtext" Decode.string)
-                            (Decode.field "services" <|
-                                Decode.list <|
-                                    Decode.map2
-                                        (curry (\( text, service ) -> { text = text, service = service }))
-                                        (Decode.field "text" Decode.string)
-                                        (Decode.field "service" decodeService)
-                            )
+            (Decode.map3 (,,)
+                (Decode.field "title" Decode.string)
+                (Decode.field "richtext" Decode.string)
+                (Decode.field "services" <|
+                    Decode.list <|
+                        Decode.map2
+                            (curry (\( text, service ) -> { text = text, service = service }))
+                            (Decode.field "text" Decode.string)
+                            (Decode.field "service" decodeService)
+                )
+                |> Decode.map
+                    (\( title, richtext, services ) ->
+                        { title = title
+                        , body = richtext
+                        , services = services
+                        }
+                    )
+                |> Decode.field "value"
+                |> Decode.list
+                |> Decode.field "body"
             )
 
 

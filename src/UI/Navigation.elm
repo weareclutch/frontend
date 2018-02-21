@@ -7,6 +7,7 @@ import Html.Styled.Events exposing (..)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import UI.Common exposing (addLink)
+import Style exposing (..)
 
 
 view : Model -> Html Msg
@@ -25,11 +26,23 @@ view model =
         toggleWrapper =
             styled div
                 [ position absolute
-                , right (px 100)
-                , top (px 75)
                 , zIndex (int 110)
                 , cursor pointer
                 , padding (px 8)
+                , right (px 20)
+                , top (px 20)
+                , bpMedium
+                    [ right (px 40)
+                    , top (px 25)
+                    ]
+                , bpLarge
+                    [ right (px 40)
+                    , top (px 25)
+                    ]
+                , bpXLargeUp
+                    [ right (px 100)
+                    , top (px 75)
+                    ]
                 ]
 
         burgerWrapper =
@@ -60,10 +73,22 @@ view model =
         logoWrapper =
             styled div
                 [ position absolute
-                , left (px 100)
-                , top (px 80)
                 , zIndex (int 110)
                 , cursor pointer
+                , left (px 20)
+                , top (px 20)
+                , bpMedium
+                    [ left (px 40)
+                    , top (px 25)
+                    ]
+                , bpLarge
+                    [ left (px 40)
+                    , top (px 25)
+                    ]
+                , bpXLargeUp
+                    [ left (px 100)
+                    , top (px 80)
+                    ]
                 ]
 
         menuWrapper =

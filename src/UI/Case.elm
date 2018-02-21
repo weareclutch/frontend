@@ -7,12 +7,13 @@ import Html.Styled.Attributes exposing (class)
 import UI.Common exposing (addLink, loremIpsum, backgroundImg)
 import UI.Blocks
 import Dict
+import Style exposing (..)
 
 
 overlayZoom : { time : String, delay : String, transition : String }
 overlayZoom =
-    { time = "0.4s"
-    , delay = "0.15s"
+    { time = "0.3s"
+    , delay = "0s"
     , transition = "ease-in-out"
     }
 
@@ -52,6 +53,20 @@ overlayWrapper active ( x, y ) =
                 ]
             else
                 [ overflowY hidden
+                , height (px 540)
+                , marginBottom (px 25)
+                , bpMedium
+                    [ height (px 540)
+                    , marginBottom (px 60)
+                    ]
+                , bpLarge
+                    [ height (px 680)
+                    , marginBottom (px 80)
+                    ]
+                , bpXLargeUp
+                    [ height (px 940)
+                    , marginBottom (px 135)
+                    ]
                 ]
     in
         styled div <|
@@ -79,8 +94,7 @@ overlayWrapper active ( x, y ) =
                     ++ overlayZoom.transition
             , left (px 0)
             , top (px 0)
-            , width (px 660)
-            , height (px 940)
+            , width (pct 100)
             , property "will-change" "width, height, top, left"
             , transform <| translateZ zero
             , property "-webkit-overflow-scrolling" "touch"
@@ -91,9 +105,6 @@ overlayWrapper active ( x, y ) =
                 ]
             , property "-ms-overflow-style" "none"
             , zIndex (int 5)
-            , nthChild "even"
-                [ margin4 (px 120) zero (px 120) (px 380)
-                ]
             ]
                 ++ extraStyle
 
@@ -124,7 +135,7 @@ overlay model cases active =
             (\content ->
                 let
                     className =
-                        class <| "overlay overlay-" ++ (toString content.id)
+                        class <| "overlay overlay-" ++ (toString content.meta.id)
 
                     attributes =
                         if active then
@@ -133,7 +144,7 @@ overlay model cases active =
                         else
                             [ className
                             ]
-                                ++ (addLink <| "/" ++ (toString content.id) ++ "/lorem")
+                                ++ (addLink <| "/" ++ (toString content.meta.id) ++ "/lorem")
 
                     caseViews =
                         if not active then
@@ -160,7 +171,7 @@ renderCases model cases =
                             |> List.indexedMap (,)
                             |> List.filterMap
                                 (\( index, content ) ->
-                                    if content.id == activeCase.id then
+                                    if content.meta.id == activeCase.meta.id then
                                         Just index
                                     else
                                         Nothing
@@ -173,7 +184,7 @@ renderCases model cases =
             |> List.map
                 (\content ->
                     model.cases
-                        |> Dict.get content.id
+                        |> Dict.get content.meta.id
                         |> Maybe.withDefault content
                 )
             |> List.indexedMap (,)
@@ -209,7 +220,7 @@ caseView content state =
                     ]
 
             Preview ->
-                wrapper (addLink <| "/" ++ (toString content.id) ++ "/lorem")
+                wrapper (addLink <| "/" ++ (toString content.meta.id) ++ "/lorem")
                     [ header state content
                     ]
 
@@ -217,8 +228,21 @@ caseView content state =
 header : CaseState -> CaseContent -> Html msg
 header state content =
     let
+        wrapperAttributes =
+            content.backgroundImage
+                |> Maybe.map
+                    (\image ->
+                        [ backgroundImg image ]
+                    )
+                |> Maybe.withDefault []
+
+        image =
+            content.image
+                |> Maybe.map (layerImage state content.theme)
+                |> Maybe.withDefault (text "")
+
         wrapper =
-            styled div
+            styled div <|
                 [ height <|
                     if state == Preview then
                         (pct 50)
@@ -226,6 +250,7 @@ header state content =
                         (pct 100)
                 , width (pct 100)
                 , backgroundColor (hex content.theme.backgroundColor)
+                , backgroundPosition center
                 , property "transition" <|
                     "all "
                         ++ overlayZoom.time
@@ -245,9 +270,9 @@ header state content =
                 , fontSize (px 48)
                 ]
     in
-        wrapper []
-            [ layerImage state content.theme content.image
-            , titleWrapper [] [ text content.title ]
+        wrapper wrapperAttributes
+            [ image
+            , titleWrapper [] [ text content.meta.title ]
             ]
 
 
@@ -257,8 +282,8 @@ layerImage state theme image =
         size =
             case state of
                 Open ->
-                    [ width (px 700)
-                    , height (px 700)
+                    [ width (px 900)
+                    , height (px 900)
                     ]
 
                 _ ->
