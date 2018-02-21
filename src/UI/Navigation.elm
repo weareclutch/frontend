@@ -50,7 +50,7 @@ view model =
                 [ position absolute
                 , top (px 12)
                 , left (px 6)
-                , property "transition" "opacity 0.2s linear"
+                , transition "opacity" 0.2 0 "linear"
                 , opacity <|
                     int <|
                         if model.menuState == Closed && model.activeOverlay == Nothing then
@@ -61,7 +61,7 @@ view model =
 
         crossWrapper =
             styled div
-                [ property "transition" "opacity 0.2s linear"
+                [ transition "opacity" 0.2 0 "linear"
                 , opacity <|
                     int <|
                         if model.menuState /= Closed || model.activeOverlay /= Nothing then
@@ -111,7 +111,7 @@ view model =
                         , textAlign center
                         , position absolute
                         , width (pct 100)
-                        , property "transition" "all 0.4s ease-in-out"
+                        , transition "all" 0.4 0 "ease-in-out"
                         ]
                             ++ extraStyle
             )

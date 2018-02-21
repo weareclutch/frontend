@@ -65,3 +65,25 @@ bpXLargeUp styles =
         [ "only screen and (min-width: " ++ (toString large) ++ "px)"
         ]
         styles
+
+
+transitionString : String -> Float -> Float -> String -> String
+transitionString prop duration delay easing =
+    prop ++ " " ++ (toString duration) ++ "s " ++ (toString delay) ++ "s " ++ easing
+    
+
+transitions : List (String, Float, Float, String) -> Style
+transitions transitions =
+    transitions
+        |> List.map
+            (\(prop, duration, delay, easing) ->
+                transitionString prop duration delay easing
+            )
+        |> String.join ", "
+        |> property "transition"
+
+
+transition : String -> Float -> Float -> String -> Style
+transition prop duration delay easing =
+    property "transition" <|
+        transitionString prop duration delay easing

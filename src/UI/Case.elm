@@ -10,10 +10,10 @@ import Dict
 import Style exposing (..)
 
 
-overlayZoom : { time : String, delay : String, transition : String }
+overlayZoom : { time : Float, delay : Float, transition : String }
 overlayZoom =
-    { time = "0.3s"
-    , delay = "0s"
+    { time = 0.3
+    , delay = 0
     , transition = "ease-in-out"
     }
 
@@ -71,27 +71,12 @@ overlayWrapper active ( x, y ) =
     in
         styled div <|
             [ position relative
-            , property "transition" <|
-                "height "
-                    ++ overlayZoom.time
-                    ++ " "
-                    ++ overlayZoom.transition
-                    ++ ", top "
-                    ++ overlayZoom.time
-                    ++ " "
-                    ++ overlayZoom.transition
-                    ++ ", width "
-                    ++ overlayZoom.time
-                    ++ " "
-                    ++ overlayZoom.delay
-                    ++ " "
-                    ++ overlayZoom.transition
-                    ++ ", left "
-                    ++ overlayZoom.time
-                    ++ " "
-                    ++ overlayZoom.delay
-                    ++ " "
-                    ++ overlayZoom.transition
+            , transitions
+                [ ("height", overlayZoom.time, 0, overlayZoom.transition)
+                , ("top", overlayZoom.time, 0, overlayZoom.transition)
+                , ("width", overlayZoom.time, overlayZoom.delay, overlayZoom.transition)
+                , ("left", overlayZoom.time, overlayZoom.delay, overlayZoom.transition)
+                ]
             , left (px 0)
             , top (px 0)
             , width (pct 100)
@@ -251,13 +236,7 @@ header state content =
                 , width (pct 100)
                 , backgroundColor (hex content.theme.backgroundColor)
                 , backgroundPosition center
-                , property "transition" <|
-                    "all "
-                        ++ overlayZoom.time
-                        ++ " "
-                        ++ overlayZoom.delay
-                        ++ " "
-                        ++ overlayZoom.transition
+                , transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
                 , position relative
                 ]
 
@@ -344,13 +323,7 @@ layerImage state theme image =
 
         wrapper =
             styled div <|
-                [ property "transition" <|
-                    "all "
-                        ++ overlayZoom.time
-                        ++ " "
-                        ++ overlayZoom.delay
-                        ++ " "
-                        ++ overlayZoom.transition
+                [ transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
                 ]
                     ++ positionStyles
                     ++ size
