@@ -55,4 +55,3 @@ namespace :deploy do
 
   after :publishing, :build
 end
-

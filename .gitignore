@@ -7,6 +7,9 @@
 # production
 /public/app.js
 
+# local fonts
+fonts
+
 # deploy
 deploy/log
 
