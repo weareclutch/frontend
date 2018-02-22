@@ -24,6 +24,22 @@ globalStyle =
         , selector "*, *:before, *:after"
             [ boxSizing borderBox
             ]
+        , selector "h1"
+            [ fontSize (px 120)
+            , lineHeight (px 130)
+            , fontFamilies ["Qanelas ExtraBold"]
+            ]
+        , selector "h2"
+            [ fontSize (px 50)
+            , lineHeight (px 60)
+            , fontFamilies ["Qanelas ExtraBold"]
+            ]
+        , selector "p"
+            [ fontSize (px 22)
+            , lineHeight (px 34)
+            , fontFamilies ["Roboto", "sans-serif"]
+            , fontWeight (int 500)
+            ]
         ]
 
 
