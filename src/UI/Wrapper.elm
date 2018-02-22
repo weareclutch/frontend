@@ -28,17 +28,23 @@ globalStyle =
             [ fontSize (px 120)
             , lineHeight (px 130)
             , fontFamilies ["Qanelas ExtraBold"]
+            , margin4 zero zero (px 35) zero
+            , padding zero
             ]
         , selector "h2"
             [ fontSize (px 50)
             , lineHeight (px 60)
             , fontFamilies ["Qanelas ExtraBold"]
+            , margin4 zero zero (px 35) zero
+            , padding zero
             ]
         , selector "p"
             [ fontSize (px 22)
             , lineHeight (px 34)
             , fontFamilies ["Roboto", "sans-serif"]
-            , fontWeight (int 500)
+            , fontWeight (int 400)
+            , margin4 zero zero (px 35) zero
+            , padding zero
             ]
         ]
 

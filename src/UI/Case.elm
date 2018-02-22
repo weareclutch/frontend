@@ -3,7 +3,7 @@ module UI.Case exposing (staticView, overlay)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, href)
 import UI.Common exposing (addLink, loremIpsum, backgroundImg)
 import UI.Blocks
 import Dict
@@ -12,9 +12,9 @@ import Style exposing (..)
 
 overlayZoom : { time : Float, delay : Float, transition : String }
 overlayZoom =
-    { time = 0.3
+    { time = 0.35
     , delay = 0
-    , transition = "ease-in-out"
+    , transition = "cubic-bezier(0.43, 0.15, 0.2, 1)"
     }
 
 
@@ -234,18 +234,89 @@ header state content =
                 , position relative
                 ]
 
+        titleTransition =
+            transition "all" overlayZoom.time 0 overlayZoom.transition
+
         titleWrapper =
-            styled h2
+            styled div <|
                 [ color (hex content.theme.textColor)
                 , position absolute
-                , bottom (px 20)
-                , left (px 20)
-                , fontSize (px 48)
+                , paddingRight (px 40)
+                , titleTransition
                 ]
+                    ++
+                        if state == Open then
+                            [ left (px 25)
+                            , bottom (px 25)
+                            , bpMedium
+                                [ left (px 40)
+                                , bottom (pct 50)
+                                , transform <| translateY (pct 50)
+                                ]
+                            , bpLarge
+                                [ left (px 40)
+                                , bottom (pct 50)
+                                , transform <| translateY (pct 50)
+                                ]
+                            , bpXLargeUp
+                                [ left (px 270)
+                                , bottom (pct 50)
+                                , transform <| translateY (pct 50)
+                                ]
+                            ]
+                        else
+                            [ left (px 25)
+                            , bottom (px 25)
+                            , bpMedium
+                                [ left (px 40)
+                                , bottom (px 50)
+                                ]
+                            , bpLarge
+                                [ left (px 50)
+                                , bottom (px 100)
+                                ]
+                            , bpXLargeUp
+                                [ left (px 50)
+                                , bottom (px 100)
+                                ]
+                            ]
+
+        
+        title =
+            styled h1 <|
+                if state == Open then
+                    [ fontSize (px 120)
+                    , lineHeight (px 130)
+                    , maxWidth (px 1200)
+                    , titleTransition
+                    ]
+                else
+                    [ fontSize (px 50)
+                    , lineHeight (px 55)
+                    , maxWidth (px 500)
+                    , titleTransition
+                    ]
+
+        caption =
+            styled span <|
+                if state == Open then
+                    [ fontSize (px 26)
+                    , letterSpacing (px 2)
+                    , titleTransition
+                    ]
+                else
+                    [ fontSize (px 22)
+                    , letterSpacing (px 2)
+                    , titleTransition
+                    ]
+
     in
         wrapper wrapperAttributes
             [ image
-            , titleWrapper [] [ text content.meta.title ]
+            , titleWrapper []
+                [ title [] [ text content.meta.title ]
+                , caption [] [ text content.meta.caption ]
+                ]
             ]
 
 
@@ -342,5 +413,87 @@ body content =
                 |> Maybe.withDefault (text "")
     in
         wrapper []
-            [ blocks
+            [ intro content
+            , blocks
+            ]
+
+
+intro : CaseContent -> Html Msg
+intro content =
+    let
+        wrapper =
+            styled div
+                [ width (pct 100)
+                , backgroundColor (hex "f8f8f8")
+                , color (hex "292A32")
+                , padding2 (px 80) zero
+                , bpMediumUp
+                    [ padding2 (px 200) zero
+                    ]
+                ]
+
+        innerWrapper =
+            styled div
+                [ width (pct 100)
+                , maxWidth (px 1460)
+                , position relative
+                , margin auto
+                ]
+
+        introWrapper =
+            styled div
+                [ maxWidth (px 960)
+                , fontWeight (int 500)
+                , padding2 zero (px 25)
+                ]
+
+        introEl =
+            content.intro
+                |> Maybe.map (UI.Blocks.richText)
+                |> Maybe.withDefault (text "")
+
+        metaInfo =
+            styled div
+                [ padding2 zero (px 25)
+                , bpMediumUp
+                    [ position absolute
+                    , top zero
+                    , right zero
+                    ]
+                ]
+
+        metaSection =
+            styled div
+                [ marginBottom (px 35)
+                , lineHeight (px 34)
+                , fontSize (px 22)
+                , letterSpacing (px 3.85)
+                ]
+
+        description =
+            styled div
+                [ fontFamilies [ "Qanelas ExtraBold" ]
+                ]
+
+
+    in
+        wrapper []
+            [ innerWrapper []
+                [ introWrapper []
+                    [ introEl
+                    ]
+                , metaInfo []
+                    [ metaSection []
+                        [ description [] [ text "Diensten" ]
+                        ]
+                    , metaSection []
+                        [ description [] [ text "Periode" ]
+                        , div [] [ text "Jan 2018" ]
+                        ]
+                    , metaSection []
+                        [ description [] [ text "Bekijken" ]
+                        , a [ href content.meta.websiteUrl ] [ text content.meta.websiteUrl ]
+                        ]
+                    ]
+                ]
             ]

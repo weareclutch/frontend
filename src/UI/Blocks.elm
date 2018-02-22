@@ -6,6 +6,7 @@ import Html.Styled.Attributes exposing (property)
 import UI.Common exposing (backgroundImg, image)
 import Css exposing (..)
 import Json.Encode
+import Style exposing (..)
 
 
 streamfield : List Block -> Html msg
@@ -63,9 +64,12 @@ imageBlock theme imageData =
         wrapper =
             styled div
                 [ backgroundColor (hex theme.backgroundColor)
-                , height (px 1100)
                 , width (pct 100)
+                , height (vh 80)
                 , position relative
+                , bpMediumUp
+                    [ height (px 1100)
+                    ]
                 ]
 
         innerWrapper =
@@ -79,6 +83,7 @@ imageBlock theme imageData =
                         (pct -50)
                 , maxWidth (px 660)
                 , margin auto
+                , padding2 zero (px 25)
                 ]
 
     in
@@ -95,21 +100,58 @@ contentBlock theme text =
             styled div
                 [ backgroundColor (hex theme.backgroundColor)
                 , color (hex theme.textColor)
-                , height (px 1100)
                 , position relative
+                , padding2 (px 80) zero
+                , bpMediumUp
+                    [ padding2 (px 180) zero
+                    ]
                 ]
 
         innerWrapper =
             styled div
-                [ position absolute
-                , top (pct 50)
-                , left (pct 50)
-                , transform <|
-                    translate2
-                        (pct -50)
-                        (pct -50)
+                [ margin auto
+                , maxWidth (px 660)
+                , padding2 zero (px 25)
+                ]
+    in
+        wrapper [ ]
+            [ innerWrapper  []
+                [ richText text
+                ]
+            ]
+
+
+contentTallBlock : Theme -> String -> Html msg
+contentTallBlock theme text =
+    let
+        wrapper =
+            styled div
+                [ backgroundColor (hex theme.backgroundColor)
+                , color (hex theme.textColor)
+                , position relative
+                , padding2 (px 80) zero
+                , bpMediumUp
+                    [ height (px 1100)
+                    , padding zero
+                    ]
+                ]
+
+        innerWrapper =
+            styled div
+                [ position relative
                 , maxWidth (px 660)
                 , margin auto
+                , padding2 zero (px 25)
+                , bpMediumUp
+                    [ position absolute
+                    , padding2 zero (px 25)
+                    , top (pct 50)
+                    , left (pct 50)
+                    , transform <|
+                        translate2
+                            (pct -50)
+                            (pct -50)
+                    ]
                 ]
     in
         wrapper [ ]
@@ -135,19 +177,28 @@ backgroundBlock image =
 columns : Column -> Column -> Html msg
 columns col1 col2 =
     let
+        wrapper =
+            styled div
+                [ position relative
+                ]
+
         colWrapper =
             styled div
-                [ width (pct 50)
-                , height (px 1100)
+                [ bpLargeUp
+                    [ width (pct 50)
+                    , height (px 1100)
+                    ]
                 , nthChild "even"
-                    [ position absolute
-                    , top zero
-                    , right zero
+                    [ bpMediumUp
+                        [ position absolute
+                        , top zero
+                        , right zero
+                        ]
                     ]
                 ]
         
     in
-        div []
+        wrapper []
             [ colWrapper [] [ column col1 ]
             , colWrapper [] [ column col2 ]
             ]
@@ -158,6 +209,6 @@ column col =
         |> Maybe.map (imageBlock col.theme)
         |> Maybe.withDefault
             ( col.richText
-                |> Maybe.map (contentBlock col.theme)
+                |> Maybe.map (contentTallBlock col.theme)
                 |> Maybe.withDefault (text "")
             )
