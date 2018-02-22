@@ -146,13 +146,24 @@ type alias Event =
 
 
 type Block
-    = RichTextBlock String
+    = UnknownBlock String
     | QuoteBlock Quote
+    | ImageBlock Theme Image
+    | ContentBlock Theme String
+    | BackgroundBlock Image
+    | ColumnBlock Column Column
 
 
 type alias Quote =
     { text : String
     , name : Maybe String
+    }
+
+
+type alias Column =
+    { theme : Theme
+    , image : Maybe Image
+    , richText : Maybe String
     }
 
 

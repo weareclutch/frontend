@@ -330,8 +330,7 @@ body content =
     let
         wrapper =
             styled div <|
-                [ backgroundColor (hex "fff")
-                , padding (px 80)
+                [ position relative
                 ]
 
         blocks =
@@ -344,5 +343,4 @@ body content =
     in
         wrapper []
             [ blocks
-            , p (addLink <| "/7/lorem") [ text "hello" ]
             ]

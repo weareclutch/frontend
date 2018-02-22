@@ -45,13 +45,19 @@ image data =
     let
         imageUrl =
             siteUrl ++ data.image
+
+        el =
+            styled img
+                [ maxWidth (pct 100)
+                ]
+
     in
         case data.caption of
             Just caption ->
-                img [ src imageUrl, alt caption ] []
+                el [ src imageUrl, alt caption ] []
 
             Nothing ->
-                img [ src imageUrl ] []
+                el [ src imageUrl ] []
 
 
 backgroundImg : Image -> Attribute msg

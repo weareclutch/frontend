@@ -205,7 +205,11 @@ decodeTheme : Decode.Decoder Theme
 decodeTheme =
     Decode.map3 Theme
         (Decode.field "background_color" Decode.string)
-        (Decode.field "text_color" Decode.string)
+        (Decode.oneOf
+            [ Decode.field "text_color" Decode.string
+            , Decode.succeed "fff"
+            ]
+        )
         (Decode.maybe <|
             Decode.map2 (,)
                 (Decode.field "background_position_x" Decode.string)
@@ -215,21 +219,37 @@ decodeTheme =
 
 decodeBlocks : Decode.Decoder (List Block)
 decodeBlocks =
-    Decode.list <|
-        Decode.field "value" <|
-            Decode.oneOf
-                [ decodeRichText
-                , decodeQuote
-                ]
-
-
-decodeRichText : Decode.Decoder Block
-decodeRichText =
-    Decode.string
+    Decode.field "type" Decode.string
         |> Decode.andThen
-            (\string ->
-                Decode.succeed <| RichTextBlock string
+            (\blockType ->
+                case blockType of
+                    "quote" ->
+                        Decode.field "value" decodeQuote
+                    "image" ->
+                        Decode.field "value" decodeImageBlock
+                    "background" ->
+                        Decode.field "value" decodeBackgroundBlock
+                    "content" ->
+                        Decode.field "value" decodeContentBlock
+                    "columns" ->
+                        Decode.field "value" decodeColumns
+                    _ ->
+                        Decode.succeed (UnknownBlock blockType)
             )
+        |> Decode.list
+
+decodeColumns : Decode.Decoder Block
+decodeColumns =
+    Decode.map2 ColumnBlock
+        (Decode.field "left" decodeColumn)
+        (Decode.field "right" decodeColumn)
+
+decodeColumn : Decode.Decoder Column
+decodeColumn =
+    Decode.map3 Column
+        decodeTheme
+        (Decode.maybe <| Decode.field "image" decodeImage)
+        (Decode.maybe <| Decode.field "rich_text" Decode.string)
 
 
 decodeQuote : Decode.Decoder Block
@@ -241,3 +261,24 @@ decodeQuote =
             (\quote ->
                 Decode.succeed <| QuoteBlock quote
             )
+
+decodeImageBlock : Decode.Decoder Block
+decodeImageBlock =
+    Decode.map2
+        ImageBlock
+        decodeTheme
+        (Decode.field "image" decodeImage)
+
+
+decodeBackgroundBlock : Decode.Decoder Block
+decodeBackgroundBlock =
+    Decode.map BackgroundBlock
+        (Decode.field "image" decodeImage)
+
+
+decodeContentBlock : Decode.Decoder Block
+decodeContentBlock =
+    Decode.map2
+        ContentBlock
+        decodeTheme
+        (Decode.field "rich_text" Decode.string)
