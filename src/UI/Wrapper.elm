@@ -4,6 +4,8 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
+import Dict
+import Style exposing (..)
 
 
 globalStyle : Html msg
@@ -27,21 +29,21 @@ globalStyle =
         , selector "h1"
             [ fontSize (px 120)
             , lineHeight (px 130)
-            , fontFamilies ["Qanelas ExtraBold"]
+            , fontFamilies [ "Qanelas ExtraBold" ]
             , margin4 zero zero (px 35) zero
             , padding zero
             ]
         , selector "h2"
             [ fontSize (px 50)
             , lineHeight (px 60)
-            , fontFamilies ["Qanelas ExtraBold"]
+            , fontFamilies [ "Qanelas ExtraBold" ]
             , margin4 zero zero (px 35) zero
             , padding zero
             ]
         , selector "p"
             [ fontSize (px 22)
             , lineHeight (px 34)
-            , fontFamilies ["Roboto", "sans-serif"]
+            , fontFamilies [ "Roboto", "sans-serif" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
             , padding zero
@@ -49,15 +51,31 @@ globalStyle =
         ]
 
 
-wrapper : List (Attribute msg) -> List (Html msg) -> Html msg
-wrapper =
-    styled div
-        [ backgroundColor (hex "fff")
-        ]
-
-
 view : Model -> List (Html Msg) -> Html Msg
 view model children =
-    globalStyle
-        :: children
-        |> wrapper []
+    let
+        maybePage =
+            model.activePage
+                |> Maybe.andThen
+                    (\activePage ->
+                        Dict.get activePage model.pages
+                    )
+
+        extraStyle =
+            if maybePage /= Nothing || model.activeCase /= Nothing then
+                [ opacity (int 1)
+                ]
+            else
+                [ opacity zero
+                ]
+
+        wrapper =
+            styled div <|
+                [ backgroundColor (hex "292A32")
+                , transition "all" 0.4 0 "ease-in-out"
+                ]
+                    ++ extraStyle
+    in
+        globalStyle
+            :: children
+            |> wrapper []

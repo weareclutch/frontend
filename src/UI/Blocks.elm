@@ -25,15 +25,15 @@ streamfield blockData =
 
                             ContentBlock theme text ->
                                 contentBlock theme text
-                            
+
                             BackgroundBlock image ->
                                 backgroundBlock image
 
                             ColumnBlock col1 col2 ->
                                 columns col1 col2
-                            
+
                             UnknownBlock blockType ->
-                                Debug.log 
+                                Debug.log
                                     ("unknown block type: " ++ blockType)
                                     (text "")
                     )
@@ -41,10 +41,9 @@ streamfield blockData =
         div [] blocks
 
 
-
 richText : String -> Html msg
 richText string =
-    div        
+    div
         [ (Html.Styled.Attributes.property "innerHTML" (Json.Encode.string string))
         ]
         []
@@ -85,13 +84,13 @@ imageBlock theme imageData =
                 , margin auto
                 , padding2 zero (px 25)
                 ]
-
     in
-        wrapper [ ]
+        wrapper []
             [ innerWrapper []
                 [ image imageData
                 ]
             ]
+
 
 contentBlock : Theme -> String -> Html msg
 contentBlock theme text =
@@ -114,8 +113,8 @@ contentBlock theme text =
                 , padding2 zero (px 25)
                 ]
     in
-        wrapper [ ]
-            [ innerWrapper  []
+        wrapper []
+            [ innerWrapper []
                 [ richText text
                 ]
             ]
@@ -154,8 +153,8 @@ contentTallBlock theme text =
                     ]
                 ]
     in
-        wrapper [ ]
-            [ innerWrapper  []
+        wrapper []
+            [ innerWrapper []
                 [ richText text
                 ]
             ]
@@ -171,7 +170,7 @@ backgroundBlock image =
                 , backgroundSize cover
                 ]
     in
-        wrapper [ backgroundImg image ] [ ]
+        wrapper [ backgroundImg image ] []
 
 
 columns : Column -> Column -> Html msg
@@ -196,19 +195,19 @@ columns col1 col2 =
                         ]
                     ]
                 ]
-        
     in
         wrapper []
             [ colWrapper [] [ column col1 ]
             , colWrapper [] [ column col2 ]
             ]
 
+
 column : Column -> Html msg
 column col =
     col.image
         |> Maybe.map (imageBlock col.theme)
         |> Maybe.withDefault
-            ( col.richText
+            (col.richText
                 |> Maybe.map (contentTallBlock col.theme)
                 |> Maybe.withDefault (text "")
             )

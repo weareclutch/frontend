@@ -79,17 +79,29 @@ update msg model =
             getPageType page
                 |> Maybe.map
                     (\pageType ->
-                        ( { model
-                            | activePage = Just pageType
-                            , activeCase = Nothing
-                            , activeOverlay = Nothing
-                            , activeService = Nothing
-                            , pages =
-                                model.pages
-                                    |> Dict.insert pageType page
-                          }
-                        , Cmd.none
-                        )
+                        let
+                            cmd =
+                                if
+                                    pageType
+                                        == "home.HomePage"
+                                        && (Dict.get pageType model.pages)
+                                        == Nothing
+                                then
+                                    Ports.scrollHomePageDown ()
+                                else
+                                    Cmd.none
+                        in
+                            ( { model
+                                | activePage = Just pageType
+                                , activeCase = Nothing
+                                , activeOverlay = Nothing
+                                , activeService = Nothing
+                                , pages =
+                                    model.pages
+                                        |> Dict.insert pageType page
+                              }
+                            , cmd
+                            )
                     )
                 |> Maybe.withDefault ( model, Cmd.none )
 

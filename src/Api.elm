@@ -225,24 +225,31 @@ decodeBlocks =
                 case blockType of
                     "quote" ->
                         Decode.field "value" decodeQuote
+
                     "image" ->
                         Decode.field "value" decodeImageBlock
+
                     "background" ->
                         Decode.field "value" decodeBackgroundBlock
+
                     "content" ->
                         Decode.field "value" decodeContentBlock
+
                     "columns" ->
                         Decode.field "value" decodeColumns
+
                     _ ->
                         Decode.succeed (UnknownBlock blockType)
             )
         |> Decode.list
+
 
 decodeColumns : Decode.Decoder Block
 decodeColumns =
     Decode.map2 ColumnBlock
         (Decode.field "left" decodeColumn)
         (Decode.field "right" decodeColumn)
+
 
 decodeColumn : Decode.Decoder Column
 decodeColumn =
@@ -261,6 +268,7 @@ decodeQuote =
             (\quote ->
                 Decode.succeed <| QuoteBlock quote
             )
+
 
 decodeImageBlock : Decode.Decoder Block
 decodeImageBlock =

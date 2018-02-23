@@ -50,7 +50,6 @@ image data =
             styled img
                 [ maxWidth (pct 100)
                 ]
-
     in
         case data.caption of
             Just caption ->

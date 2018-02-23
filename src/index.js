@@ -23,6 +23,13 @@ app.ports.getCasePosition.subscribe(function(id) {
   }
 })
 
+app.ports.scrollHomePageDown.subscribe(function() {
+  window.requestAnimationFrame(function() {
+    var home = document.querySelector('.page-wrapper.home')
+    home.scrollTop = home.scrollHeight
+  })
+})
+
 var ticking = false
 var lastKnownY = 0
 
@@ -55,9 +62,3 @@ setTimeout(function() {
     wrapper.addEventListener('scroll', onScroll)
   })
 }, 2000)
-
-// yes this needs another solution
-setTimeout(function() {
-  var home = document.querySelector('.page-wrapper.home')
-  home.scrollTop = home.scrollHeight
-}, 800)

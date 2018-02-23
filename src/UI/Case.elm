@@ -244,44 +244,42 @@ header state content =
                 , paddingRight (px 40)
                 , titleTransition
                 ]
-                    ++
-                        if state == Open then
-                            [ left (px 25)
-                            , bottom (px 25)
-                            , bpMedium
-                                [ left (px 40)
-                                , bottom (pct 50)
-                                , transform <| translateY (pct 50)
-                                ]
-                            , bpLarge
-                                [ left (px 40)
-                                , bottom (pct 50)
-                                , transform <| translateY (pct 50)
-                                ]
-                            , bpXLargeUp
-                                [ left (px 270)
-                                , bottom (pct 50)
-                                , transform <| translateY (pct 50)
-                                ]
+                    ++ if state == Open then
+                        [ left (px 25)
+                        , bottom (px 25)
+                        , bpMedium
+                            [ left (px 40)
+                            , bottom (pct 50)
+                            , transform <| translateY (pct 50)
                             ]
-                        else
-                            [ left (px 25)
-                            , bottom (px 25)
-                            , bpMedium
-                                [ left (px 40)
-                                , bottom (px 50)
-                                ]
-                            , bpLarge
-                                [ left (px 50)
-                                , bottom (px 100)
-                                ]
-                            , bpXLargeUp
-                                [ left (px 50)
-                                , bottom (px 100)
-                                ]
+                        , bpLarge
+                            [ left (px 40)
+                            , bottom (pct 50)
+                            , transform <| translateY (pct 50)
                             ]
+                        , bpXLargeUp
+                            [ left (px 270)
+                            , bottom (pct 50)
+                            , transform <| translateY (pct 50)
+                            ]
+                        ]
+                       else
+                        [ left (px 25)
+                        , bottom (px 25)
+                        , bpMedium
+                            [ left (px 40)
+                            , bottom (px 50)
+                            ]
+                        , bpLarge
+                            [ left (px 50)
+                            , bottom (px 100)
+                            ]
+                        , bpXLargeUp
+                            [ left (px 50)
+                            , bottom (px 100)
+                            ]
+                        ]
 
-        
         title =
             styled h1 <|
                 if state == Open then
@@ -309,7 +307,6 @@ header state content =
                     , letterSpacing (px 2)
                     , titleTransition
                     ]
-
     in
         wrapper wrapperAttributes
             [ image
@@ -474,8 +471,6 @@ intro content =
             styled div
                 [ fontFamilies [ "Qanelas ExtraBold" ]
                 ]
-
-
     in
         wrapper []
             [ innerWrapper []

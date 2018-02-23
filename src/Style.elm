@@ -70,13 +70,13 @@ bpXLargeUp styles =
 transitionString : String -> Float -> Float -> String -> String
 transitionString prop duration delay easing =
     prop ++ " " ++ (toString duration) ++ "s " ++ (toString delay) ++ "s " ++ easing
-    
 
-transitions : List (String, Float, Float, String) -> Style
+
+transitions : List ( String, Float, Float, String ) -> Style
 transitions transitions =
     transitions
         |> List.map
-            (\(prop, duration, delay, easing) ->
+            (\( prop, duration, delay, easing ) ->
                 transitionString prop duration delay easing
             )
         |> String.join ", "
