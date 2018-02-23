@@ -4,7 +4,7 @@ import Types exposing (..)
 import Json.Decode as Decode
 
 
-port scrollHomePageDown : () -> Cmd msg
+port showHomeIntro : (Maybe String) -> Cmd msg
 
 
 port getCasePosition : Int -> Cmd msg

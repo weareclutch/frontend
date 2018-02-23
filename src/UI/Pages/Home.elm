@@ -3,7 +3,7 @@ module UI.Pages.Home exposing (view)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, attribute, id)
 import UI.Case
 import UI.Blocks exposing (richText)
 import Dict
@@ -110,25 +110,6 @@ pageWrapper children =
             ]
 
 
-logo : Html msg
-logo =
-    let
-        wrapper =
-            styled div
-                [ width (px 200)
-                , height (px 200)
-                , top (pct 50)
-                , marginTop (px -100)
-                , left (pct 50)
-                , marginLeft (px -100)
-                , position absolute
-                , borderRadius (pct 50)
-                , backgroundColor (hex "711826")
-                ]
-    in
-        wrapper [] []
-
-
 introCover : Float -> HomeContent -> Html msg
 introCover offset content =
     let
@@ -151,9 +132,27 @@ introCover offset content =
                 , left (pct 50)
                 , position absolute
                 ]
+
+        lottiePlayer =
+            styled div
+                [ position relative
+                , maxWidth (px 600)
+                , maxHeight (px 600)
+                , width (pct 100)
+                , height (pct 100)
+                , margin auto
+                , top (pct 50)
+                , transform <| translateY (pct -50)
+                ]
     in
         wrapper []
-            [ logo
+            [ lottiePlayer
+                [ attribute "data-anim-loop" "true"
+                , attribute "data-animation-path" "animation/"
+                , attribute "data-name" "loader"
+                , id "home-animation"
+                ]
+                []
             , text []
                 [ richText content.cover.text
                 ]

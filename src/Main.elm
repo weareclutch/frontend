@@ -11,6 +11,8 @@ import UI.Case
 import UI.Page
 import UI.Pages.Services
 import Ports
+import Regex
+import Api exposing (siteUrl)
 
 
 initModel : Route -> Model
@@ -58,6 +60,25 @@ getPageType page =
         _ ->
             Nothing
 
+getPageCommand : Model -> Page -> Cmd Msg
+getPageCommand model page =
+    case page of
+        Home content ->
+            if (Dict.get content.pageType model.pages == Nothing) then
+                content.animation
+                    |> Maybe.map
+                        (Regex.replace
+                            Regex.All
+                            (Regex.regex "http://localhost")
+                            (\_ -> siteUrl)
+                        )
+                    |> Ports.showHomeIntro
+
+            else
+                Cmd.none
+        _ ->
+            Cmd.none
+
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
@@ -81,15 +102,7 @@ update msg model =
                     (\pageType ->
                         let
                             cmd =
-                                if
-                                    pageType
-                                        == "home.HomePage"
-                                        && (Dict.get pageType model.pages)
-                                        == Nothing
-                                then
-                                    Ports.scrollHomePageDown ()
-                                else
-                                    Cmd.none
+                                getPageCommand model page
                         in
                             ( { model
                                 | activePage = Just pageType

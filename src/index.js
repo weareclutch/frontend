@@ -23,10 +23,23 @@ app.ports.getCasePosition.subscribe(function(id) {
   }
 })
 
-app.ports.scrollHomePageDown.subscribe(function() {
+app.ports.showHomeIntro.subscribe(function(lottiePath) {
   window.requestAnimationFrame(function() {
+    // scroll to the bottom
     var home = document.querySelector('.page-wrapper.home')
     home.scrollTop = home.scrollHeight
+
+    // play the lottie animation if its available
+    if (lottiePath) {
+      var animation = bodymovin.loadAnimation({
+        container: document.getElementById('home-animation'),
+        path: lottiePath,
+        renderer: 'svg/canvas/html',
+        loop: true,
+        autoplay: true,
+        name: "Hello World"
+      })
+    }
   })
 })
 
@@ -61,4 +74,5 @@ setTimeout(function() {
   caseWrappers.forEach(function(wrapper, index) {
     wrapper.addEventListener('scroll', onScroll)
   })
+
 }, 2000)

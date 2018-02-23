@@ -72,13 +72,14 @@ decodePageResults decoder =
 decodeHomeContent : Decode.Decoder Page
 decodeHomeContent =
     Decode.map Home <|
-        Decode.map4 HomeContent
+        Decode.map5 HomeContent
             (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "cases" <|
                 Decode.list <|
                     Decode.field "value" <|
                         decodeCaseContent
             )
+            (Decode.maybe <| Decode.at ["animation", "meta", "download_url"] Decode.string)
             (Decode.map2 mapCoverContent
                 (Decode.field "text" Decode.string)
                 (Decode.field "link" Decode.string)

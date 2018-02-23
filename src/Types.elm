@@ -80,6 +80,7 @@ type CaseState
 type alias HomeContent =
     { pageType : String
     , cases : List CaseContent
+    , animation : Maybe String
     , cover :
         { text : String
         , link : String
