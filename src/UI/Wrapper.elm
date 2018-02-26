@@ -30,6 +30,7 @@ globalStyle =
             [ fontSize (px 120)
             , lineHeight (px 130)
             , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
             , padding zero
             ]
@@ -37,6 +38,7 @@ globalStyle =
             [ fontSize (px 50)
             , lineHeight (px 60)
             , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
             , padding zero
             ]

@@ -4,6 +4,7 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (class)
+import Html.Styled.Events exposing (..)
 import UI.Pages.Home
 import UI.Pages.Services
 import UI.Pages.Culture
@@ -54,9 +55,8 @@ container model =
 
         pages =
             pageOrder
-                |> List.indexedMap (,)
-                |> List.map
-                    (\( index, pageType ) ->
+                |> List.indexedMap
+                    (\index pageType ->
                         let
                             depth =
                                 if index <= activeDepth then
@@ -131,25 +131,45 @@ pageView : Model -> String -> Int -> Html Msg
 pageView model pageType depth =
     let
         locked =
-            model.activeCase
+            (model.activeCase
                 |> Maybe.map (\activeCase -> True)
                 |> Maybe.withDefault False
+            )
+                || (model.menuState == OpenTop || model.menuState == OpenBottom)
 
         pageTypeClassName =
             String.split "." pageType
                 |> List.head
                 |> Maybe.withDefault ""
 
-        className =
+        isActive =
             model.activePage
                 |> Maybe.andThen
                     (\activePage ->
                         if activePage == pageType then
-                            Just "page-wrapper active"
+                            Just True
                         else
                             Nothing
                     )
-                |> Maybe.withDefault "page-wrapper"
+                |> Maybe.withDefault False
+
+        action =
+            if isActive then
+                [ onClick (OpenMenu Closed)
+                ]
+            else
+                []
+
+        className =
+            if isActive then
+                "page-wrapper active"
+            else
+                "page-wrapper"
+
+        attributes =
+            [ class <| className ++ " " ++ pageTypeClassName
+            ]
+                ++ action
 
         page =
             model.pages
@@ -177,6 +197,6 @@ pageView model pageType depth =
         pageWrapper depth
             locked
             model.menuState
-            [ class <| className ++ " " ++ pageTypeClassName ]
+            attributes
             [ page
             ]

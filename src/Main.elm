@@ -60,6 +60,7 @@ getPageType page =
         _ ->
             Nothing
 
+
 getPageCommand : Model -> Page -> Cmd Msg
 getPageCommand model page =
     case page of
@@ -73,9 +74,9 @@ getPageCommand model page =
                             (\_ -> siteUrl)
                         )
                     |> Ports.showHomeIntro
-
             else
                 Cmd.none
+
         _ ->
             Cmd.none
 
@@ -137,6 +138,7 @@ update msg model =
                 ( { model
                     | cases = cases
                     , activeCase = Just content
+                    , menuState = Closed
                     , activeOverlay = activeOverlay
                   }
                 , cmd
@@ -190,8 +192,32 @@ update msg model =
                                 Dict.insert key pos model.pageScrollPositions
                             )
                         |> Maybe.withDefault model.pageScrollPositions
+
+                menuState =
+                    case model.activeOverlay of
+                        Just _ ->
+                            model.menuState
+
+                        Nothing ->
+                            case model.activePage of
+                                Just "home.HomePage" ->
+                                    if pos < 1 then
+                                        OpenTop
+                                    else
+                                        model.menuState
+
+                                Just _ ->
+                                    model.menuState
+
+                                Nothing ->
+                                    model.menuState
             in
-                ( { model | pageScrollPositions = pageScrollPositions }, Cmd.none )
+                ( { model
+                    | pageScrollPositions = pageScrollPositions
+                    , menuState = menuState
+                  }
+                , Cmd.none
+                )
 
 
 view : Model -> Html Msg

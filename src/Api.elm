@@ -79,7 +79,7 @@ decodeHomeContent =
                     Decode.field "value" <|
                         decodeCaseContent
             )
-            (Decode.maybe <| Decode.at ["animation", "meta", "download_url"] Decode.string)
+            (Decode.maybe <| Decode.at [ "animation", "meta", "download_url" ] Decode.string)
             (Decode.map2 mapCoverContent
                 (Decode.field "text" Decode.string)
                 (Decode.field "link" Decode.string)

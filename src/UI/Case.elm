@@ -118,7 +118,7 @@ overlay model cases active =
                         class <| "overlay overlay-" ++ (toString content.meta.id)
 
                     attributes =
-                        if active then
+                        if active || model.menuState /= Closed then
                             [ className
                             ]
                         else
