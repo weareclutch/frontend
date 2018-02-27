@@ -66,7 +66,7 @@ imageBlock theme imageData =
                 , width (pct 100)
                 , height (vh 80)
                 , position relative
-                , bpMediumUp
+                , bpLargeUp
                     [ height (px 1100)
                     ]
                 ]
@@ -129,7 +129,7 @@ contentTallBlock theme text =
                 , color (hex theme.textColor)
                 , position relative
                 , padding2 (px 80) zero
-                , bpMediumUp
+                , bpLargeUp
                     [ height (px 1100)
                     , padding zero
                     ]
@@ -141,7 +141,7 @@ contentTallBlock theme text =
                 , maxWidth (px 660)
                 , margin auto
                 , padding2 zero (px 25)
-                , bpMediumUp
+                , bpLargeUp
                     [ position absolute
                     , padding2 zero (px 25)
                     , top (pct 50)
@@ -168,6 +168,7 @@ backgroundBlock image =
                 [ width (pct 100)
                 , height (vh 80)
                 , backgroundSize cover
+                , backgroundPosition center
                 ]
     in
         wrapper [ backgroundImg image ] []
@@ -188,7 +189,7 @@ columns col1 col2 =
                     , height (px 1100)
                     ]
                 , nthChild "even"
-                    [ bpMediumUp
+                    [ bpLargeUp
                         [ position absolute
                         , top zero
                         , right zero

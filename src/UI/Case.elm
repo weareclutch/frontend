@@ -234,6 +234,7 @@ header state content =
             styled div <|
                 [ backgroundColor (hex content.theme.backgroundColor)
                 , backgroundPosition center
+                , backgroundSize cover
                 , transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
                 , position relative
                 , cursor <|
@@ -247,6 +248,7 @@ header state content =
                 , maxWidth (pct 100)
                 , top zero
                 , left zero
+                , overflow hidden
                 ] ++
                     if state == Preview then
                         [ bpMediumUp
@@ -313,8 +315,7 @@ header state content =
                         , bottom (px 25)
                         , bpMedium
                             [ left (px 40)
-                            , bottom (pct 50)
-                            , transform <| translateY (pct 50)
+                            , bottom (px 40)
                             ]
                         , bpLarge
                             [ left (px 40)
@@ -347,17 +348,52 @@ header state content =
         title =
             styled h1 <|
                 if state == Open then
-                    [ fontSize (px 120)
-                    , lineHeight (px 130)
-                    , maxWidth (px 1200)
+                    [ maxWidth (px 1200)
                     , titleTransition
+                    , fontSize (px 40)
+                    , lineHeight (px 50)
+                    , letterSpacing (px 2)
+                    , bpMedium
+                        [ fontSize (px 60)
+                        , lineHeight (px 70)
+                        , letterSpacing (px 3.5)
+                        , paddingRight (pct 20)
+                        , maxWidth (px 600)
+                        ]
+                    , bpLarge
+                        [ fontSize (px 72)
+                        , lineHeight (px 80)
+                        , letterSpacing (px 6.5)
+                        , maxWidth (px 700)
+                        ]
+                    , bpXLargeUp
+                        [ fontSize (px 120)
+                        , lineHeight (px 130)
+                        , letterSpacing (px 8.5)
+                        , maxWidth (px 900)
+                        ]
                     ]
                 else
-                    [ fontSize (px 50)
-                    , lineHeight (px 55)
-                    , letterSpacing (px 3.5)
-                    , maxWidth (px 500)
+                    [ maxWidth (px 500)
                     , titleTransition
+                    , fontSize (px 28)
+                    , lineHeight (px 32)
+                    , letterSpacing (px 2)
+                    , bpMedium
+                        [ fontSize (px 34)
+                        , lineHeight (px 40)
+                        , letterSpacing (px 2)
+                        ]
+                    , bpLarge
+                        [ fontSize (px 40)
+                        , lineHeight (px 50)
+                        , letterSpacing (px 2)
+                        ]
+                    , bpXLargeUp
+                        [ fontSize (px 50)
+                        , lineHeight (px 55)
+                        , letterSpacing (px 3.5)
+                        ]
                     ]
 
         caption =
@@ -393,69 +429,46 @@ layerImage state theme image =
         size =
             case state of
                 Open ->
-                    [ width (px 900)
-                    , height (px 900)
+                    [ width (pct 80)
+                    , height (pct 50)
+                    , bpLargeUp
+                        [ width (px 900)
+                        , height (px 900)
+                        ]
                     ]
 
                 _ ->
-                    [ width (px 500)
-                    , height (px 500)
+                    [ width (pct 80)
+                    , height (pct 100)
+                    , bpLargeUp
+                        [ width (px 500)
+                        , height (px 500)
+                        ]
                     ]
 
         positionStyles =
-            theme.backgroundPosition
-                |> Maybe.map
-                    (\( x, y ) ->
-                        let
-                            xStyle =
-                                case x of
-                                    "left" ->
-                                        [ left <|
-                                            if state == Open then
-                                                (px -100)
-                                            else
-                                                (px -200)
-                                        , position absolute
-                                        ]
-
-                                    "right" ->
-                                        [ right <|
-                                            if state == Open then
-                                                (px -100)
-                                            else
-                                                (px -200)
-                                        , position absolute
-                                        ]
-
-                                    _ ->
-                                        [ margin auto
-                                        , position relative
-                                        ]
-
-                            yStyle =
-                                case y of
-                                    "top" ->
-                                        [ top zero ]
-
-                                    "bottom" ->
-                                        [ bottom zero ]
-
-                                    _ ->
-                                        [ transform <|
-                                            translateY (pct -50)
-                                        , top (pct 50)
-                                        ]
-                        in
-                            xStyle ++ yStyle
-                    )
-                |> Maybe.withDefault
-                    [ top zero
-                    , left zero
-                    ]
+            [ transform <| translateY (pct -50)
+            , position absolute
+            , top (pct 50)
+            , right <|
+                if state == Open then
+                    (pct 0)
+                else
+                    (pct -30)
+            , bpLargeUp
+                [ right <|
+                    if state == Open then
+                        (pct -10)
+                    else
+                        (pct -30)
+                ]
+            ]
 
         wrapper =
             styled div <|
                 [ transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
+                , backgroundSize contain
+                , backgroundPosition center
                 ]
                     ++ positionStyles
                     ++ size

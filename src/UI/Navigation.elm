@@ -30,7 +30,7 @@ view model =
                 , cursor pointer
                 , padding (px 8)
                 , right (px 20)
-                , top (px 20)
+                , top (px 12)
                 , bpMedium
                     [ right (px 40)
                     , top (px 25)
@@ -61,8 +61,7 @@ view model =
 
         crossWrapper =
             styled div
-                [ transition "opacity" 0.2 0 "linear"
-                , opacity <|
+                [ transition "opacity" 0.2 0 "linear" , opacity <|
                     int <|
                         if model.menuState /= Closed || model.activeOverlay /= Nothing then
                             1
@@ -144,7 +143,7 @@ view model =
                     , after
                         [ property "content" "''"
                         , backgroundColor (hex "fff")
-                        , transition "width" 0.16 0 "ease-in-out"
+                        , transition "width" 0.1 0 "ease-in-out"
                         , width <|
                             if active then
                                 (pct 100)

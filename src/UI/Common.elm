@@ -69,7 +69,7 @@ backgroundImg data =
     in
         css
             [ backgroundImage (url imageUrl)
-            , backgroundSize cover
+            , backgroundRepeat noRepeat
             ]
 
 

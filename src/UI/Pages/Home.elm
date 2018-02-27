@@ -65,14 +65,14 @@ view model content =
                     [ indexedCases
                         |> List.filter
                             (\( index, page ) ->
-                                index % 2 /= 0
+                                index % 2 == 0
                             )
                         |> List.map Tuple.second
                         |> caseWrapper []
                     , indexedCases
                         |> List.filter
                             (\( index, page ) ->
-                                index % 2 == 0
+                                index % 2 /= 0
                             )
                         |> List.map Tuple.second
                         |> caseWrapper []

@@ -115,7 +115,7 @@ pageWrapper depth locked menuState =
                    ]
     in
         styled div <|
-            [ backgroundColor (hex "fff")
+            [ backgroundColor (hex "292A32")
             , boxShadow4 zero (px 10) (px 25) (rgba 0 0 0 0.1)
             , height (vh 100)
             , width (vw 100)
