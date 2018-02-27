@@ -3,9 +3,10 @@ module UI.Pages.Home exposing (view)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (class, attribute, id)
+import Html.Styled.Attributes exposing (class, attribute, id, href)
 import UI.Case
 import UI.Blocks exposing (richText)
+import UI.Common exposing (button)
 import Dict
 import Style exposing (..)
 
@@ -62,14 +63,14 @@ view model content =
                     [ indexedCases
                         |> List.filter
                             (\( index, page ) ->
-                                index % 2 == 0
+                                index % 2 /= 0
                             )
                         |> List.map Tuple.second
                         |> caseWrapper []
                     , indexedCases
                         |> List.filter
                             (\( index, page ) ->
-                                index % 2 /= 0
+                                index % 2 == 0
                             )
                         |> List.map Tuple.second
                         |> caseWrapper []
@@ -88,21 +89,22 @@ pageWrapper children =
                 , position relative
                 , zIndex (int 10)
                 , backgroundColor (hex "292A32")
-                , padding2 (px 80) (px 25)
+                , padding4 (px 140) (px 25) (px 80) (px 25)
                 , bpMedium
-                    [ padding2 (px 140) (px 80)
+                    [ padding4 (px 280) (px 80) (px 140) (px 80)
                     ]
                 , bpLarge
-                    [ padding2 (px 140) (px 140)
+                    [ padding4 (px 280) (px 140) (px 140) (px 140)
                     ]
                 , bpXLargeUp
-                    [ padding2 (px 140) (px 240)
+                    [ padding4 (px 280) (px 240) (px 140) (px 240)
                     ]
                 ]
 
         innerWrapper =
             styled div
                 [ margin auto
+                , padding4 zero zero (px 280) zero
                 ]
     in
         wrapper []
@@ -122,10 +124,18 @@ introCover offset content =
                 , zIndex (int 5)
                 ]
 
-        text =
+        title =
+            styled div
+                [ letterSpacing (px 2)
+                , fontSize (px 22)
+                , fontWeight (int 500)
+                , marginBottom (px 6)
+                ]
+
+        textWrapper =
             styled div
                 [ color (hex content.theme.textColor)
-                , maxWidth (px 500)
+                , maxWidth (px 660)
                 , margin auto
                 , transform (translateY (pct -50))
                 , top (pct 50)
@@ -153,7 +163,11 @@ introCover offset content =
                 , id "home-animation"
                 ]
                 []
-            , text []
-                [ richText content.cover.text
+            , textWrapper []
+                [ title [] [ text "Uitgelicht" ]
+                , richText content.cover.text
+                , a [ href content.cover.link ]
+                    [ UI.Common.button content.theme [] (Just "lees verder")
+                    ]
                 ]
             ]

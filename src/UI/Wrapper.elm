@@ -12,7 +12,7 @@ globalStyle : Html msg
 globalStyle =
     global
         [ selector "body"
-            [ fontFamilies [ "sans-serif" ]
+            [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin zero
             , padding zero
             , overflow hidden
@@ -31,12 +31,14 @@ globalStyle =
             , lineHeight (px 130)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
+            , letterSpacing (px 8.4)
             , margin4 zero zero (px 35) zero
             , padding zero
             ]
         , selector "h2"
             [ fontSize (px 50)
             , lineHeight (px 60)
+            , letterSpacing (px 3.5)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
@@ -49,6 +51,7 @@ globalStyle =
             , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
             , padding zero
+            , letterSpacing (px 2)
             ]
         ]
 

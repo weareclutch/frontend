@@ -110,6 +110,7 @@ update msg model =
                                 , activeCase = Nothing
                                 , activeOverlay = Nothing
                                 , activeService = Nothing
+                                , menuState = Closed
                                 , pages =
                                     model.pages
                                         |> Dict.insert pageType page

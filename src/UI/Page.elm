@@ -27,8 +27,9 @@ containerWrapper =
 pageOrder : List String
 pageOrder =
     [ "contact.ContactPage"
-    , "culture.CulturePage"
-    , "service.ServicesPage"
+
+    -- , "culture.CulturePage"
+    -- , "service.ServicesPage"
     , "home.HomePage"
     ]
 
@@ -87,8 +88,8 @@ pageWrapper depth locked menuState =
                 OpenTop ->
                     [ transforms
                         [ translate2
-                            (px 0)
-                            (px <| toFloat <| 100 * depth + 200)
+                            zero
+                            (px <| toFloat <| 140 * depth + 300)
                         , scale <| 0.1 * (toFloat depth) + 0.94
                         ]
                     ]
@@ -96,8 +97,8 @@ pageWrapper depth locked menuState =
                 OpenBottom ->
                     [ transforms
                         [ translate2
-                            (px 0)
-                            (px <| toFloat <| -100 * depth - 200)
+                            zero
+                            (px <| toFloat <| -140 * depth - 300)
                         , scale <| 0.1 * (toFloat depth) + 0.94
                         ]
                     ]
@@ -123,6 +124,10 @@ pageWrapper depth locked menuState =
             , left zero
             , zIndex (int <| 10 + depth)
             , property "transition" "all 0.28s ease-in-out"
+            , if menuState == Closed then
+                cursor default
+              else
+                cursor pointer
             ]
                 ++ extraStyles
 

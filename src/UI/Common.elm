@@ -6,6 +6,7 @@ module UI.Common
         , image
         , backgroundImg
         , parallax
+        , button
         )
 
 import Types exposing (..)
@@ -13,6 +14,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (..)
 import Json.Decode as Decode
+import Icons.Arrow exposing (arrow)
 import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
 import Api exposing (siteUrl)
@@ -104,4 +106,49 @@ parallax amount pageScroll element =
             , class ""
             ]
             [ element
+            ]
+
+
+button : Theme -> List (Attribute msg) -> Maybe String -> Html msg
+button theme attributes maybeText =
+    let
+        ( hasText, children ) =
+            case maybeText of
+                Just txt ->
+                    ( True, text txt )
+
+                Nothing ->
+                    ( False, text "" )
+
+        wrapper =
+            styled div
+                [ cursor pointer
+                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.35)
+                , backgroundColor (hex theme.backgroundColor)
+                , color (hex theme.textColor)
+                , borderRadius (px 60)
+                , display inlineBlock
+                , minHeight (px 60)
+                , minWidth (px 60)
+                , lineHeight (px 60)
+                , position relative
+                , fontSize (px 22)
+                , fontWeight (int 500)
+                , letterSpacing (px 2)
+                , if hasText then
+                    padding4 zero (px 60) zero (px 30)
+                  else
+                    padding zero
+                ]
+
+        arrowWrapper =
+            styled div
+                [ position absolute
+                , right (px 23)
+                , top (px 21)
+                ]
+    in
+        wrapper attributes
+            [ children
+            , arrowWrapper [] [ arrow theme.textColor ]
             ]

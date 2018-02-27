@@ -4,7 +4,7 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (class, href)
-import UI.Common exposing (addLink, loremIpsum, backgroundImg)
+import UI.Common exposing (button, addLink, loremIpsum, backgroundImg)
 import UI.Blocks
 import Dict
 import Style exposing (..)
@@ -232,10 +232,39 @@ header state content =
                 , backgroundPosition center
                 , transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
                 , position relative
+                , cursor <|
+                    if state == Open then
+                        default
+                    else
+                        pointer
                 ]
 
         titleTransition =
             transition "all" overlayZoom.time 0 overlayZoom.transition
+
+        buttonWrapper =
+            styled div
+                [ position absolute
+                , titleTransition
+                , if state == Open then
+                    opacity zero
+                  else
+                    opacity (int 1)
+                , right (px 25)
+                , bottom (px 25)
+                , bpMedium
+                    [ right (px 40)
+                    , bottom (px 50)
+                    ]
+                , bpLarge
+                    [ right (px 50)
+                    , bottom (px 100)
+                    ]
+                , bpXLargeUp
+                    [ right (px 50)
+                    , bottom (px 100)
+                    ]
+                ]
 
         titleWrapper =
             styled div <|
@@ -291,6 +320,7 @@ header state content =
                 else
                     [ fontSize (px 50)
                     , lineHeight (px 55)
+                    , letterSpacing (px 3.5)
                     , maxWidth (px 500)
                     , titleTransition
                     ]
@@ -313,6 +343,9 @@ header state content =
             , titleWrapper []
                 [ title [] [ text content.meta.title ]
                 , caption [] [ text content.meta.caption ]
+                ]
+            , buttonWrapper []
+                [ UI.Common.button content.theme [] Nothing
                 ]
             ]
 
@@ -439,9 +472,12 @@ intro content =
 
         introWrapper =
             styled div
-                [ maxWidth (px 960)
+                [ maxWidth (px 1345)
                 , fontWeight (int 500)
                 , padding2 zero (px 25)
+                , bpMediumUp
+                    [ padding4 zero (px 385) zero (px 40)
+                    ]
                 ]
 
         introEl =
@@ -456,6 +492,7 @@ intro content =
                     [ position absolute
                     , top zero
                     , right zero
+                    , maxWidth (px 360)
                     ]
                 ]
 
