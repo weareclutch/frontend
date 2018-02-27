@@ -16,7 +16,7 @@ medium =
 
 large : Int
 large =
-    1580
+    1680
 
 
 bpSmallOnly : List Style -> Style

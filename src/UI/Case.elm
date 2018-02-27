@@ -50,24 +50,27 @@ overlayWrapper active ( x, y ) =
                 , zIndex (int 10)
                 , left (px -x)
                 , top (px -y)
+                , maxWidth (vw 100)
                 ]
             else
                 [ overflowY hidden
                 , height (px 540)
                 , marginBottom (px 25)
                 , bpMedium
-                    [ height (px 540)
+                    [ height (px 569)
                     , marginBottom (px 60)
                     ]
                 , bpLarge
-                    [ height (px 680)
+                    [ height (px 712)
                     , marginBottom (px 80)
                     ]
                 , bpXLargeUp
                     [ height (px 940)
+                    -- , maxWidth (px 660)
                     , marginBottom (px 135)
                     ]
                 ]
+
     in
         styled div <|
             [ position relative
@@ -220,15 +223,16 @@ header state content =
                 |> Maybe.map (layerImage state content.theme)
                 |> Maybe.withDefault (text "")
 
+        outerWrapper =
+            styled div <|
+                [ backgroundColor (hex "292A32")
+                , height (pct 100)
+                , width (pct 100)
+                ]
+
         wrapper =
             styled div <|
-                [ height <|
-                    if state == Preview then
-                        (pct 50)
-                    else
-                        (pct 100)
-                , width (pct 100)
-                , backgroundColor (hex content.theme.backgroundColor)
+                [ backgroundColor (hex content.theme.backgroundColor)
                 , backgroundPosition center
                 , transition "all" overlayZoom.time overlayZoom.delay overlayZoom.transition
                 , position relative
@@ -237,7 +241,38 @@ header state content =
                         default
                     else
                         pointer
-                ]
+                , height (pct 100)
+                , width (pct 100)
+                , maxHeight (pct 100)
+                , maxWidth (pct 100)
+                , top zero
+                , left zero
+                ] ++
+                    if state == Preview then
+                        [ bpMediumUp
+                            [ transform <|
+                                translate2
+                                    (pct -50)
+                                    (pct -50)
+                            , top (pct 50)
+                            , left (pct 50)
+                            , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
+                            ]
+                        , bpMedium
+                            [ maxWidth (px 400)
+                            , maxHeight (px 569)
+                            ]
+                        , bpLarge
+                            [ maxWidth (px 500)
+                            , maxHeight (px 712)
+                            ]
+                        , bpXLargeUp
+                            [ maxWidth (px 660)
+                            , maxHeight (px 940)
+                            ]
+                        ]
+                    else
+                        []
 
         titleTransition =
             transition "all" overlayZoom.time 0 overlayZoom.transition
@@ -338,14 +373,16 @@ header state content =
                     , titleTransition
                     ]
     in
-        wrapper wrapperAttributes
-            [ image
-            , titleWrapper []
-                [ title [] [ text content.meta.title ]
-                , caption [] [ text content.meta.caption ]
-                ]
-            , buttonWrapper []
-                [ UI.Common.button content.theme [] Nothing
+        outerWrapper []
+            [ wrapper wrapperAttributes
+                [ image
+                , titleWrapper []
+                    [ title [] [ text content.meta.title ]
+                    , caption [] [ text content.meta.caption ]
+                    ]
+                , buttonWrapper []
+                    [ UI.Common.button content.theme [] Nothing
+                    ]
                 ]
             ]
 

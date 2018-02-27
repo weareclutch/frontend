@@ -34,6 +34,8 @@ view model content =
         innerWrapper =
             styled div
                 [ width (pct 100)
+                , maxWidth (px 1400)
+                , margin auto
                 , position relative
                 ]
 
