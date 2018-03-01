@@ -155,13 +155,11 @@ update msg model =
             let
                 ( oldX, oldY ) =
                     model.casePosition
-                        |> Debug.log "oldpos"
 
                 newPosition =
                     ( oldX + x
                     , oldY + y
                     )
-                        |> Debug.log "newpos"
             in
                 ( { model | casePosition = newPosition }, Cmd.none )
 

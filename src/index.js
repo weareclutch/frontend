@@ -30,7 +30,7 @@ window.onresize = debounce(function() {
 
   var pos = activeOverlay.getBoundingClientRect()
   app.ports.repositionCase.send(pos)
-}, 100)
+}, 400)
 
 app.ports.getCasePosition.subscribe(function(id) {
   var activePage = document

@@ -21,8 +21,8 @@ decodePosition message position =
     let
         decoder =
             Decode.map2 (,)
-                (Decode.field "x" Decode.float)
-                (Decode.field "y" Decode.float)
+                (Decode.field "left" Decode.float)
+                (Decode.field "top" Decode.float)
 
         result =
             Decode.decodeValue decoder position
