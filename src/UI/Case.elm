@@ -66,11 +66,11 @@ overlayWrapper active ( x, y ) =
                     ]
                 , bpXLargeUp
                     [ height (px 940)
+
                     -- , maxWidth (px 660)
                     , marginBottom (px 135)
                     ]
                 ]
-
     in
         styled div <|
             [ position relative
@@ -118,7 +118,13 @@ overlay model cases active =
             (\content ->
                 let
                     className =
-                        class <| "overlay overlay-" ++ (toString content.meta.id)
+                        class <|
+                            "overlay overlay-"
+                                ++ (toString content.meta.id)
+                                ++ if active then
+                                    " active"
+                                   else
+                                    ""
 
                     attributes =
                         if active || model.menuState /= Closed then
@@ -249,8 +255,8 @@ header state content =
                 , top zero
                 , left zero
                 , overflow hidden
-                ] ++
-                    if state == Preview then
+                ]
+                    ++ if state == Preview then
                         [ bpMediumUp
                             [ transform <|
                                 translate2
@@ -273,7 +279,7 @@ header state content =
                             , maxHeight (px 940)
                             ]
                         ]
-                    else
+                       else
                         []
 
         titleTransition =

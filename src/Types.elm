@@ -11,6 +11,7 @@ type Msg
     | OpenPage (Result Http.Error Page)
     | OpenCase (Result Http.Error CaseContent)
     | SetCasePosition ( Float, Float )
+    | RepositionCase ( Float, Float )
     | OpenService Service
     | CloseService
     | OpenMenu MenuState

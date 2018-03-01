@@ -1,10 +1,36 @@
 'use strict';
 
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('elm-app');
 
 var app = Elm.Main.embed(mountNode);
 
+window.onresize = debounce(function() {
+  var activeOverlay = document
+    .querySelector('.overlay.active')
+
+  if (!activeOverlay) {
+    return null
+  }
+
+  var pos = activeOverlay.getBoundingClientRect()
+  app.ports.repositionCase.send(pos)
+}, 100)
 
 app.ports.getCasePosition.subscribe(function(id) {
   var activePage = document

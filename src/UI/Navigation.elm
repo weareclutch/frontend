@@ -61,7 +61,8 @@ view model =
 
         crossWrapper =
             styled div
-                [ transition "opacity" 0.2 0 "linear" , opacity <|
+                [ transition "opacity" 0.2 0 "linear"
+                , opacity <|
                     int <|
                         if model.menuState /= Closed || model.activeOverlay /= Nothing then
                             1

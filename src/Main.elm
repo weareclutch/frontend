@@ -151,6 +151,20 @@ update msg model =
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
 
+        RepositionCase ( x, y ) ->
+            let
+                ( oldX, oldY ) =
+                    model.casePosition
+                        |> Debug.log "oldpos"
+
+                newPosition =
+                    ( oldX + x
+                    , oldY + y
+                    )
+                        |> Debug.log "newpos"
+            in
+                ( { model | casePosition = newPosition }, Cmd.none )
+
         ToggleMenu ->
             let
                 menuState =
@@ -234,7 +248,8 @@ view model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ Ports.newCasePosition Ports.decodePosition
+        [ Ports.newCasePosition (Ports.decodePosition SetCasePosition)
+        , Ports.repositionCase (Ports.decodePosition RepositionCase)
         , Ports.changeMenu Ports.decodeDirection
         , Ports.setScrollPosition SetPageScrollPosition
         ]

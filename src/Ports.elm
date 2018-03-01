@@ -13,8 +13,11 @@ port getCasePosition : Int -> Cmd msg
 port newCasePosition : (Decode.Value -> msg) -> Sub msg
 
 
-decodePosition : Decode.Value -> Msg
-decodePosition position =
+port repositionCase : (Decode.Value -> msg) -> Sub msg
+
+
+decodePosition : (( Float, Float ) -> Msg) -> Decode.Value -> Msg
+decodePosition message position =
     let
         decoder =
             Decode.map2 (,)
@@ -26,10 +29,10 @@ decodePosition position =
     in
         case result of
             Ok pos ->
-                SetCasePosition pos
+                message pos
 
             Err _ ->
-                SetCasePosition ( 0, 0 )
+                message ( 0, 0 )
 
 
 port setScrollPosition : (Float -> msg) -> Sub msg
