@@ -46,9 +46,6 @@ getPageRequest pageType id =
             "culture.CulturePage" ->
                 Http.get url <| decodePageResults decodeCultureContent
 
-            "contact.ContactPage" ->
-                Http.get url <| decodePageResults decodeContactContent
-
             _ ->
                 Http.get (apiUrl ++ "/pages/") decodeServicesContent
 
@@ -172,16 +169,6 @@ decodeService =
         (Decode.field "title" Decode.string)
         (Decode.field "body" Decode.string)
         (Decode.field "slides" <| Decode.list decodeImage)
-
-
-decodeContactContent : Decode.Decoder Page
-decodeContactContent =
-    Decode.map Contact <|
-        Decode.map4 ContactContent
-            (Decode.at [ "meta", "type" ] Decode.string)
-            (Decode.field "caption" Decode.string)
-            (Decode.field "intro" Decode.string)
-            (Decode.field "contact_people" <| Decode.list (Decode.field "value" decodePerson))
 
 
 decodePerson : Decode.Decoder Person

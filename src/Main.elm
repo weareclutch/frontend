@@ -54,9 +54,6 @@ getPageType page =
         Culture { pageType } ->
             Just pageType
 
-        Contact { pageType } ->
-            Just pageType
-
         _ ->
             Nothing
 

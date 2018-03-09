@@ -8,7 +8,6 @@ import Html.Styled.Events exposing (..)
 import UI.Pages.Home
 import UI.Pages.Services
 import UI.Pages.Culture
-import UI.Pages.Contact
 import Dict
 
 
@@ -26,11 +25,9 @@ containerWrapper =
 
 pageOrder : List String
 pageOrder =
-    [ "contact.ContactPage"
-
-    -- , "culture.CulturePage"
-    -- , "service.ServicesPage"
+    [ "service.ServicesPage"
     , "home.HomePage"
+    -- , "culture.CulturePage"
     ]
 
 
@@ -190,9 +187,6 @@ pageView model pageType depth =
 
                             Culture content ->
                                 Just <| UI.Pages.Culture.view model content
-
-                            Contact content ->
-                                Just <| UI.Pages.Contact.view content
 
                             _ ->
                                 Nothing

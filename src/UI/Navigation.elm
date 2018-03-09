@@ -186,12 +186,16 @@ view model =
                     (model.activePage
                         |> Maybe.map
                             (\activePage ->
-                                activePage == "contact.ContactPage"
+                                activePage == "service.ServicesPage"
                             )
                         |> Maybe.withDefault False
                     )
-                    (addLink "/contact")
-                    [ text "Contact" ]
+                    (addLink "/services")
+                    [ text "Services" ]
+                , menuItem
+                  False
+                  []
+                  [ text "Contact" ]
                 ]
             , logoWrapper (addLink "/")
                 [ logo

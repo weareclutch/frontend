@@ -43,7 +43,6 @@ type Route
     = HomeRoute
     | ServicesRoute
     | CultureRoute
-    | ContactRoute
     | CaseRoute Int String
     | NotFoundRoute
 
@@ -52,7 +51,6 @@ type Page
     = Home HomeContent
     | Services ServicesContent
     | Culture CultureContent
-    | Contact ContactContent
     | Case CaseContent
 
 
@@ -110,14 +108,6 @@ type alias Service =
     { title : String
     , body : String
     , slides : List Image
-    }
-
-
-type alias ContactContent =
-    { pageType : String
-    , caption : String
-    , intro : String
-    , contactPeople : List Person
     }
 
 
