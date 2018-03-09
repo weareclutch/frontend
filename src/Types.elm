@@ -16,6 +16,7 @@ type Msg
     | CloseService
     | OpenMenu MenuState
     | ToggleMenu
+    | OpenContact
     | SetPageScrollPosition Float
 
 
@@ -37,6 +38,8 @@ type MenuState
     = Closed
     | OpenTop
     | OpenBottom
+    | OpenTopContact
+    | OpenBottomContact
 
 
 type Route

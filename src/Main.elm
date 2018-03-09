@@ -172,8 +172,32 @@ update msg model =
 
                         OpenBottom ->
                             Closed
+
+                        OpenTopContact ->
+                            Closed
+
+                        OpenBottomContact ->
+                            Closed
+
             in
                 ( { model | menuState = menuState }, Cmd.none )
+
+        OpenContact ->
+            let
+                menuState =
+                    case model.menuState of
+                        OpenTop ->
+                            OpenTopContact
+
+                        OpenBottom ->
+                            OpenBottomContact
+
+                        _ ->
+                            OpenTopContact
+
+            in
+                ( { model | menuState = menuState }, Cmd.none )
+
 
         OpenMenu state ->
             ( { model | menuState = state }, Cmd.none )

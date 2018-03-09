@@ -8,6 +8,7 @@ import Html.Styled.Events exposing (..)
 import UI.Pages.Home
 import UI.Pages.Services
 import UI.Pages.Culture
+import UI.Contact
 import Dict
 
 
@@ -65,7 +66,8 @@ container model =
                             pageView model pageType depth
                     )
     in
-        containerWrapper [] pages
+        containerWrapper [] <|
+            pages ++ [ UI.Contact.view model ]
 
 
 pageWrapper : Int -> Bool -> MenuState -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -91,11 +93,29 @@ pageWrapper depth locked menuState =
                         ]
                     ]
 
+                OpenTopContact ->
+                    [ transforms
+                        [ translate2
+                            zero
+                            (px <| toFloat <| 140 * depth + 900)
+                        , scale <| 0.1 * (toFloat depth) + 0.94
+                        ]
+                    ]
+
                 OpenBottom ->
                     [ transforms
                         [ translate2
                             zero
                             (px <| toFloat <| -140 * depth - 300)
+                        , scale <| 0.1 * (toFloat depth) + 0.94
+                        ]
+                    ]
+
+                OpenBottomContact ->
+                    [ transforms
+                        [ translate2
+                            zero
+                            (px <| toFloat <| -140 * depth - 900)
                         , scale <| 0.1 * (toFloat depth) + 0.94
                         ]
                     ]

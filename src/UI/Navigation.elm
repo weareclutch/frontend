@@ -194,7 +194,7 @@ view model =
                     [ text "Services" ]
                 , menuItem
                   False
-                  []
+                  [ onClick OpenContact ]
                   [ text "Contact" ]
                 ]
             , logoWrapper (addLink "/")
