@@ -4,6 +4,33 @@ import Types exposing (..)
 import Json.Decode as Decode
 
 
+port getParallaxPositions : (Decode.Value -> msg) -> Sub msg
+
+
+decodeParallaxPositions : Decode.Value -> Msg
+decodeParallaxPositions list =
+    let
+        decoder =
+            Decode.list <|
+                Decode.map2
+                    (,)
+                    (Decode.field "id" Decode.string)
+                    (Decode.field "y" Decode.float)
+
+        result =
+            Decode.decodeValue decoder list
+    in
+        case result of
+            Ok list ->
+                SetParallaxPositions list
+
+            Err _ ->
+                SetParallaxPositions []
+
+
+port setWindowDimensions : ((Float, Float) -> msg) -> Sub msg
+
+
 port showHomeIntro : Maybe String -> Cmd msg
 
 
@@ -33,9 +60,6 @@ decodePosition message position =
 
             Err _ ->
                 message ( 0, 0 )
-
-
-port setScrollPosition : (Float -> msg) -> Sub msg
 
 
 port changeMenu : (String -> msg) -> Sub msg

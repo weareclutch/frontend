@@ -10,6 +10,7 @@ import UI.Pages.Services
 import UI.Pages.Culture
 import UI.Contact
 import Dict
+import Json.Decode as Json
 
 
 containerWrapper : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -148,6 +149,10 @@ pageWrapper depth locked menuState =
             ]
                 ++ extraStyles
 
+handleScroll : Json.Decoder Float
+handleScroll =
+    Json.at [ "target", "scrollTop" ] Json.float
+
 
 pageView : Model -> String -> Int -> Html Msg
 pageView model pageType depth =
@@ -190,6 +195,7 @@ pageView model pageType depth =
 
         attributes =
             [ class <| className ++ " " ++ pageTypeClassName
+            , on "scroll" (Json.map (ScrollEvent pageType) handleScroll)
             ]
                 ++ action
 

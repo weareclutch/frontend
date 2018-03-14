@@ -6,8 +6,8 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (class, attribute, id, href)
 import UI.Case
 import UI.Blocks exposing (richText)
-import UI.Common exposing (button)
-import Dict
+import UI.Common exposing (button, parallax)
+import Dict exposing (Dict)
 import Style exposing (..)
 
 
@@ -79,6 +79,10 @@ view model content =
                     ]
                 ]
             , introCover pageScroll content
+            , easterEgg
+                model.parallaxPositions
+                pageScroll
+                (Tuple.second model.windowDimensions)
             ]
 
 
@@ -165,11 +169,53 @@ introCover offset content =
                 , id "home-animation"
                 ]
                 []
-            , textWrapper []
+            , textWrapper [ ]
                 [ title [] [ text "Uitgelicht" ]
                 , richText content.cover.text
                 , a [ href content.cover.link ]
                     [ UI.Common.button content.theme [] (Just "lees verder")
                     ]
                 ]
+            ]
+
+
+easterEgg : Dict String Float -> Float -> Float -> Html msg
+easterEgg dict offset windowHeight =
+    let
+        (size, displayText) =
+            Dict.get "scroll" dict
+                |> Maybe.map
+                    (\pos ->
+                        if offset > pos - windowHeight * 0.8 then
+                            (48, "Wil je niet naar een hoger niveau?")
+                        else if offset > pos - windowHeight * 1.2 then
+                            (36, "Andere omhoog")
+                        else
+                            (22, "Scroll omhoog")
+                    )
+                |> Maybe.withDefault (22, "Scroll omhoog")
+
+        wrapper =
+            styled div
+                [ height (vh 100)
+                , width (vw 100)
+                , backgroundColor (hex "000")
+                , position relative
+                ]
+
+        title =
+            styled div
+                [ fontSize (px size)
+                , color (hex "fff")
+                , top (vh 50)
+                , width (pct 100)
+                , textAlign center
+                , position absolute
+                , transition "all" 0.2 0 "ease-in-out"
+                ]
+    in
+        wrapper []
+            [ title
+                (parallax dict offset "scroll")
+                [ text displayText ]
             ]

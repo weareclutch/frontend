@@ -17,7 +17,9 @@ type Msg
     | OpenMenu MenuState
     | ToggleMenu
     | OpenContact
-    | SetPageScrollPosition Float
+    | SetParallaxPositions (List ( String, Float ))
+    | ScrollEvent String Float
+    | SetWindowDimensions (Float, Float)
 
 
 type alias Model =
@@ -31,6 +33,8 @@ type alias Model =
     , casePosition : ( Float, Float )
     , menuState : MenuState
     , pageScrollPositions : Dict String Float
+    , parallaxPositions : Dict String Float
+    , windowDimensions : (Float, Float)
     }
 
 

@@ -27,6 +27,8 @@ initModel route =
     , casePosition = ( 0, 0 )
     , menuState = Closed
     , pageScrollPositions = Dict.empty
+    , parallaxPositions = Dict.empty
+    , windowDimensions = ( 0, 0 )
     }
 
 
@@ -208,50 +210,19 @@ update msg model =
         CloseService ->
             ( { model | activeService = Nothing }, Cmd.none )
 
-        SetPageScrollPosition pos ->
+        SetParallaxPositions list ->
+            ( { model | parallaxPositions = Dict.fromList list }, Cmd.none )
+
+        SetWindowDimensions dimensions ->
+            ( { model | windowDimensions = Debug.log "dim" dimensions }, Cmd.none )
+
+        ScrollEvent pageType pos ->
             let
-                pageScrollPositions =
-                    model.activePage
-                        |> Maybe.map
-                            (\activePage ->
-                                case model.activeOverlay of
-                                    Just id ->
-                                        toString id
-
-                                    Nothing ->
-                                        activePage
-                            )
-                        |> Maybe.map
-                            (\key ->
-                                Dict.insert key pos model.pageScrollPositions
-                            )
-                        |> Maybe.withDefault model.pageScrollPositions
-
-                menuState =
-                    case model.activeOverlay of
-                        Just _ ->
-                            model.menuState
-
-                        Nothing ->
-                            case model.activePage of
-                                Just "home.HomePage" ->
-                                    if pos < 1 then
-                                        OpenTop
-                                    else
-                                        model.menuState
-
-                                Just _ ->
-                                    model.menuState
-
-                                Nothing ->
-                                    model.menuState
+                positions =
+                    Dict.insert pageType pos model.pageScrollPositions
             in
-                ( { model
-                    | pageScrollPositions = pageScrollPositions
-                    , menuState = menuState
-                  }
-                , Cmd.none
-                )
+                ( { model | pageScrollPositions = positions }, Cmd.none )
+
 
 
 view : Model -> Html Msg
@@ -270,7 +241,8 @@ subscriptions model =
         [ Ports.newCasePosition (Ports.decodePosition SetCasePosition)
         , Ports.repositionCase (Ports.decodePosition RepositionCase)
         , Ports.changeMenu Ports.decodeDirection
-        , Ports.setScrollPosition SetPageScrollPosition
+        , Ports.getParallaxPositions Ports.decodeParallaxPositions
+        , Ports.setWindowDimensions SetWindowDimensions
         ]
 
 

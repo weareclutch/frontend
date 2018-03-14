@@ -1,5 +1,11 @@
 'use strict';
 
+var Elm = require('./Main.elm');
+var mountNode = document.getElementById('elm-app');
+
+var app = Elm.Main.embed(mountNode);
+window.app = app
+
 function debounce(func, wait, immediate) {
 	var timeout;
 	return function() {
@@ -15,14 +21,36 @@ function debounce(func, wait, immediate) {
 	};
 };
 
-var Elm = require('./Main.elm');
-var mountNode = document.getElementById('elm-app');
 
-var app = Elm.Main.embed(mountNode);
+
+function getParallaxPositions() {
+  var elements = [].slice.call(document.querySelectorAll('.parallax'))
+
+  app.ports.getParallaxPositions.send(
+    elements.map(function(element) {
+      var [ , id ] = /parallax-([^\s]+)/.exec(element.className)
+      var closestWrapper = element.closest('.page-wrapper')
+      var { top } = element.getBoundingClientRect()
+
+      return {
+        y: closestWrapper.scrollTop + top,
+        id
+      }
+    })
+  )
+}
+
+function setWindowDimensions() {
+  app.ports.setWindowDimensions.send([window.innerWidth, window.innerHeight])
+}
+
 
 window.onresize = debounce(function() {
   var activeOverlay = document
     .querySelector('.overlay.active')
+
+  setWindowDimensions()
+  getParallaxPositions()
 
   if (!activeOverlay) {
     return null
@@ -31,6 +59,9 @@ window.onresize = debounce(function() {
   var pos = activeOverlay.getBoundingClientRect()
   app.ports.repositionCase.send(pos)
 }, 400)
+
+
+
 
 app.ports.getCasePosition.subscribe(function(id) {
   var activePage = document
@@ -49,11 +80,16 @@ app.ports.getCasePosition.subscribe(function(id) {
   }
 })
 
+
+
 app.ports.showHomeIntro.subscribe(function(lottiePath) {
   window.requestAnimationFrame(function() {
     // scroll to the bottom
     var home = document.querySelector('.page-wrapper.home')
-    home.scrollTop = home.scrollHeight
+    home.scrollTop = home.scrollHeight - window.innerHeight * 2
+
+    getParallaxPositions()
+    setWindowDimensions()
 
     // play the lottie animation if its available
     if (lottiePath) {
@@ -68,37 +104,3 @@ app.ports.showHomeIntro.subscribe(function(lottiePath) {
     }
   })
 })
-
-var ticking = false
-var lastKnownY = 0
-
-function update() {
-  ticking = false
-  app.ports.setScrollPosition.send(lastKnownY)
-}
-
-function requestTick() {
-  if (!ticking) {
-    window.requestAnimationFrame(update)
-  }
-  ticking = true
-}
-
-function onScroll(e) {
-  lastKnownY = e.target.scrollTop
-  requestTick()
-}
-
-setTimeout(function() {
-  var pageWrappers = document.querySelectorAll('.page-wrapper')
-  var caseWrappers = document.querySelectorAll('.overlay')
-
-  pageWrappers.forEach(function(wrapper, index) {
-    wrapper.addEventListener('scroll', onScroll)
-  })
-
-  caseWrappers.forEach(function(wrapper, index) {
-    wrapper.addEventListener('scroll', onScroll)
-  })
-
-}, 2000)

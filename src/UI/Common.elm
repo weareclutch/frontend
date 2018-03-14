@@ -18,6 +18,7 @@ import Icons.Arrow exposing (arrow)
 import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
 import Api exposing (siteUrl)
+import Dict exposing (Dict)
 
 
 addLink : String -> List (Attribute Msg)
@@ -90,23 +91,29 @@ loremIpsum =
         ]
 
 
-parallax : Float -> Float -> Html msg -> Html msg
-parallax amount pageScroll element =
-    let
-        offset =
-            (-pageScroll) * amount
+parallax : Dict String Float -> Float -> String -> List (Attribute msg)
+parallax dict pageY id =
+    Dict.get id dict
+        |> Maybe.map
+            (\elementY ->
+                let
+                    offset =
+                        (pageY - elementY) * 0.35
 
-        style =
-            Html.Styled.Attributes.style
-                [ ( "transform", "translate3d(0, " ++ (toString offset) ++ "px, 0)" )
-                ]
-    in
-        div
-            [ style
-            , class ""
+                    style =
+                        Html.Styled.Attributes.style
+                            [ ( "transform", "translate3d(0, " ++ (offset |> floor |> toString) ++ "px, 0)" )
+                            , ( "transition", "transform 0.07s linear")
+                            ]
+                in
+                    [ style
+                    , class <| "parallax parallax-" ++ id
+                    ]
+            )
+        |> Maybe.withDefault
+            [ class <| "parallax parallax-" ++ id
             ]
-            [ element
-            ]
+
 
 
 button : Theme -> List (Attribute msg) -> Maybe String -> Html msg
