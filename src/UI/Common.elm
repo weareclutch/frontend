@@ -103,7 +103,7 @@ parallax dict pageY id =
                     style =
                         Html.Styled.Attributes.style
                             [ ( "transform", "translate3d(0, " ++ (offset |> floor |> toString) ++ "px, 0)" )
-                            , ( "transition", "transform 0.07s linear")
+                            , ( "transition", "transform 0.08s linear")
                             ]
                 in
                     [ style

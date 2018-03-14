@@ -199,23 +199,29 @@ easterEgg dict offset windowHeight =
             styled div
                 [ height (vh 100)
                 , width (vw 100)
-                , backgroundColor (hex "000")
+                , backgroundColor (hex "292A32")
                 , position relative
                 ]
 
-        title =
+        titleWrapper =
             styled div
+                [ top (vh 55)
+                , width (pct 100)
+                , position absolute
+                ]
+
+        title =
+            styled h2
                 [ fontSize (px size)
                 , color (hex "fff")
-                , top (vh 50)
-                , width (pct 100)
                 , textAlign center
-                , position absolute
-                , transition "all" 0.2 0 "ease-in-out"
+                , letterSpacing (px 2)
+                , transition "all" 0.16 0 "ease-in-out"
                 ]
     in
         wrapper []
-            [ title
+            [ titleWrapper
                 (parallax dict offset "scroll")
-                [ text displayText ]
+                [ title [] [ text displayText ]
+                ]
             ]
