@@ -69,7 +69,7 @@ decodePageResults decoder =
 decodeHomeContent : Decode.Decoder Page
 decodeHomeContent =
     Decode.map Home <|
-        Decode.map5 HomeContent
+        Decode.map6 HomeContent
             (Decode.at [ "meta", "type" ] Decode.string)
             (Decode.field "cases" <|
                 Decode.list <|
@@ -82,6 +82,13 @@ decodeHomeContent =
                 (Decode.field "link" Decode.string)
             )
             decodeTheme
+            (Decode.field "easter_egg_images" <|
+                Decode.list <|
+                    Decode.field "value" <|
+                        Decode.map2 (,)
+                            (Decode.field "background_color" Decode.string)
+                            (Decode.field "image" decodeImage)
+            )
 
 
 mapCoverContent : String -> String -> { text : String, link : String }

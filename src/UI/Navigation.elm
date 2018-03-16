@@ -166,11 +166,7 @@ view model =
                 addLink "/"
     in
         wrapper []
-            [ toggleWrapper toggleAction
-                [ burgerWrapper [] [ burger ]
-                , crossWrapper [] [ cross ]
-                ]
-            , menuWrapper model.menuState
+            [ menuWrapper model.menuState
                 []
                 [ menuItem
                     (model.activePage

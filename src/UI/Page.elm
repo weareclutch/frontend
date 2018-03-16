@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (class)
 import Html.Styled.Events exposing (..)
-import UI.Pages.Home
+import UI.Pages.SimpleHome
 import UI.Pages.Services
 import UI.Pages.Culture
 import UI.Contact
@@ -206,7 +206,7 @@ pageView model pageType depth =
                     (\page ->
                         case page of
                             Home content ->
-                                Just <| UI.Pages.Home.view model content
+                                Just <| UI.Pages.SimpleHome.view model content
 
                             Services content ->
                                 Just <| UI.Pages.Services.view content

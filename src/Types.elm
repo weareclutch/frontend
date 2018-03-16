@@ -20,6 +20,7 @@ type Msg
     | SetParallaxPositions (List ( String, Float ))
     | ScrollEvent String Float
     | SetWindowDimensions (Float, Float)
+    | SpinEasterEgg Float Float
 
 
 type alias Model =
@@ -92,6 +93,7 @@ type alias HomeContent =
         , link : String
         }
     , theme : Theme
+    , easterEggImages : List (String, Image)
     }
 
 

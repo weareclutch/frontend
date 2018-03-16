@@ -13,6 +13,9 @@ import UI.Pages.Services
 import Ports
 import Regex
 import Api exposing (siteUrl)
+import Task
+import Process
+import Time
 
 
 initModel : Route -> Model
@@ -209,6 +212,52 @@ update msg model =
 
         CloseService ->
             ( { model | activeService = Nothing }, Cmd.none )
+
+        SpinEasterEgg acc step ->
+            model.pages
+                |> Dict.get "home.HomePage"
+                |> Maybe.andThen
+                    (\page ->
+                        case page of
+                            Home content ->
+                                Just content
+
+                            _ ->
+                                Nothing
+                    )
+                |> Maybe.andThen
+                    (\content ->
+                        case content.easterEggImages of
+                            hd::tl ->
+                                Just { content | easterEggImages = tl ++ [ hd ] }
+
+                            _ ->
+                                Nothing
+                    )
+                |> Maybe.map
+                    (\content ->
+                        let
+                            pages =
+                                model.pages
+                                    |> Dict.insert "home.HomePage" (Home content)
+
+                            cmd =
+                                if acc < 380 then
+                                    Process.sleep ((acc + step))
+                                        |> Task.perform
+                                            (\_ ->
+                                                SpinEasterEgg
+                                                    (acc + step)
+                                                    (step * 1.15)
+                                                    |> Debug.log "spin!"
+                                            )
+                                else
+                                    Cmd.none
+
+                        in
+                            ( { model | pages = pages }, cmd )
+                    )
+                |> Maybe.withDefault ( model, Cmd.none )
 
         SetParallaxPositions list ->
             ( { model | parallaxPositions = Dict.fromList list }, Cmd.none )
