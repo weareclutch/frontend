@@ -5,7 +5,8 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import UI.Common exposing (button, backgroundImg)
 import Html.Styled.Events exposing (onClick)
-
+import UI.Case
+import Style exposing (..)
 
 easterEgg : List (String, Image) -> Html Msg
 easterEgg list =
@@ -67,4 +68,38 @@ view model content =
     in
         wrapper []
             [ easterEgg content.easterEggImages
+            , cases model content
             ]
+
+
+cases : Model -> HomeContent -> Html Msg
+cases model content =
+    let
+        wrapper =
+            styled div
+                [ margin2 zero (px 20)
+                ]
+
+        caseWrapper =
+            styled div
+                [ width (pct 100)
+                , float left
+                , bpMedium
+                    [ width (pct 50)
+                    ]
+                , bpLargeUp
+                    [ width (pct 33)
+                    ]
+                ]
+
+        cases =
+            List.map
+                (\page ->
+                    caseWrapper []
+                        [ UI.Case.overlay model [ page ] False
+                        ]
+                )
+                content.cases
+    in
+        wrapper [] cases
+

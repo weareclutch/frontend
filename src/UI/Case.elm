@@ -30,7 +30,7 @@ outerWrapper active =
     in
         styled div <|
             [ zIndex (int 80)
-            , position absolute
+            , position fixed 
             , top zero
             , left zero
             , width (vw 100)
@@ -48,28 +48,28 @@ overlayWrapper active ( x, y ) =
                 , width (vw 100)
                 , height (vh 100)
                 , zIndex (int 10)
-                , left (px -x)
-                , top (px -y)
+                -- , left (px -x)
+                -- , top (px -y)
                 , maxWidth (vw 100)
                 ]
             else
                 [ overflowY hidden
                 , height (px 540)
-                , marginBottom (px 25)
-                , bpMedium
-                    [ height (px 569)
-                    , marginBottom (px 60)
-                    ]
-                , bpLarge
-                    [ height (px 712)
-                    , marginBottom (px 80)
-                    ]
-                , bpXLargeUp
-                    [ height (px 940)
+                -- , marginBottom (px 25)
+                -- , bpMedium
+                --     [ height (px 569)
+                --     , marginBottom (px 60)
+                --     ]
+                -- , bpLarge
+                --     [ height (px 712)
+                --     , marginBottom (px 80)
+                --     ]
+                -- , bpXLargeUp
+                --     [ height (px 940)
 
-                    -- , maxWidth (px 660)
-                    , marginBottom (px 135)
-                    ]
+                --     -- , maxWidth (px 660)
+                --     , marginBottom (px 135)
+                --     ]
                 ]
     in
         styled div <|
@@ -95,18 +95,12 @@ overlayWrapper active ( x, y ) =
 staticView : Model -> Html Msg
 staticView model =
     model.activeCase
-        |> Maybe.andThen
+        |> Maybe.map
             (\content ->
-                case model.activePage of
-                    Just _ ->
-                        Nothing
-
-                    Nothing ->
-                        Just <|
-                            outerWrapper True
-                                []
-                                [ overlay model [ content ] True
-                                ]
+                outerWrapper True
+                    []
+                    [ overlay model [ content ] True
+                    ]
             )
         |> Maybe.withDefault (outerWrapper False [] [])
 
