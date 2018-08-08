@@ -19,17 +19,14 @@ view model content =
                 |> Dict.get "home.HomePage"
                 |> Maybe.withDefault 0
 
-        indexedCases =
+        (leftCases, rightCases) =
             content.cases
                 |> List.indexedMap
                     (\index page ->
-                        model.activeOverlay
-                            |> Maybe.andThen (\id -> Just (id == page.meta.id))
-                            |> Maybe.withDefault False
-                            |> UI.Case.overlay model (List.drop index content.cases)
-                            |> (,) index
+                        (index, UI.Common.link (toString page.meta.id ++ "/" ++ page.meta.title ) [text page.meta.title] )
                     )
-                |> List.reverse
+                |> List.partition (\(idx, _) -> idx % 2 == 0)
+                |> \(left, right) -> ( List.map Tuple.second left, List.map Tuple.second right)
 
         innerWrapper =
             styled div
@@ -62,20 +59,8 @@ view model content =
         div [ class "home" ] <|
             [ pageWrapper
                 [ innerWrapper []
-                    [ indexedCases
-                        |> List.filter
-                            (\( index, page ) ->
-                                index % 2 == 0
-                            )
-                        |> List.map Tuple.second
-                        |> caseWrapper []
-                    , indexedCases
-                        |> List.filter
-                            (\( index, page ) ->
-                                index % 2 /= 0
-                            )
-                        |> List.map Tuple.second
-                        |> caseWrapper []
+                    [ caseWrapper [] leftCases
+                    , caseWrapper [] rightCases
                     ]
                 ]
             , introCover pageScroll content

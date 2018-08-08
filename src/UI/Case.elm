@@ -41,55 +41,7 @@ outerWrapper active =
 
 overlayWrapper : Bool -> ( Float, Float ) -> List (Attribute msg) -> List (Html msg) -> Html msg
 overlayWrapper active ( x, y ) =
-    let
-        extraStyle =
-            if active then
-                [ overflowY scroll
-                , width (vw 100)
-                , height (vh 100)
-                , zIndex (int 10)
-                -- , left (px -x)
-                -- , top (px -y)
-                , maxWidth (vw 100)
-                ]
-            else
-                [ overflowY hidden
-                , height (px 540)
-                -- , marginBottom (px 25)
-                -- , bpMedium
-                --     [ height (px 569)
-                --     , marginBottom (px 60)
-                --     ]
-                -- , bpLarge
-                --     [ height (px 712)
-                --     , marginBottom (px 80)
-                --     ]
-                -- , bpXLargeUp
-                --     [ height (px 940)
-
-                --     -- , maxWidth (px 660)
-                --     , marginBottom (px 135)
-                --     ]
-                ]
-    in
-        styled div <|
-            [ position relative
-            , transition "all" overlayZoom.time 0 overlayZoom.transition
-            , left (px 0)
-            , top (px 0)
-            , width (pct 100)
-            , property "will-change" "width, height, top, left"
-            , transform <| translateZ zero
-            , property "-webkit-overflow-scrolling" "touch"
-            , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
-            , overflowX hidden
-            , pseudoElement "-webkit-scrollbar"
-                [ display none
-                ]
-            , property "-ms-overflow-style" "none"
-            , zIndex (int 5)
-            ]
-                ++ extraStyle
+    div
 
 
 staticView : Model -> Html Msg
