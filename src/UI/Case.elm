@@ -30,7 +30,7 @@ outerWrapper active =
     in
         styled div <|
             [ zIndex (int 80)
-            , position fixed 
+            , position fixed
             , top zero
             , left zero
             , width (vw 100)
@@ -82,7 +82,7 @@ overlay model cases active =
                                 ++ (addLink <| "/" ++ (toString content.meta.id) ++ "/lorem")
 
                     caseViews =
-                        if not active then
+                        if False then
                             [ caseView content Cover ]
                         else
                             renderCases model cases

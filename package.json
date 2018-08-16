@@ -9,6 +9,6 @@
   "scripts": {
     "start": "webpack-dev-server",
     "build": "webpack -p --config webpack.config.production.js",
-    "test" : "echo 'no tests'"
+    "test": "echo 'no tests'"
   }
 }

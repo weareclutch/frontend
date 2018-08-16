@@ -1,121 +1,67 @@
-module Api exposing ( decodeWagtailPageType, siteUrl, getPage )
+module Decoders exposing ( getWagtailPageDecoder )
 
-import Http exposing (..)
-import Navigation
-import Json.Decode as Decode
 import Types exposing (..)
-import Decoders exposing (getWagtailPageDecoder)
+import Json.Decode as Decode
+import Date exposing (Date)
 
 
-siteUrl : String
-siteUrl =
-    "https://weareclutch.nl"
+getWagtailPageDecoder : String -> Decode.Decoder
+getWagtailPageDecoder pageType =
+  case pageType of
+    -- Register the page decoders here ( "page.Type" -> aDecoder ) --
+    "home.HomePage" -> blingDecoder
 
-
-apiUrl : String
-apiUrl =
-    siteUrl ++ "/api/v2"
-
-
-
-
-
-
-decodeWagtailPageType : Decode.Decoder String
-decodeWagtailPageType =
-    Decode.at ["meta", "type"] Decode.string
-
-
-getPage : Navigation.Location -> (String -> Decode.Decoder WagtailPage) -> Cmd Msg
-getPage location getPageDecoder =
-    Http.request
-        { method = "GET"
-        , headers = [header "Accept" "application/json"]
-        , url = apiUrl ++ "/pages/4/"
-        , body = Http.emptyBody
-        , expect = expectJson (
-            decodeWagtailPageType
-                |> Decode.andThen getWagtailPageDecoder
-        )
-        , timeout = Nothing
-        , withCredentials = False
-        }
-        |> Http.send LoadPage
-
-
-
-getPageById : String -> Int -> Http.Request Page
-getPageById pageType id =
-    getPageRequest pageType (Just id)
-
-
-getPageRequest : String -> Maybe Int -> Http.Request Page
-getPageRequest pageType id =
-    let
-        url =
-            case id of
-                Just id ->
-                    apiUrl ++ "/pages/?type=" ++ pageType ++ "&fields=*" ++ "&id=" ++ (toString id)
-
-                Nothing ->
-                    apiUrl ++ "/pages/?type=" ++ pageType ++ "&fields=*"
-    in
-        case pageType of
-            "home.HomePage" ->
-                Http.get url <| decodePageResults decodeHomeContent
-
-            "service.ServicesPage" ->
-                Http.get url <| decodePageResults decodeServicesContent
-
-            "culture.CulturePage" ->
-                Http.get url <| decodePageResults decodeCultureContent
-
-            _ ->
-                Http.get (apiUrl ++ "/pages/") decodeServicesContent
-
-
-getCaseById : Int -> Http.Request CaseContent
-getCaseById id =
-    let
-        url =
-            apiUrl ++ "/pages/?type=case.CasePage&fields=*" ++ "&id=" ++ (toString id)
-    in
-        Http.get url <| decodePageResults decodeCaseContent
+    -- Default handler forn unknown types (aka "we can't handle")  --
+    _ -> Decode.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
 
 
 
 
-decodePageResults : Decode.Decoder a -> Decode.Decoder a
-decodePageResults decoder =
-    Decode.field "items" <|
-        Decode.index 0 <|
-            decoder
+
+homePageDecoder : Decode.Decoder WagtailHomePageContent
+homePageDecoder =
+      Decode.map WagtailHomePageContent
+          (Decode.map2 (\text link -> { text = text, link = link })
+              (Decode.field "text" Decode.string)
+              (Decode.field "link" Decode.string)
+          )
+
+helloPageDecoder : Decode.Decoder WagtailHelloPageContent
+helloPageDecoder =
+        Decode.map WagtailHelloPageContent
+            (Decode.field "hello" Decode.string)
+
+type alias WagtailMetaContent =
+  { type_ : String
+  , slug : String
+  , published : Date
+  , seoTitle : String
+  }
+
+type alias WagtailPageBaseContent contentType = { contentType | meta : WagtailMetaContent, id : Int }
 
 
-decodeHomeContent : Decode.Decoder Page
-decodeHomeContent =
-    Decode.map Home <|
-        Decode.map6 HomeContent
-            (Decode.at [ "meta", "type" ] Decode.string)
-            (Decode.field "cases" <|
-                Decode.list <|
-                    Decode.field "value" <|
-                        decodeCaseContent
-            )
-            (Decode.maybe <| Decode.at [ "animation", "meta", "download_url" ] Decode.string)
-            (Decode.map2 mapCoverContent
-                (Decode.field "text" Decode.string)
-                (Decode.field "link" Decode.string)
-            )
-            decodeTheme
-            (Decode.field "easter_egg_images" <|
-                Decode.list <|
-                    Decode.field "value" <|
-                        Decode.map2 (,)
-                            (Decode.field "background_color" Decode.string)
-                            (Decode.field "image" decodeImage)
-            )
 
+
+dateDecoder : Decode.Decoder Date
+dateDecoder  =
+    Decode.string
+        |> Decode.andThen ( \s -> Decode.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
+
+decodeBase =
+  Decode.map2 (\id meta -> { id = id, meta = meta })
+    (Decode.field "id" Decode.int)
+    (Decode.map4 WagtailMetaContent
+      (Decode.field "type" Decode.string)
+      (Decode.field "slug" Decode.string)
+      (Decode.field "first_published_at" dateDecoder)
+      (Decode.field "seo_title" Decode.string)
+    )
+
+blingDecoder =
+  Decode.map2 (\base data -> { data | meta = base.meta, id = base.id  } )
+    decodeBase
+    homePageDecoder
 
 mapCoverContent : String -> String -> { text : String, link : String }
 mapCoverContent text link =
@@ -311,4 +257,3 @@ decodeContentBlock =
         ContentBlock
         decodeTheme
         (Decode.field "rich_text" Decode.string)
-

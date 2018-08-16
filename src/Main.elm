@@ -2,7 +2,6 @@ module Main exposing (..)
 
 import Types exposing (..)
 import Navigation exposing (Location)
-import Routing exposing (parseLocation, getCommand)
 import Html.Styled exposing (..)
 import Dict exposing (Dict)
 import UI.Wrapper
@@ -12,15 +11,15 @@ import UI.Page
 import UI.Pages.Services
 import Ports
 import Regex
-import Api exposing (siteUrl)
+import Api exposing (siteUrl, getPage)
 import Task
 import Process
-import Time
+import Json.Decode as Decode
 
 
-initModel : Route -> Model
-initModel route =
-    { route = route
+initModel : Model
+initModel =
+    { route = UndefinedRoute
     , pages = Dict.empty
     , activePage = Nothing
     , cases = Dict.empty
@@ -35,16 +34,25 @@ initModel route =
     }
 
 
+
+loadDecoder : String -> Decode.Decoder WagtailPage
+loadDecoder pageType =
+    case pageType of
+        _ -> Decode.fail ( "Can't decode " ++ pageType )
+
+
+
+getAndDecodePage : Location -> Cmd Msg
+getAndDecodePage location =
+    getPage location loadDecoder
+
+
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
-        route =
-            parseLocation location
-
-        command =
-            getCommand route <| initModel NotFoundRoute
+        command = getAndDecodePage location
     in
-        ( initModel route, command )
+        ( initModel , command )
 
 
 getPageType : Page -> Maybe String
@@ -86,69 +94,18 @@ getPageCommand model page =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
+        LoadPage (Ok page) ->
+            Debug.log (toString page) (\x -> x)
+            (model, Cmd.none)
+
+        LoadPage (Err error) ->
+            Debug.log (toString error) (\x -> x)
+            (model, Cmd.none)
+
         OnLocationChange location ->
-            let
-                newRoute =
-                    parseLocation location
-
-                command =
-                    getCommand newRoute model
-            in
-                ( { model | route = newRoute }, command )
-
+            (model, Cmd.none)
         ChangeLocation path ->
-            ( model, Navigation.newUrl path )
-
-        OpenPage (Ok page) ->
-            getPageType page
-                |> Maybe.map
-                    (\pageType ->
-                        let
-                            cmd =
-                                getPageCommand model page
-                        in
-                            ( { model
-                                | activePage = Just pageType
-                                , activeCase = Nothing
-                                , activeOverlay = Nothing
-                                , activeService = Nothing
-                                , menuState = Closed
-                                , pages =
-                                    model.pages
-                                        |> Dict.insert pageType page
-                              }
-                            , cmd
-                            )
-                    )
-                |> Maybe.withDefault ( model, Cmd.none )
-
-        OpenPage (Err err) ->
-            Debug.log (toString err) ( model, Cmd.none )
-
-        OpenCase (Ok content) ->
-            let
-                cases =
-                    Dict.insert content.meta.id content model.cases
-
-                ( activeOverlay, cmd ) =
-                    case model.activeCase of
-                        Just _ ->
-                            ( model.activeOverlay, Cmd.none )
-
-                        Nothing ->
-                            ( Just content.meta.id, Ports.getCasePosition content.meta.id )
-            in
-                ( { model
-                    | cases = cases
-                    , activeCase = Just content
-                    , menuState = Closed
-                    , activeOverlay = activeOverlay
-                  }
-                , cmd
-                )
-
-        OpenCase (Err err) ->
-            Debug.log (toString err) ( model, Cmd.none )
+            (model, Cmd.none)
 
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
@@ -272,6 +229,7 @@ update msg model =
             in
                 ( { model | pageScrollPositions = positions }, Cmd.none )
 
+        _ -> (model, Cmd.none)
 
 
 view : Model -> Html Msg

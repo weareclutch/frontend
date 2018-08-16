@@ -3,6 +3,59 @@ module Types exposing (..)
 import Navigation exposing (Location)
 import Http
 import Dict exposing (Dict)
+import Date exposing (Date)
+import Json.Decode as Decode
+
+
+-- { id, slug, title, customField }
+-- { meta: { id, slug, title, }, customField }
+
+
+-- makeDecode : decode Meta -> Decoder Page
+-- makeDecode custom =
+--     Decode.map ContentTHing <|
+--         custom
+--         decodeCustomField
+
+
+-- decode = makeDecode meta
+
+-- decode Home
+-- decode NotFoundRoute
+-- decode Content
+
+
+
+
+type alias WagtailMetaContent =
+  { type_ : String
+  , slug : String
+  , published : Date
+  , seoTitle : String
+  }
+
+type alias WagtailPageBaseContent contentType = { contentType | meta : WagtailMetaContent, id : Int }
+
+type alias WagtailHomePageContent =
+    { cover :
+        { text : String
+        , link : String
+        }
+    }
+
+type alias WagtailHomePage = WagtailPageBaseContent WagtailHomePageContent
+
+type alias WagtailHelloPageContent =
+    { hello : String }
+
+type alias WagtailHelloPage = WagtailPageBaseContent WagtailHelloPageContent
+
+
+type PageContent
+    = HomePageContent WagtailHomePage
+    | HelloPageContent WagtailHelloPage
+
+
 
 
 type Msg
@@ -21,6 +74,7 @@ type Msg
     | ScrollEvent String Float
     | SetWindowDimensions (Float, Float)
     | SpinEasterEgg Float Float
+    | LoadPage (Result Http.Error PageContent)
 
 
 type alias Model =
@@ -48,10 +102,8 @@ type MenuState
 
 
 type Route
-    = HomeRoute
-    | ServicesRoute
-    | CultureRoute
-    | CaseRoute Int String
+    = UndefinedRoute
+    | WagtailRoute Page
     | NotFoundRoute
 
 
@@ -76,6 +128,7 @@ type alias CaseContent =
     , backgroundImage : Maybe Image
     , theme : Theme
     }
+
 
 
 type CaseState
