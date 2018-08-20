@@ -1,67 +1,8 @@
-module Decoders exposing ( getWagtailPageDecoder )
+module Decoders exposing (..)
 
 import Types exposing (..)
 import Json.Decode as Decode
-import Date exposing (Date)
 
-
-getWagtailPageDecoder : String -> Decode.Decoder
-getWagtailPageDecoder pageType =
-  case pageType of
-    -- Register the page decoders here ( "page.Type" -> aDecoder ) --
-    "home.HomePage" -> blingDecoder
-
-    -- Default handler forn unknown types (aka "we can't handle")  --
-    _ -> Decode.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
-
-
-
-
-
-homePageDecoder : Decode.Decoder WagtailHomePageContent
-homePageDecoder =
-      Decode.map WagtailHomePageContent
-          (Decode.map2 (\text link -> { text = text, link = link })
-              (Decode.field "text" Decode.string)
-              (Decode.field "link" Decode.string)
-          )
-
-helloPageDecoder : Decode.Decoder WagtailHelloPageContent
-helloPageDecoder =
-        Decode.map WagtailHelloPageContent
-            (Decode.field "hello" Decode.string)
-
-type alias WagtailMetaContent =
-  { type_ : String
-  , slug : String
-  , published : Date
-  , seoTitle : String
-  }
-
-type alias WagtailPageBaseContent contentType = { contentType | meta : WagtailMetaContent, id : Int }
-
-
-
-
-dateDecoder : Decode.Decoder Date
-dateDecoder  =
-    Decode.string
-        |> Decode.andThen ( \s -> Decode.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
-
-decodeBase =
-  Decode.map2 (\id meta -> { id = id, meta = meta })
-    (Decode.field "id" Decode.int)
-    (Decode.map4 WagtailMetaContent
-      (Decode.field "type" Decode.string)
-      (Decode.field "slug" Decode.string)
-      (Decode.field "first_published_at" dateDecoder)
-      (Decode.field "seo_title" Decode.string)
-    )
-
-blingDecoder =
-  Decode.map2 (\base data -> { data | meta = base.meta, id = base.id  } )
-    decodeBase
-    homePageDecoder
 
 mapCoverContent : String -> String -> { text : String, link : String }
 mapCoverContent text link =

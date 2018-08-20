@@ -1,10 +1,9 @@
-module Api exposing ( decodeWagtailPageType, siteUrl, getPage )
+module Api exposing (..)
 
 import Http exposing (..)
 import Navigation
 import Json.Decode as Decode
 import Types exposing (..)
-import Decoders exposing (getWagtailPageDecoder)
 
 
 siteUrl : String
@@ -15,32 +14,6 @@ siteUrl =
 apiUrl : String
 apiUrl =
     siteUrl ++ "/api/v2"
-
-
-
-
-
-
-decodeWagtailPageType : Decode.Decoder String
-decodeWagtailPageType =
-    Decode.at ["meta", "type"] Decode.string
-
-
-getPage : Navigation.Location -> (String -> Decode.Decoder WagtailPage) -> Cmd Msg
-getPage location getPageDecoder =
-    Http.request
-        { method = "GET"
-        , headers = [header "Accept" "application/json"]
-        , url = apiUrl ++ "/pages/4/"
-        , body = Http.emptyBody
-        , expect = expectJson (
-            decodeWagtailPageType
-                |> Decode.andThen getWagtailPageDecoder
-        )
-        , timeout = Nothing
-        , withCredentials = False
-        }
-        |> Http.send LoadPage
 
 
 

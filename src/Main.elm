@@ -4,6 +4,7 @@ import Types exposing (..)
 import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import Dict exposing (Dict)
+import UI.Common
 import UI.Wrapper
 import UI.Navigation
 import UI.Case
@@ -11,10 +12,10 @@ import UI.Page
 import UI.Pages.Services
 import Ports
 import Regex
-import Api exposing (siteUrl, getPage)
+import Api exposing (siteUrl)
+import Wagtail exposing (getWagtailPage)
 import Task
 import Process
-import Json.Decode as Decode
 
 
 initModel : Model
@@ -34,17 +35,10 @@ initModel =
     }
 
 
-
-loadDecoder : String -> Decode.Decoder WagtailPage
-loadDecoder pageType =
-    case pageType of
-        _ -> Decode.fail ( "Can't decode " ++ pageType )
-
-
-
 getAndDecodePage : Location -> Cmd Msg
 getAndDecodePage location =
-    getPage location loadDecoder
+    getWagtailPage location
+      |> Cmd.map (\cmd -> WagtailMsg cmd)
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -94,18 +88,19 @@ getPageCommand model page =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        LoadPage (Ok page) ->
-            Debug.log (toString page) (\x -> x)
-            (model, Cmd.none)
+        -- LoadPage (Ok page) ->
+        --     Debug.log (toString page) (\x -> x)
+        --     (model, Cmd.none)
 
-        LoadPage (Err error) ->
-            Debug.log (toString error) (\x -> x)
-            (model, Cmd.none)
+        -- LoadPage (Err error) ->
+        --     Debug.log (toString error) (\x -> x)
+        --     (model, Cmd.none)
 
         OnLocationChange location ->
-            (model, Cmd.none)
+            (model, getAndDecodePage location)
+
         ChangeLocation path ->
-            (model, Cmd.none)
+            (model, Navigation.newUrl path)
 
         SetCasePosition position ->
             ( { model | casePosition = position }, Cmd.none )
@@ -234,12 +229,16 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    UI.Wrapper.view model
-        [ UI.Navigation.view model
-        , UI.Page.container model
-        , UI.Case.staticView model
-        , UI.Pages.Services.overlay model.activeService
-        ]
+    div []
+      [ UI.Common.link "foo" [ text "foo" ]
+      , UI.Common.link "bar" [ text "bar" ]
+      ]
+    -- UI.Wrapper.view model
+    --     [ UI.Navigation.view model
+    --     , UI.Page.container model
+    --     , UI.Case.staticView model
+    --     , UI.Pages.Services.overlay model.activeService
+    --     ]
 
 
 subscriptions : Model -> Sub Msg

@@ -5,6 +5,7 @@ import Http
 import Dict exposing (Dict)
 import Date exposing (Date)
 import Json.Decode as Decode
+import Wagtail exposing (WagtailPage, WagtailMsg)
 
 
 -- { id, slug, title, customField }
@@ -27,37 +28,6 @@ import Json.Decode as Decode
 
 
 
-type alias WagtailMetaContent =
-  { type_ : String
-  , slug : String
-  , published : Date
-  , seoTitle : String
-  }
-
-type alias WagtailPageBaseContent contentType = { contentType | meta : WagtailMetaContent, id : Int }
-
-type alias WagtailHomePageContent =
-    { cover :
-        { text : String
-        , link : String
-        }
-    }
-
-type alias WagtailHomePage = WagtailPageBaseContent WagtailHomePageContent
-
-type alias WagtailHelloPageContent =
-    { hello : String }
-
-type alias WagtailHelloPage = WagtailPageBaseContent WagtailHelloPageContent
-
-
-type PageContent
-    = HomePageContent WagtailHomePage
-    | HelloPageContent WagtailHelloPage
-
-
-
-
 type Msg
     = OnLocationChange Location
     | ChangeLocation String
@@ -74,7 +44,7 @@ type Msg
     | ScrollEvent String Float
     | SetWindowDimensions (Float, Float)
     | SpinEasterEgg Float Float
-    | LoadPage (Result Http.Error PageContent)
+    | WagtailMsg WagtailMsg
 
 
 type alias Model =
@@ -103,7 +73,7 @@ type MenuState
 
 type Route
     = UndefinedRoute
-    | WagtailRoute Page
+    | WagtailRoute WagtailPage
     | NotFoundRoute
 
 
@@ -112,6 +82,7 @@ type Page
     | Services ServicesContent
     | Culture CultureContent
     | Case CaseContent
+
 
 
 type alias CaseContent =
