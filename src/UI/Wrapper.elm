@@ -4,7 +4,6 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
-import Dict
 import Style exposing (..)
 
 
@@ -59,28 +58,29 @@ globalStyle =
 view : Model -> List (Html Msg) -> Html Msg
 view model children =
     let
-        maybePage =
-            model.activePage
-                |> Maybe.andThen
-                    (\activePage ->
-                        Dict.get activePage model.pages
-                    )
+        -- maybePage =
+        --     model.activePage
+        --         |> Maybe.andThen
+        --             (\activePage ->
+        --                 Dict.get activePage model.pages
+        --             )
 
-        extraStyle =
-            if maybePage /= Nothing || model.activeCase /= Nothing then
-                [ opacity (int 1)
-                ]
-            else
-                [ opacity zero
-                ]
+        -- extraStyle =
+        --     if maybePage /= Nothing || model.activeCase /= Nothing then
+        --         [ opacity (int 1)
+        --         ]
+        --     else
+        --         [ opacity zero
+        --         ]
 
         wrapper =
             styled div <|
                 [ backgroundColor (hex "292A32")
                 , transition "all" 0.4 0 "ease-in-out"
                 ]
-                    ++ extraStyle
+
     in
         globalStyle
             :: children
             |> wrapper []
+

@@ -1,12 +1,12 @@
 module UI.Blocks exposing (..)
 
-import Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (property)
 import UI.Common exposing (backgroundImg, image)
 import Css exposing (..)
 import Json.Encode
 import Style exposing (..)
+import Types exposing (..)
 
 
 streamfield : List Block -> Html msg

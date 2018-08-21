@@ -39,22 +39,23 @@ outerWrapper active =
                 ++ extraStyle
 
 
-overlayWrapper : Bool -> ( Float, Float ) -> List (Attribute msg) -> List (Html msg) -> Html msg
-overlayWrapper active ( x, y ) =
+overlayWrapper : Bool -> List (Attribute msg) -> List (Html msg) -> Html msg
+overlayWrapper active =
     div
 
 
 staticView : Model -> Html Msg
 staticView model =
-    model.activeCase
-        |> Maybe.map
-            (\content ->
-                outerWrapper True
-                    []
-                    [ overlay model [ content ] True
-                    ]
-            )
-        |> Maybe.withDefault (outerWrapper False [] [])
+    div [] []
+    -- model.activeCase
+    --     |> Maybe.map
+    --         (\content ->
+    --             outerWrapper True
+    --                 []
+    --                 [ overlay model [ content ] True
+    --                 ]
+    --         )
+    --     |> Maybe.withDefault (outerWrapper False [] [])
 
 
 overlay : Model -> List CaseContent -> Bool -> Html Msg
@@ -88,49 +89,49 @@ overlay model cases active =
                             renderCases model cases
                 in
                     overlayWrapper active
-                        model.casePosition
                         attributes
                         caseViews
             )
         |> Maybe.withDefault (text "")
 
 
-renderCases : Model -> List CaseContent -> List (Html Msg)
+renderCases : Model -> List CaseContent -> List (Html a)
 renderCases model cases =
-    let
-        activeIndex =
-            model.activeCase
-                |> Maybe.andThen
-                    (\activeCase ->
-                        cases
-                            |> List.indexedMap (,)
-                            |> List.filterMap
-                                (\( index, content ) ->
-                                    if content.meta.id == activeCase.meta.id then
-                                        Just index
-                                    else
-                                        Nothing
-                                )
-                            |> List.head
-                    )
-                |> Maybe.withDefault 0
-    in
-        cases
-            |> List.map
-                (\content ->
-                    model.cases
-                        |> Dict.get content.meta.id
-                        |> Maybe.withDefault content
-                )
-            |> List.indexedMap
-                (\index content ->
-                    if index <= activeIndex then
-                        caseView content Open
-                    else if index == (activeIndex + 1) then
-                        caseView content Preview
-                    else
-                        text ""
-                )
+    []
+    -- let
+    --     activeIndex =
+    --         model.activeCase
+    --             |> Maybe.andThen
+    --                 (\activeCase ->
+    --                     cases
+    --                         |> List.indexedMap (,)
+    --                         |> List.filterMap
+    --                             (\( index, content ) ->
+    --                                 if content.meta.id == activeCase.meta.id then
+    --                                     Just index
+    --                                 else
+    --                                     Nothing
+    --                             )
+    --                         |> List.head
+    --                 )
+    --             |> Maybe.withDefault 0
+    -- in
+    --     cases
+    --         |> List.map
+    --             (\content ->
+    --                 model.cases
+    --                     |> Dict.get content.meta.id
+    --                     |> Maybe.withDefault content
+    --             )
+    --         |> List.indexedMap
+    --             (\index content ->
+    --                 if index <= activeIndex then
+    --                     caseView content Open
+    --                 else if index == (activeIndex + 1) then
+    --                     caseView content Preview
+    --                 else
+    --                     text ""
+    --             )
 
 
 caseView : CaseContent -> CaseState -> Html Msg

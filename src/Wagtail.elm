@@ -1,4 +1,4 @@
-module Wagtail exposing (WagtailPage, WagtailMsg, getWagtailPage)
+module Wagtail exposing (siteUrl, Page, Msg, getWagtailPage)
 
 import Http exposing (..)
 import Navigation
@@ -16,8 +16,8 @@ apiUrl =
     siteUrl ++ "/api/v2"
 
 
-type WagtailMsg
-    = LoadPage (Result Http.Error WagtailPage)
+type Msg
+    = LoadPage (Result Http.Error Page)
 
 
 type alias WagtailMetaContent =
@@ -27,21 +27,16 @@ type alias WagtailMetaContent =
     , seoTitle : String
     }
 
-type alias HomePageContent =
-    { meta : WagtailMetaContent
-    , title : String
-    }
-
-type WagtailPage
+type Page
     = HomePage HomePageContent
 
 
-getWagtailPage : Navigation.Location -> Cmd WagtailMsg
+getWagtailPage : Navigation.Location -> Cmd Msg
 getWagtailPage location =
     Http.request
         { method = "GET"
         , headers = [header "Accept" "application/json"]
-        , url = apiUrl ++ "/api/v2/pages/find/?html_path=" ++ location.pathname
+        , url = apiUrl ++ "/pages/find/?html_path=" ++ location.pathname
         , body = Http.emptyBody
         , expect = expectJson (
             decodePageType
@@ -59,8 +54,7 @@ decodePageType =
     Decode.at ["meta", "type"] Decode.string
 
 
-
-getPageDecoder : String -> Decode.Decoder WagtailPage
+getPageDecoder : String -> Decode.Decoder Page
 getPageDecoder pageType =
   case pageType of
     -- Register the page decoders here ( "page.Type" -> aDecoder ) --
@@ -82,6 +76,12 @@ metaDecoder =
       (Decode.field "first_published_at" dateDecoder)
       (Decode.field "seo_title" Decode.string)
 
+
+
+type alias HomePageContent =
+    { meta : WagtailMetaContent
+    , title : String
+    }
 
 homePageDecoder =
     Decode.map HomePage <|

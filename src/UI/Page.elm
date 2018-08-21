@@ -5,13 +5,9 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (class)
 import Html.Styled.Events exposing (..)
-import UI.Pages.SimpleHome
-import UI.Pages.Home
-import UI.Pages.Services
-import UI.Pages.Culture
 import UI.Contact
-import Dict
 import Json.Decode as Json
+import UI.State exposing (MenuState(..), Msg)
 
 
 containerWrapper : List (Attribute msg) -> List (Html msg) -> Html msg
@@ -34,26 +30,10 @@ pageOrder =
     ]
 
 
-container : Model -> Html Msg
+container : Model -> Html Types.Msg
 container model =
     let
-        activeDepth =
-            model.activePage
-                |> Maybe.andThen
-                    (\activePage ->
-                        pageOrder
-                            |> List.indexedMap (,)
-                            |> List.filterMap
-                                (\( index, pageType ) ->
-                                    if pageType == activePage then
-                                        Just index
-                                    else
-                                        Nothing
-                                )
-                            |> List.head
-                    )
-                |> Maybe.withDefault 0
-
+        activeDepth = 0
         pages =
             pageOrder
                 |> List.indexedMap
@@ -70,6 +50,8 @@ container model =
     in
         containerWrapper [] <|
             pages ++ [ UI.Contact.view model ]
+
+
 
 
 pageWrapper : Int -> Bool -> MenuState -> List (Attribute msg) -> List (Html msg) -> Html msg
@@ -155,35 +137,35 @@ handleScroll =
     Json.at [ "target", "scrollTop" ] Json.float
 
 
-pageView : Model -> String -> Int -> Html Msg
+pageView : Model -> String -> Int -> Html Types.Msg
 pageView model pageType depth =
     let
-        locked =
-            (model.activeCase
-                |> Maybe.map (\activeCase -> True)
-                |> Maybe.withDefault False
-            )
-                || (model.menuState == OpenTop || model.menuState == OpenBottom)
+        locked = False
+            -- (model.activeCase
+            --     |> Maybe.map (\activeCase -> True)
+            --     |> Maybe.withDefault False
+            -- )
+            --     || (model.menuState == OpenTop || model.menuState == OpenBottom)
 
         pageTypeClassName =
             String.split "." pageType
                 |> List.head
                 |> Maybe.withDefault ""
 
-        isActive =
-            model.activePage
-                |> Maybe.andThen
-                    (\activePage ->
-                        if activePage == pageType then
-                            Just True
-                        else
-                            Nothing
-                    )
-                |> Maybe.withDefault False
+        isActive = False
+            -- model.activePage
+            --     |> Maybe.andThen
+            --         (\activePage ->
+            --             if activePage == pageType then
+            --                 Just True
+            --             else
+            --                 Nothing
+            --         )
+            --     |> Maybe.withDefault False
 
         action =
             if isActive then
-                [ onClick (OpenMenu Closed)
+                [ onClick <| NavigationMsg <| UI.State.OpenMenu UI.State.Closed
                 ]
             else
                 []
@@ -196,29 +178,29 @@ pageView model pageType depth =
 
         attributes =
             [ class <| className ++ " " ++ pageTypeClassName
-            , on "scroll" (Json.map (ScrollEvent pageType) handleScroll)
+            -- , on "scroll" (Json.map (ScrollEvent pageType) handleScroll)
             ]
                 ++ action
 
-        page =
-            model.pages
-                |> Dict.get pageType
-                |> Maybe.andThen
-                    (\page ->
-                        case page of
-                            Home content ->
-                                Just <| UI.Pages.Home.view model content
+        page = text ""
+            --model.pages
+            --    |> Dict.get pageType
+            --    |> Maybe.andThen
+            --        (\page ->
+            --            case page of
+            --                Home content ->
+            --                    Just <| UI.Pages.Home.view model content
 
-                            Services content ->
-                                Just <| UI.Pages.Services.view content
+            --                Services content ->
+            --                    Just <| UI.Pages.Services.view content
 
-                            Culture content ->
-                                Just <| UI.Pages.Culture.view model content
+            --                Culture content ->
+            --                    Just <| UI.Pages.Culture.view model content
 
-                            _ ->
-                                Nothing
-                    )
-                |> Maybe.withDefault (text "")
+            --                _ ->
+            --                    Nothing
+            --        )
+            --    |> Maybe.withDefault (text "")
     in
         pageWrapper depth
             locked
