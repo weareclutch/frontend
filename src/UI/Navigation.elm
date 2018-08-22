@@ -1,6 +1,5 @@
 module UI.Navigation exposing (view)
 
-import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Events exposing (..)
@@ -8,10 +7,11 @@ import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import UI.Common exposing (addLink)
 import Style exposing (..)
+import UI.State exposing (MenuState(..), Msg(OpenContact))
+import Types exposing (..)
 
-
-view : Model -> Html Msg
-view model =
+view : UI.State.MenuState -> Html Types.Msg
+view menuState =
     let
         wrapper =
             styled div
@@ -53,7 +53,8 @@ view model =
                 , transition "opacity" 0.2 0 "linear"
                 , opacity <|
                     int <|
-                        if model.menuState == Closed && model.activeOverlay == Nothing then
+                        -- if model.menuState == Closed && model.activeOverlay == Nothing then
+                        if menuState == Closed then
                             1
                         else
                             0
@@ -64,7 +65,8 @@ view model =
                 [ transition "opacity" 0.2 0 "linear"
                 , opacity <|
                     int <|
-                        if model.menuState /= Closed || model.activeOverlay /= Nothing then
+                        -- if model.menuState /= Closed || model.activeOverlay /= Nothing then
+                        if menuState /= Closed then
                             1
                         else
                             0
@@ -160,41 +162,43 @@ view model =
             )
 
         toggleAction =
-            if model.activeOverlay == Nothing then
-                [ onClick (ToggleMenu) ]
-            else
-                addLink "/"
+            [ onClick (NavigationMsg UI.State.ToggleMenu) ]
+            -- if model.activeOverlay == Nothing then
+            -- else
+            --     addLink "/"
     in
         wrapper []
             [ toggleWrapper toggleAction
                 [ burgerWrapper [] [ burger ]
                 , crossWrapper [] [ cross ]
                 ]
-            , menuWrapper model.menuState
+            , menuWrapper menuState
                 []
                 [ menuItem
-                    (model.activePage
-                        |> Maybe.map
-                            (\activePage ->
-                                activePage == "home.HomePage"
-                            )
-                        |> Maybe.withDefault False
-                    )
+                    --(model.activePage
+                    --    |> Maybe.map
+                    --        (\activePage ->
+                    --            activePage == "home.HomePage"
+                    --        )
+                    --    |> Maybe.withDefault False
+                    --)
+                    False
                     (addLink "/")
                     [ text "Work" ]
                 , menuItem
-                    (model.activePage
-                        |> Maybe.map
-                            (\activePage ->
-                                activePage == "service.ServicesPage"
-                            )
-                        |> Maybe.withDefault False
-                    )
+                    --(model.activePage
+                    --    |> Maybe.map
+                    --        (\activePage ->
+                    --            activePage == "service.ServicesPage"
+                    --        )
+                    --    |> Maybe.withDefault False
+                    --)
+                    False
                     (addLink "/services")
                     [ text "Services" ]
                 , menuItem
                   False
-                  [ onClick OpenContact ]
+                  [ onClick (NavigationMsg OpenContact) ]
                   [ text "Contact" ]
                 ]
             , logoWrapper (addLink "/")

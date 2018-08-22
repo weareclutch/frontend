@@ -9,7 +9,6 @@ module UI.Common
         , button
         )
 
-import Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (..)
@@ -17,8 +16,9 @@ import Json.Decode as Decode
 import Icons.Arrow exposing (arrow)
 import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
-import Api exposing (siteUrl)
+import Wagtail exposing (siteUrl)
 import Dict exposing (Dict)
+import Types exposing (..)
 
 
 addLink : String -> List (Attribute Msg)

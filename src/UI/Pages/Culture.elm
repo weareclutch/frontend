@@ -3,7 +3,6 @@ module UI.Pages.Culture exposing (view)
 import Types exposing (..)
 import Html.Styled exposing (..)
 import UI.Common exposing (loremIpsum, image)
-import UI.Case
 
 
 view : Model -> CultureContent -> Html Msg
@@ -14,15 +13,15 @@ view model content =
                 |> Maybe.map event
                 |> Maybe.withDefault (text "")
 
-        cases =
-            content.cases
-                |> List.indexedMap
-                    (\index page ->
-                        model.activeOverlay
-                            |> Maybe.andThen (\id -> Just (id == page.meta.id))
-                            |> Maybe.withDefault False
-                            |> UI.Case.overlay model (List.drop index content.cases)
-                    )
+        cases = []
+            -- content.cases
+            --     |> List.indexedMap
+            --         (\index page ->
+            --             model.activeOverlay
+            --                 |> Maybe.andThen (\id -> Just (id == page.meta.id))
+            --                 |> Maybe.withDefault False
+            --                 |> UI.Case.overlay model (List.drop index content.cases)
+            --         )
     in
         div []
             [ div [] cases

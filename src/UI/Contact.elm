@@ -4,6 +4,7 @@ import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Style exposing (..)
+import UI.State exposing (MenuState(OpenBottomContact, OpenTopContact))
 
 view : Model -> Html msg
 view model =

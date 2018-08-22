@@ -27,7 +27,7 @@ renderBody content =
                             |> List.map
                                 (\service ->
                                     li
-                                        [ onClick <| OpenService service.service
+                                        [ -- onClick <| OpenService service.service
                                         ]
                                         [ text service.text
                                         ]
@@ -91,7 +91,10 @@ overlay service =
                                 [ h1 [] [ text service.title ]
                                 , p [] [ text service.body ]
                                 , div [] slides
-                                , button [ onClick CloseService ] [ text "close" ]
+                                , button
+                                    -- [ onClick CloseService ]
+                                    []
+                                    [ text "close" ]
                                 ]
                             ]
                 )

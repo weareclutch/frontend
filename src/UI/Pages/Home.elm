@@ -14,16 +14,20 @@ import Style exposing (..)
 view : Model -> HomeContent -> Html Msg
 view model content =
     let
-        pageScroll =
-            model.pageScrollPositions
-                |> Dict.get "home.HomePage"
-                |> Maybe.withDefault 0
+        pageScroll = 0
+            -- model.pageScrollPositions
+            --     |> Dict.get "home.HomePage"
+            --     |> Maybe.withDefault 0
 
         (leftCases, rightCases) =
             content.cases
                 |> List.indexedMap
                     (\index page ->
-                        (index, UI.Common.link (toString page.meta.id ++ "/" ++ page.meta.title ) [text page.meta.title] )
+                        ( index
+                        , UI.Common.link
+                              (toString page.meta.id ++ "/" ++ page.meta.title)
+                              [ text page.meta.title ]
+                        )
                     )
                 |> List.partition (\(idx, _) -> idx % 2 == 0)
                 |> \(left, right) -> ( List.map Tuple.second left, List.map Tuple.second right)
@@ -64,10 +68,6 @@ view model content =
                     ]
                 ]
             , introCover pageScroll content
-            , easterEgg
-                model.parallaxPositions
-                pageScroll
-                (Tuple.second model.windowDimensions)
             ]
 
 
@@ -164,49 +164,3 @@ introCover offset content =
             ]
 
 
-easterEgg : Dict String Float -> Float -> Float -> Html msg
-easterEgg dict offset windowHeight =
-    let
-        (size, displayText) =
-            Dict.get "scroll" dict
-                |> Maybe.map
-                    (\pos ->
-                        if offset > pos - windowHeight * 0.8 then
-                            (48, "Wil je niet naar een hoger niveau?")
-                        else if offset > pos - windowHeight * 1.2 then
-                            (36, "Andere omhoog")
-                        else
-                            (22, "Scroll omhoog")
-                    )
-                |> Maybe.withDefault (22, "Scroll omhoog")
-
-        wrapper =
-            styled div
-                [ height (vh 100)
-                , width (vw 100)
-                , backgroundColor (hex "292A32")
-                , position relative
-                ]
-
-        titleWrapper =
-            styled div
-                [ top (vh 55)
-                , width (pct 100)
-                , position absolute
-                ]
-
-        title =
-            styled h2
-                [ fontSize (px size)
-                , color (hex "fff")
-                , textAlign center
-                , letterSpacing (px 2)
-                , transition "all" 0.16 0 "ease-in-out"
-                ]
-    in
-        wrapper []
-            [ titleWrapper
-                (parallax dict offset "scroll")
-                [ title [] [ text displayText ]
-                ]
-            ]
