@@ -7,6 +7,7 @@ import Css exposing (..)
 import Json.Encode
 import Style exposing (..)
 import Types exposing (..)
+import Wagtail exposing (Block(..), Theme, Image, Column, Quote)
 
 
 streamfield : List Block -> Html msg

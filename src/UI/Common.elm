@@ -19,6 +19,7 @@ import Css exposing (..)
 import Wagtail exposing (siteUrl)
 import Dict exposing (Dict)
 import Types exposing (..)
+import Wagtail exposing (Theme, Image)
 
 
 addLink : String -> List (Attribute Msg)

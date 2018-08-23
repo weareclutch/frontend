@@ -4,9 +4,10 @@ import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import UI.Wrapper
 import UI.Navigation
-import UI.Page
+-- import UI.Page
+import UI.PageWrappers
 import Wagtail exposing (getWagtailPage)
-import UI.State exposing (MenuState(..))
+import UI.State exposing (MenuState(..), fetchNavigation)
 
 import Types exposing (..)
 
@@ -42,6 +43,7 @@ initModel =
     -- , activeService = Nothing
     -- , casePosition = ( 0, 0 )
     , menuState = Closed
+    , navigationTree = Nothing
     -- , pageScrollPositions = Dict.empty
     -- , parallaxPositions = Dict.empty
     -- , windowDimensions = ( 0, 0 )
@@ -57,68 +59,85 @@ getAndDecodePage location =
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
-        command = getAndDecodePage location
+        commands =
+            [ getAndDecodePage location
+            , fetchNavigation |> Cmd.map (\cmd -> NavigationMsg cmd)
+            ]
     in
-        ( initModel , command )
+        ( initModel , Cmd.batch commands )
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        -- LoadPage (Ok page) ->
-        --     Debug.log (toString page) (\x -> x)
-        --     (model, Cmd.none)
-
-        -- LoadPage (Err error) ->
-        --     Debug.log (toString error) (\x -> x)
-        --     (model, Cmd.none)
-
         OnLocationChange location ->
             (model, getAndDecodePage location)
 
         ChangeLocation path ->
             (model, Navigation.newUrl path)
 
-        NavigationMsg UI.State.ToggleMenu ->
-            let
-                menuState =
-                    case model.menuState of
-                        Closed ->
-                            OpenTop
 
-                        OpenTop ->
-                            Closed
+        WagtailMsg msg ->
+            case msg of
+                Wagtail.LoadPage (Ok page) ->
+                    ({ model | route = WagtailRoute page }, Cmd.none )
 
-                        OpenBottom ->
-                            Closed
-
-                        OpenTopContact ->
-                            Closed
-
-                        OpenBottomContact ->
-                            Closed
-
-            in
-                ( { model | menuState = menuState }, Cmd.none )
-
-        NavigationMsg UI.State.OpenContact ->
-            let
-                menuState =
-                    case model.menuState of
-                        OpenTop ->
-                            OpenTopContact
-
-                        OpenBottom ->
-                            OpenBottomContact
-
-                        _ ->
-                            OpenTopContact
-
-            in
-                ( { model | menuState = menuState }, Cmd.none )
+                Wagtail.LoadPage (Err error) ->
+                    Debug.log (toString error) (\x -> x)
+                    ({ model | route = NotFoundRoute }, Cmd.none)
 
 
-        NavigationMsg (UI.State.OpenMenu state) ->
-            ( { model | menuState = state }, Cmd.none )
+        NavigationMsg msg ->
+            case msg of
+                UI.State.FetchNavigation (Ok navigationTree) ->
+                    ({ model | navigationTree = Just navigationTree }, Cmd.none)
+
+                UI.State.FetchNavigation (Err error) ->
+                    ({ model | navigationTree = Nothing }, Cmd.none)
+
+                UI.State.ToggleMenu ->
+                    let
+                        menuState =
+                            case model.menuState of
+                                Closed ->
+                                    OpenTop
+
+                                OpenTop ->
+                                    Closed
+
+                                OpenBottom ->
+                                    Closed
+
+                                OpenTopContact ->
+                                    Closed
+
+                                OpenBottomContact ->
+                                    Closed
+
+                    in
+                        ( { model | menuState = menuState }, Cmd.none )
+
+                UI.State.OpenContact ->
+                    let
+                        menuState =
+                            case model.menuState of
+                                OpenTop ->
+                                    OpenTopContact
+
+                                OpenBottom ->
+                                    OpenBottomContact
+
+                                _ ->
+                                    OpenTopContact
+
+                    in
+                        ( { model | menuState = menuState }, Cmd.none )
+
+
+                (UI.State.OpenMenu state) ->
+                    ( { model | menuState = state }, Cmd.none )
+
+
+
 
         -- OpenService service ->
         --     ( { model | activeService = Just service }, Cmd.none )
@@ -126,17 +145,28 @@ update msg model =
         -- CloseService ->
         --     ( { model | activeService = Nothing }, Cmd.none )
 
-        _ -> (model, Cmd.none)
+        -- _ -> (model, Cmd.none)
 
 
 view : Model -> Html Msg
 view model =
-    UI.Wrapper.view model
-        [ UI.Navigation.view model.menuState
-        , UI.Page.container model
-        -- , UI.Case.staticView model
-        -- , UI.Pages.Services.overlay model.activeService
-        ]
+    let
+        page =
+            case model.route of
+                UndefinedRoute ->
+                    div [] [ text "undefined route" ]
+
+                WagtailRoute page -> 
+                    UI.PageWrappers.renderPage page
+
+                NotFoundRoute ->
+                    div [] [ text "not found" ]
+
+    in
+        UI.Wrapper.view model
+            [ UI.Navigation.view model.menuState
+            , UI.PageWrappers.overlayWrapper page
+            ]
 
 
 subscriptions : Model -> Sub Msg

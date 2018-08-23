@@ -2,8 +2,6 @@ module Types exposing (..)
 
 import Http
 import Dict exposing (Dict)
-import Date exposing (Date)
-import Json.Decode as Decode
 import Navigation exposing (Location)
 
 import Wagtail
@@ -35,6 +33,7 @@ type alias Model =
     -- , activeOverlay : Maybe Int
     -- , activeService : Maybe Service
     -- , casePosition : ( Float, Float )
+    , navigationTree : Maybe UI.State.NavigationTree
     , menuState : UI.State.MenuState
     -- , pageScrollPositions : Dict String Float
     -- , parallaxPositions : Dict String Float
@@ -46,47 +45,6 @@ type Route
     = UndefinedRoute
     | WagtailRoute Wagtail.Page
     | NotFoundRoute
-
-
-type Block
-    = UnknownBlock String
-    | QuoteBlock Quote
-    | ImageBlock Theme Image
-    | ContentBlock Theme String
-    | BackgroundBlock Image
-    | ColumnBlock Column Column
-
-
-type alias Quote =
-    { text : String
-    , name : Maybe String
-    }
-
-
-type alias Column =
-    { theme : Theme
-    , image : Maybe Image
-    , richText : Maybe String
-    }
-
-
-type alias Image =
-    { image : String
-    , caption : Maybe String
-    }
-
-
-type alias Theme =
-    { backgroundColor : String
-    , textColor : String
-    , backgroundPosition : Maybe ( String, String )
-    }
-
-
-
-
-
-
 
 
 -- type alias CaseContent =
