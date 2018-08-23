@@ -32,6 +32,7 @@ overlayWrapper child =
                 , width (vw 100)
                 , height (vh 100)
                 , backgroundColor (hex "fff")
+                , overflowY scroll
                 ]
 
     in

@@ -65,7 +65,9 @@ dateDecoder  =
 
 
 type alias WagtailMetaContent =
-    { type_ : String
+    { id : Int
+    , title : String
+    , type_ : String
     , slug : String
     , published : Date
     , seoTitle : String
@@ -73,12 +75,13 @@ type alias WagtailMetaContent =
 
 
 metaDecoder =
-    D.field "meta" <| 
-        D.map4 WagtailMetaContent
-            (D.field "type" D.string)
-            (D.field "slug" D.string)
-            (D.field "first_published_at" dateDecoder)
-            (D.field "seo_title" D.string)
+    D.map6 WagtailMetaContent
+        (D.field "id" D.int)
+        (D.field "title" D.string)
+        (D.at ["meta", "type"] D.string)
+        (D.at ["meta", "slug"] D.string)
+        (D.at ["meta", "first_published_at"] dateDecoder)
+        (D.at ["meta", "seo_title"] D.string)
 
 
 type alias HomePageContent =
@@ -111,6 +114,11 @@ homePageDecoder =
 type alias CasePageContent =
     { meta : WagtailMetaContent
     , theme : Theme
+    , info :
+        { caption : String
+        , releaseDate : String
+        , websiteUrl : String
+        }
     , intro : Maybe String
     , body : Maybe (List Block)
     , image : Maybe Image
@@ -120,10 +128,16 @@ type alias CasePageContent =
 
 casePageDecoder =
     D.map CasePage <|
-        D.map6 CasePageContent
+        D.map7 CasePageContent
             metaDecoder
             decodeTheme
-            (D.maybe <| D.succeed "foobarbody")
+            (D.map3
+                (\x y z -> { caption = x, releaseDate = y, websiteUrl = z })
+                (D.field "caption" D.string)
+                (D.field "release_date" D.string)
+                (D.field "website_url" D.string)
+            )
+            (D.maybe <| D.field "intro" D.string)
             (D.maybe <| D.field "body" decodeBlocks)
             (D.maybe <| D.field "image_src" decodeImage)
             (D.maybe <| D.field "background_image_src" decodeImage)
