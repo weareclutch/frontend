@@ -1,4 +1,4 @@
-module UI.Blocks exposing (..)
+module UI.Components.Blocks exposing (..)
 
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (property)
@@ -6,7 +6,6 @@ import UI.Common exposing (backgroundImg, image)
 import Css exposing (..)
 import Json.Encode
 import Style exposing (..)
-import Types exposing (..)
 import Wagtail exposing (Block(..), Theme, Image, Column, Quote)
 
 
@@ -199,10 +198,11 @@ columns col1 col2 =
                 ]
     in
         wrapper []
-            [ colWrapper [] [ column col1 ]
-            , colWrapper [] [ column col2 ]
+            [ div []
+                [ colWrapper [] [ column col1 ]
+                , colWrapper [] [ column col2 ]
+                ]
             ]
-
 
 column : Column -> Html msg
 column col =

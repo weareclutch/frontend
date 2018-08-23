@@ -1,4 +1,4 @@
-module UI.Contact exposing (view)
+module UI.Components.Contact exposing (view)
 
 import Types exposing (..)
 import Html.Styled exposing (..)

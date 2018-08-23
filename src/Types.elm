@@ -1,9 +1,6 @@
 module Types exposing (..)
 
-import Http
-import Dict exposing (Dict)
 import Navigation exposing (Location)
-
 import Wagtail
 import UI.State
 

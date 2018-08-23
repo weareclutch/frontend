@@ -1,12 +1,11 @@
-module UI.Case exposing (view)
+module UI.Pages.Case exposing (view)
 
-import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
+import Style exposing (..)
 import Html.Styled.Attributes exposing (class, href)
 import UI.Common exposing (button, addLink, loremIpsum, backgroundImg)
-import UI.Blocks
-import Style exposing (..)
+import UI.Components.Blocks
 import Wagtail
 
 
@@ -174,7 +173,7 @@ body content =
             content.body
                 |> Maybe.andThen
                     (\body ->
-                        Just <| UI.Blocks.streamfield body
+                        Just <| UI.Components.Blocks.streamfield body
                     )
                 |> Maybe.withDefault (text "")
     in
@@ -218,7 +217,7 @@ intro content =
 
         introEl =
             content.intro
-                |> Maybe.map (UI.Blocks.richText)
+                |> Maybe.map (UI.Components.Blocks.richText)
                 |> Maybe.withDefault (text "")
 
         metaInfo =

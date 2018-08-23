@@ -146,15 +146,21 @@ casePageDecoder =
 type alias CasePreview =
     { theme : Theme
     , title : String
+    , caption : String
+    , url : String
+    , backgroundImage : Maybe Image
     }
 
 
 decodeCasePreview : D.Decoder CasePreview
 decodeCasePreview =
-    D.map2
+    D.map5
         CasePreview
         decodeTheme
         (D.field "title" D.string)
+        (D.field "caption" D.string)
+        (D.field "url" D.string)
+        (D.maybe <| D.field "background_image_src" decodeImage)
 
 
 type alias Image =

@@ -3,21 +3,19 @@ module UI.PageWrappers exposing (..)
 import Wagtail exposing (Page)
 import Html.Styled exposing (..)
 import Css exposing (..)
-import UI.Case
+import UI.Pages.Case
+import UI.Pages.Home
+import Types exposing (Msg)
 
-import Html.Styled exposing (..)
 
-
-renderPage : Page -> Html msg
+renderPage : Page -> Html Msg
 renderPage page =
     case page of
         Wagtail.HomePage content ->
-            div [] [ text "homepage" ]
+            UI.Pages.Home.view content
 
         Wagtail.CasePage content ->
-            UI.Case.view content
-
-
+            UI.Pages.Case.view content
 
 
 overlayWrapper : Html msg -> Html msg

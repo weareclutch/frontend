@@ -5,7 +5,6 @@ module UI.Common
         , loremIpsum
         , image
         , backgroundImg
-        , parallax
         , button
         )
 
@@ -17,7 +16,6 @@ import Icons.Arrow exposing (arrow)
 import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
 import Wagtail exposing (siteUrl)
-import Dict exposing (Dict)
 import Types exposing (..)
 import Wagtail exposing (Theme, Image)
 
@@ -91,29 +89,6 @@ loremIpsum =
           """
         ]
 
-
-parallax : Dict String Float -> Float -> String -> List (Attribute msg)
-parallax dict pageY id =
-    Dict.get id dict
-        |> Maybe.map
-            (\elementY ->
-                let
-                    offset =
-                        (pageY - elementY) * 0.35
-
-                    style =
-                        Html.Styled.Attributes.style
-                            [ ( "transform", "translate3d(0, " ++ (offset |> floor |> toString) ++ "px, 0)" )
-                            , ( "transition", "transform 0.08s linear")
-                            ]
-                in
-                    [ style
-                    , class <| "parallax parallax-" ++ id
-                    ]
-            )
-        |> Maybe.withDefault
-            [ class <| "parallax parallax-" ++ id
-            ]
 
 
 

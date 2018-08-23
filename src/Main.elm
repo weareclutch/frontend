@@ -3,7 +3,7 @@ module Main exposing (..)
 import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import UI.Wrapper
-import UI.Navigation
+import UI.Components.Navigation
 -- import UI.Page
 import UI.PageWrappers
 import Wagtail exposing (getWagtailPage)
@@ -164,7 +164,7 @@ view model =
 
     in
         UI.Wrapper.view model
-            [ UI.Navigation.view model.menuState
+            [ UI.Components.Navigation.view model.menuState
             , UI.PageWrappers.overlayWrapper page
             ]
 

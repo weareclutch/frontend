@@ -1,4 +1,4 @@
-module UI.Navigation exposing (view)
+module UI.Components.Navigation exposing (view)
 
 import Html.Styled exposing (..)
 import Css exposing (..)

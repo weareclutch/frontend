@@ -1,37 +1,19 @@
 module UI.Pages.Home exposing (view)
 
-import Types exposing (..)
 import Html.Styled exposing (..)
 import Css exposing (..)
 import Html.Styled.Attributes exposing (class, attribute, id, href)
-import UI.Case
-import UI.Blocks exposing (richText)
-import UI.Common exposing (button, parallax)
-import Dict exposing (Dict)
+import UI.Components.Blocks exposing (richText)
+import UI.Components.CasePoster
+import UI.Common exposing (button)
 import Style exposing (..)
+import Wagtail
+import Types exposing (Msg)
 
 
-view : Model -> HomeContent -> Html Msg
-view model content =
+view : Wagtail.HomePageContent -> Html Msg
+view content =
     let
-        pageScroll = 0
-            -- model.pageScrollPositions
-            --     |> Dict.get "home.HomePage"
-            --     |> Maybe.withDefault 0
-
-        (leftCases, rightCases) =
-            content.cases
-                |> List.indexedMap
-                    (\index page ->
-                        ( index
-                        , UI.Common.link
-                              (toString page.meta.id ++ "/" ++ page.meta.title)
-                              [ text page.meta.title ]
-                        )
-                    )
-                |> List.partition (\(idx, _) -> idx % 2 == 0)
-                |> \(left, right) -> ( List.map Tuple.second left, List.map Tuple.second right)
-
         innerWrapper =
             styled div
                 [ width (pct 100)
@@ -40,7 +22,24 @@ view model content =
                 , position relative
                 ]
 
+
+        (evenCases, oddCases) =
+            content.cases
+                |> List.indexedMap (,)
+                |> List.partition (\(index, x) -> index % 2 == 0)
+
         caseWrapper =
+            styled div
+                [ marginBottom (px 20)
+                , bpMedium
+                    [ marginBottom (px 80)
+                    ]
+                , bpLarge
+                    [ marginBottom (px 120)
+                    ]
+                ]
+
+        casesWrapper =
             styled div
                 [ bpMedium
                     [ width <| calc (pct 50) minus (px 30)
@@ -63,15 +62,27 @@ view model content =
         div [ class "home" ] <|
             [ pageWrapper
                 [ innerWrapper []
-                    [ caseWrapper [] leftCases
-                    , caseWrapper [] rightCases
+                    [ evenCases
+                        |> List.map Tuple.second
+                        |> List.map
+                            (\x ->
+                                caseWrapper [] [ UI.Components.CasePoster.view x ]
+                            )
+                        |> casesWrapper []
+                    , oddCases
+                        |> List.map Tuple.second
+                        |> List.map
+                            (\x ->
+                                caseWrapper [] [ UI.Components.CasePoster.view x ]
+                            )
+                        |> casesWrapper []
                     ]
                 ]
-            , introCover pageScroll content
+            , introCover content
             ]
 
 
-pageWrapper : List (Html Msg) -> Html Msg
+pageWrapper : List (Html msg) -> Html msg
 pageWrapper children =
     let
         wrapper =
@@ -103,8 +114,8 @@ pageWrapper children =
             ]
 
 
-introCover : Float -> HomeContent -> Html msg
-introCover offset content =
+introCover : Wagtail.HomePageContent -> Html msg
+introCover content =
     let
         wrapper =
             styled div
