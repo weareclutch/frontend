@@ -30,8 +30,8 @@ type alias Model =
     -- , activeOverlay : Maybe Int
     -- , activeService : Maybe Service
     -- , casePosition : ( Float, Float )
+    , navigationState : UI.State.NavigationState
     , navigationTree : Maybe UI.State.NavigationTree
-    , menuState : UI.State.MenuState
     -- , pageScrollPositions : Dict String Float
     -- , parallaxPositions : Dict String Float
     -- , windowDimensions : (Float, Float)

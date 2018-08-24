@@ -75,8 +75,10 @@ view model children =
 
         wrapper =
             styled div <|
-                [ backgroundColor (hex "292A32")
+                [ backgroundColor (hex "001AE0")
                 , transition "all" 0.4 0 "ease-in-out"
+                , width (pct 100)
+                , height (pct 100)
                 ]
 
     in

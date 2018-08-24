@@ -7,7 +7,7 @@ import UI.Components.Navigation
 -- import UI.Page
 import UI.PageWrappers
 import Wagtail exposing (getWagtailPage)
-import UI.State exposing (MenuState(..), fetchNavigation)
+import UI.State exposing (fetchNavigation)
 
 import Types exposing (..)
 
@@ -42,7 +42,7 @@ initModel =
     -- , activeOverlay = Nothing
     -- , activeService = Nothing
     -- , casePosition = ( 0, 0 )
-    , menuState = Closed
+    , navigationState = UI.State.Closed
     , navigationTree = Nothing
     -- , pageScrollPositions = Dict.empty
     -- , parallaxPositions = Dict.empty
@@ -79,7 +79,28 @@ update msg model =
         WagtailMsg msg ->
             case msg of
                 Wagtail.LoadPage (Ok page) ->
-                    ({ model | route = WagtailRoute page }, Cmd.none )
+                    let
+                        navigationTree =
+                            model.navigationTree
+                                |> Maybe.andThen
+                                    (\navigationTree ->
+                                        case UI.PageWrappers.isNavigationPage navigationTree page of
+                                            True ->
+                                                Just <| UI.State.addPageToNavigationTree navigationTree page
+                                            _ ->
+                                                Just navigationTree
+                                    )
+
+                        route =
+                            WagtailRoute page
+                    in
+                        ( { model
+                            | route = route
+                            , navigationTree = navigationTree
+                            , navigationState = UI.State.Closed
+                            }
+                        , Cmd.none
+                        )
 
                 Wagtail.LoadPage (Err error) ->
                     Debug.log (toString error) (\x -> x)
@@ -94,47 +115,50 @@ update msg model =
                 UI.State.FetchNavigation (Err error) ->
                     ({ model | navigationTree = Nothing }, Cmd.none)
 
-                UI.State.ToggleMenu ->
-                    let
-                        menuState =
-                            case model.menuState of
-                                Closed ->
-                                    OpenTop
+                UI.State.ChangeNavigation newState ->
+                    Debug.log "newState" ({ model | navigationState = newState }, Cmd.none)
 
-                                OpenTop ->
-                                    Closed
+                --UI.State.ToggleMenu ->
+                --    let
+                --        menuState =
+                --            case model.menuState of
+                --                Closed ->
+                --                    OpenTop
 
-                                OpenBottom ->
-                                    Closed
+                --                OpenTop ->
+                --                    Closed
 
-                                OpenTopContact ->
-                                    Closed
+                --                OpenBottom ->
+                --                    Closed
 
-                                OpenBottomContact ->
-                                    Closed
+                --                OpenTopContact ->
+                --                    Closed
 
-                    in
-                        ( { model | menuState = menuState }, Cmd.none )
+                --                OpenBottomContact ->
+                --                    Closed
 
-                UI.State.OpenContact ->
-                    let
-                        menuState =
-                            case model.menuState of
-                                OpenTop ->
-                                    OpenTopContact
+                --    in
+                --        ( { model | menuState = menuState }, Cmd.none )
 
-                                OpenBottom ->
-                                    OpenBottomContact
+                -- UI.State.OpenContact ->
+                --     let
+                --         menuState =
+                --             case model.menuState of
+                --                 OpenTop ->
+                --                     OpenTopContact
 
-                                _ ->
-                                    OpenTopContact
+                --                 OpenBottom ->
+                --                     OpenBottomContact
 
-                    in
-                        ( { model | menuState = menuState }, Cmd.none )
+                --                 _ ->
+                --                     OpenTopContact
+
+                --     in
+                --         ( { model | menuState = menuState }, Cmd.none )
 
 
-                (UI.State.OpenMenu state) ->
-                    ( { model | menuState = state }, Cmd.none )
+                -- (UI.State.OpenMenu state) ->
+                --     ( { model | menuState = state }, Cmd.none )
 
 
 
@@ -150,23 +174,38 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    let
-        page =
-            case model.route of
-                UndefinedRoute ->
-                    div [] [ text "undefined route" ]
+    model.navigationTree
+        |> Maybe.map
+            (\navigationTree ->
+                let
+                    (overlayState, overlayPage) =
+                        case model.route of
+                            UndefinedRoute ->
+                                (False, text "overlay: undefined route")
 
-                WagtailRoute page -> 
-                    UI.PageWrappers.renderPage page
+                            WagtailRoute page -> 
+                                case UI.PageWrappers.isNavigationPage navigationTree page of
+                                    True ->
+                                        (False, text "overlay: is nav page")
 
-                NotFoundRoute ->
-                    div [] [ text "not found" ]
+                                    False ->
+                                        (model.navigationState == UI.State.Closed, UI.PageWrappers.renderPage page)
 
-    in
-        UI.Wrapper.view model
-            [ UI.Components.Navigation.view model.menuState
-            , UI.PageWrappers.overlayWrapper page
-            ]
+                            NotFoundRoute ->
+                                (False, text "overlay: not found")
+
+                    overlay =
+                        UI.PageWrappers.overlayWrapper overlayPage overlayState
+
+                in
+                    UI.Wrapper.view model
+                        [ UI.Components.Navigation.view navigationTree model.navigationState
+                        , overlay
+                        , UI.PageWrappers.navigationPages model.navigationState navigationTree.items
+                        ]
+            )
+        |> Maybe.withDefault
+            ( UI.Wrapper.view model [] )
 
 
 subscriptions : Model -> Sub Msg

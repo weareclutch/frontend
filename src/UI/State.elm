@@ -1,20 +1,21 @@
-module UI.State exposing (MenuState(..), Msg(..), NavigationTree, NavigationItem, fetchNavigation)
+module UI.State exposing (NavigationState(..), Msg(..), NavigationTree, NavigationItem, fetchNavigation, addPageToNavigationTree)
 
-import Json.Decode as Decode
-import Wagtail exposing (siteUrl)
+import Json.Decode as D
+import Wagtail exposing (siteUrl, Page, getPageId)
 import Http
 
-type MenuState
+
+type NavigationState
     = Closed
-    | OpenTop
-    | OpenBottom
-    | OpenTopContact
-    | OpenBottomContact
+    | Open
+    | OpenContact
 
 
 type alias NavigationItem =
-    { title : String
+    { id : Int
+    , title : String
     , path : String
+    , page : Maybe Page
     }
 
 type alias NavigationTree =
@@ -24,10 +25,23 @@ type alias NavigationTree =
 
 type Msg
     = FetchNavigation (Result Http.Error NavigationTree)
-    | OpenMenu MenuState
-    | ToggleMenu
-    | OpenContact
+    | ChangeNavigation NavigationState
 
+
+
+addPageToNavigationTree : NavigationTree -> Page -> NavigationTree
+addPageToNavigationTree { title, items } page =
+    { title = title
+    , items =
+        items
+            |> List.map
+                (\item ->
+                    if item.id == getPageId page then
+                        { item | page = Just page }
+                    else
+                        item
+                )
+    }
 
 
 fetchNavigation : Cmd Msg
@@ -36,13 +50,15 @@ fetchNavigation =
         Http.get (siteUrl ++ "/api/navigation") decodeNavigation
 
 
-decodeNavigation : Decode.Decoder NavigationTree
+decodeNavigation : D.Decoder NavigationTree
 decodeNavigation =
-    Decode.map2 NavigationTree
-        (Decode.field "title" Decode.string)
-        (Decode.field "structure" <| Decode.list <|
-            Decode.map2 NavigationItem
-                (Decode.field "title" Decode.string)
-                (Decode.at ["page", "path"] Decode.string)
+    D.map2 NavigationTree
+        (D.field "title" D.string)
+        (D.field "structure" <| D.list <|
+            D.map4 NavigationItem
+                (D.at ["page", "id"] D.int)
+                (D.field "title" D.string)
+                (D.at ["page", "path"] D.string)
+                (D.succeed Nothing)
         )
 

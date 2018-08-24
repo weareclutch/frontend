@@ -25,6 +25,13 @@ type Page
     | CasePage CasePageContent
 
 
+getPageId : Page -> Int
+getPageId page =
+    case page of
+        HomePage { meta } -> meta.id
+        CasePage { meta } -> meta.id
+
+
 getWagtailPage : Navigation.Location -> Cmd Msg
 getWagtailPage location =
     Http.request
