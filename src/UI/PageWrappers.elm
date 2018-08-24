@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import UI.Pages.Case
 import UI.Pages.Home
-import Types exposing (Msg)
+import Types exposing (Msg, Route(..))
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree)
 
 
@@ -50,57 +50,91 @@ overlayWrapper child active =
         wrapper [] [ child ]
 
 
-navigationPages : NavigationState -> List (NavigationItem) -> Html Msg
-navigationPages navState navItems =
-    div [] <|
-        List.indexedMap (navigationPage navState) navItems
+
+
+navigationPages : NavigationState -> List (NavigationItem) -> Route -> Html Msg
+navigationPages navState navItems route =
+    div []
+        (
+            navItems
+                |> List.indexedMap (,)
+                |> List.foldr
+                    (\(index, item) acc ->
+                        List.head acc
+                            |> Maybe.map
+                                (\(_, lastItem, lastActive) ->
+                                    case route of
+                                        WagtailRoute page ->
+                                                if lastItem.id == getPageId(page) then
+                                                    (index, item, False) :: acc
+                                                else
+                                                    (index, item, lastActive) :: acc
+                                        _ ->
+                                            (index, item, lastActive) :: acc
+
+                                )
+                            |> Maybe.withDefault
+                                ((index, item, True) :: acc)
+                    )
+                    []
+                -- |> List.map (\(x, y, z) -> Debug.log ((toString x) ++ " " ++ (toString z)) (x, y, z))
+                |> List.map
+                    (\(index, item, active) ->
+                        navigationPage navState index item active
+                    )
+        )
 
 
 
-navigationPage: NavigationState -> Int -> NavigationItem -> Html Msg
-navigationPage navState index navItem =
+navigationPage: NavigationState -> Int -> NavigationItem -> Bool -> Html Msg
+navigationPage navState index navItem active =
     let
         transformStyle =
-            case navState of
-                Closed ->
-                    [ transforms [] ]
-
-                Open ->
+            case (active, navState) of
+                (False, Closed) ->
                     [ transforms
                         [ translate2
                             zero
-                            (px <| toFloat <| 140 * index + 300)
-                        , scale <| 0.1 * (toFloat index) + 0.94
+                            (px <| toFloat <| 80 * -index + 1100)
                         ]
+                    , opacity zero
+                    , visibility hidden
                     ]
 
-                OpenContact ->
+                (True, Closed) ->
+                    [ transforms []
+                    , opacity (int 1)
+                    ]
+
+                (True, Open) ->
                     [ transforms
                         [ translate2
                             zero
-                            (px <| toFloat <| 140 * index + 900)
-                        , scale <| 0.1 * (toFloat index) + 0.94
+                            (px <| toFloat <| 80 * -index + 300)
+                        , scale <| 0.06 * (toFloat -index) + 0.94
                         ]
+                    , opacity (int 1)
                     ]
 
-        extraStyles =
-            transformStyle
-                ++ [ property "-webkit-overflow-scrolling" "touch"
-                   , pseudoElement "-webkit-scrollbar"
-                        [ display none
+                (False, Open) ->
+                    [ transforms
+                        [ translate2
+                            zero
+                            (px <| toFloat <| 80 * -index + 1100)
+                        , scale <| 0.06 * (toFloat -index) + 0.94
                         ]
-                   , property "-ms-overflow-style" "none"
-                   , overflowX hidden
-                   ]
-                ++ (if navState == Closed then
-                        [ cursor default
-                        , overflowY scroll
+                    , opacity (int 1)
+                    ]
+
+                (_, OpenContact) ->
+                    [ transforms
+                        [ translate2
+                            zero
+                            (px <| toFloat <| 80 * -index + 1100)
+                        , scale <| 0.06 * (toFloat -index) + 0.94
                         ]
-                    else
-                        [ cursor pointer
-                        , overflowY hidden
-                        ]
-                    )
+                    , opacity (int 1)
+                    ]
 
         wrapper =
             styled div <|
@@ -110,15 +144,40 @@ navigationPage navState index navItem =
                 , position absolute
                 , top zero
                 , left zero
-                , zIndex (int <| 10 + index)
+                , zIndex (int <| 10 - index)
                 , property "transition" "all 0.28s ease-in-out"
+                , property "-webkit-overflow-scrolling" "touch"
+                , pseudoElement "-webkit-scrollbar"
+                    [ display none
+                    ]
+                , property "-ms-overflow-style" "none"
+                , overflowX hidden
                 ] 
-                    ++ extraStyles
+                  ++
+                    (if navState == Closed then
+                        [ cursor default
+                        , overflowY scroll
+                        ]
+                    else
+                        [ cursor pointer
+                        , overflowY hidden
+                        ]
+                    )
+                    ++
+                    transformStyle
     in
         wrapper []
             [ navItem.page
                 |> Maybe.map renderPage
-                |> Maybe.withDefault (text "not yet loaded")
+                |> Maybe.withDefault
+                    ( styled div
+                        [ height (pct 100)
+                        , width (pct 100)
+                        , backgroundColor (hex "fff")
+                        ]
+                        []
+                        [ text "" ]
+                    )
             ]
             
 

@@ -3,11 +3,9 @@ module Main exposing (..)
 import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import UI.Wrapper
-import UI.Components.Navigation
--- import UI.Page
-import UI.PageWrappers
 import Wagtail exposing (getWagtailPage)
 import UI.State exposing (fetchNavigation)
+import UI.PageWrappers
 
 import Types exposing (..)
 
@@ -97,7 +95,7 @@ update msg model =
                         ( { model
                             | route = route
                             , navigationTree = navigationTree
-                            , navigationState = UI.State.Closed
+                            -- , navigationState = UI.State.Closed
                             }
                         , Cmd.none
                         )
@@ -172,41 +170,6 @@ update msg model =
         -- _ -> (model, Cmd.none)
 
 
-view : Model -> Html Msg
-view model =
-    model.navigationTree
-        |> Maybe.map
-            (\navigationTree ->
-                let
-                    (overlayState, overlayPage) =
-                        case model.route of
-                            UndefinedRoute ->
-                                (False, text "overlay: undefined route")
-
-                            WagtailRoute page -> 
-                                case UI.PageWrappers.isNavigationPage navigationTree page of
-                                    True ->
-                                        (False, text "overlay: is nav page")
-
-                                    False ->
-                                        (model.navigationState == UI.State.Closed, UI.PageWrappers.renderPage page)
-
-                            NotFoundRoute ->
-                                (False, text "overlay: not found")
-
-                    overlay =
-                        UI.PageWrappers.overlayWrapper overlayPage overlayState
-
-                in
-                    UI.Wrapper.view model
-                        [ UI.Components.Navigation.view navigationTree model.navigationState
-                        , overlay
-                        , UI.PageWrappers.navigationPages model.navigationState navigationTree.items
-                        ]
-            )
-        |> Maybe.withDefault
-            ( UI.Wrapper.view model [] )
-
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -223,7 +186,7 @@ main : Program Never Model Msg
 main =
     Navigation.program OnLocationChange
         { init = init
-        , view = view >> toUnstyled
+        , view = UI.Wrapper.view >> toUnstyled
         , update = update
         , subscriptions = subscriptions
         }

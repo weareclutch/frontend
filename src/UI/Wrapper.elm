@@ -5,6 +5,9 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
 import Style exposing (..)
+import UI.State
+import UI.Components.Navigation
+import UI.PageWrappers
 
 
 globalStyle : Html msg
@@ -55,34 +58,59 @@ globalStyle =
         ]
 
 
-view : Model -> List (Html Msg) -> Html Msg
-view model children =
+wrapper : Bool -> List (Html Msg) -> Html Msg
+wrapper active children =
     let
-        -- maybePage =
-        --     model.activePage
-        --         |> Maybe.andThen
-        --             (\activePage ->
-        --                 Dict.get activePage model.pages
-        --             )
-
-        -- extraStyle =
-        --     if maybePage /= Nothing || model.activeCase /= Nothing then
-        --         [ opacity (int 1)
-        --         ]
-        --     else
-        --         [ opacity zero
-        --         ]
-
-        wrapper =
+        wrapperDiv =
             styled div <|
                 [ backgroundColor (hex "001AE0")
                 , transition "all" 0.4 0 "ease-in-out"
                 , width (pct 100)
                 , height (pct 100)
+                , if active then
+                    opacity (int 1)
+                else
+                    opacity zero
                 ]
 
     in
         globalStyle
             :: children
-            |> wrapper []
+            |> wrapperDiv []
+
+
+view : Model -> Html Msg
+view model =
+    model.navigationTree
+        |> Maybe.map
+            (\navigationTree ->
+                let
+                    (overlayState, overlayPage) =
+                        case model.route of
+                            UndefinedRoute ->
+                                (False, text "overlay: undefined route")
+
+                            WagtailRoute page -> 
+                                case UI.PageWrappers.isNavigationPage navigationTree page of
+                                    True ->
+                                        (False, text "overlay: is nav page")
+
+                                    False ->
+                                        (model.navigationState == UI.State.Closed, UI.PageWrappers.renderPage page)
+
+                            NotFoundRoute ->
+                                (False, text "overlay: not found")
+
+                    overlay =
+                        UI.PageWrappers.overlayWrapper overlayPage overlayState
+
+                in
+                    wrapper (model.route /= UndefinedRoute)
+                        [ UI.Components.Navigation.view navigationTree model.navigationState
+                        , overlay
+                        , UI.PageWrappers.navigationPages model.navigationState navigationTree.items model.route
+                        ]
+            )
+        |> Maybe.withDefault
+            ( wrapper False [] )
 
