@@ -230,7 +230,11 @@ view navigationTree navigationState route =
                                 (NavigationMsg <| ChangeNavigation Closed)
                             ]
                     )
-                    [ cross "fff"
+                    [ cross
+                        (case navigationState of
+                            Closed -> svgColor
+                            _ -> "fff"
+                        )
                     ]
                 ]
             , menuWrapper navigationState [] <|
