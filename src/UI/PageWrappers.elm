@@ -77,7 +77,6 @@ navigationPages navState navItems route =
                                 ((index, item, True) :: acc)
                     )
                     []
-                -- |> List.map (\(x, y, z) -> Debug.log ((toString x) ++ " " ++ (toString z)) (x, y, z))
                 |> List.map
                     (\(index, item, active) ->
                         navigationPage navState index item active
@@ -111,7 +110,7 @@ navigationPage navState index navItem active =
     let
         zoomStart = -100
         zoomStep = -50
-        topStart = 20
+        topStart = 26
         topStep = 6
         rotateStart = -5
         rotateStep = 1
@@ -150,7 +149,7 @@ navigationPage navState index navItem active =
 
         wrapper =
             styled div <|
-                [ boxShadow4 zero (px 10) (px 25) (rgba 0 0 0 0.1)
+                [ boxShadow4 zero (px 0) (px 50) (rgba 0 0 0 0.2)
                 , height (vh 100)
                 , width (vw 100)
                 , position absolute

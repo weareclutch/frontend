@@ -7,6 +7,7 @@ import Css.Foreign exposing (global, selector)
 import Style exposing (..)
 import UI.State
 import UI.Components.Navigation
+import UI.Components.Contact
 import UI.PageWrappers
 
 
@@ -26,6 +27,9 @@ globalStyle =
             ]
         , selector "*, *:before, *:after"
             [ boxSizing borderBox
+            ]
+        , selector "svg path"
+            [ transition "all" 0.16 0 "linear"
             ]
         , selector "h1"
             [ fontSize (px 120)
@@ -108,6 +112,7 @@ view model =
                         [ UI.Components.Navigation.view navigationTree model.navigationState model.route
                         , overlay
                         , UI.PageWrappers.navigationPages model.navigationState navigationTree.items model.route
+                        , UI.Components.Contact.view
                         ]
             )
         |> Maybe.withDefault

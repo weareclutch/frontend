@@ -139,10 +139,10 @@ view navigationTree navigationState route =
             )
 
         menuItem =
-            (\active ->
+            (\active hoverActive ->
                 styled li
                     [ display inlineBlock
-                    , color (hex "fff")
+                    , color <| if active then hex "00FFB0" else hex "fff"
                     , margin2 zero (px 30)
                     , fontFamilies [ "Qanelas ExtraBold" ]
                     , fontWeight (int 400)
@@ -150,21 +150,15 @@ view navigationTree navigationState route =
                     , fontSize (px 20)
                     , cursor pointer
                     , position relative
-                    , hover
-                        [ after
-                            [ width (pct 100)
-                            ]
-                        ]
                     , after
                         [ property "content" "''"
-                        , backgroundColor (hex "fff")
+                        , backgroundColor <| if active then hex "00FFB0" else hex "fff"
                         , transition "width" 0.1 0 "ease-in-out"
-                        , width <|
-                            if active then
-                                (pct 100)
-                            else
-                                (pct 0)
+                        , opacity <| if hoverActive then (int 1) else (int 0)
+                        , borderRadius (pct 100)
+                        , width (pct 100)
                         , height (px 3)
+                        , maxWidth (px 3)
                         , display block
                         , position relative
                         , bottom (px -4)
@@ -197,11 +191,12 @@ view navigationTree navigationState route =
                 [ burgerWrapper
                     [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
                     ]
-                    [ burger ]
+                    [ burger "fff"
+                    ]
                 , crossWrapper
                     [ onClick (NavigationMsg <| ChangeNavigation Closed)
                     ]
-                    [ cross
+                    [ cross "fff"
                     ]
                 ]
             , menuWrapper navigationState [] <|
@@ -209,7 +204,12 @@ view navigationTree navigationState route =
                     |> List.indexedMap
                         (\index item ->
                             menuItem
-                                False
+                                (activeIndex == index)
+                                (
+                                    case navigationState of
+                                        Open i -> i == index
+                                        _ -> False
+                                )
                                 ( [ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
                                   ]
                                     ++
@@ -221,10 +221,19 @@ view navigationTree navigationState route =
                     ++
                     [ menuItem
                       False
-                      [ onClick (NavigationMsg <| ChangeNavigation OpenContact) ]
+                      (navigationState == OpenContact)
+                      (
+                          [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
+                          , onClick (NavigationMsg <| ChangeNavigation OpenContact) 
+                          ]
+                      )
                       [ text "Contact" ]
                     ]
             , logoWrapper (addLink "/")
-                [ logo
+                [ logo <|
+                    (case navigationState of
+                        Open _ -> "00FFB0"
+                        _ -> "fff"
+                    )
                 ]
             ]
