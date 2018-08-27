@@ -11,9 +11,28 @@ import UI.State exposing (..)
 import Types exposing (..)
 import Wagtail exposing (..)
 
+
+
+type ToggleState
+    = CloseOverlay
+    | OpenMenu
+    | CloseMenu
+
+
+
 view : NavigationTree -> NavigationState -> Route -> Html Types.Msg
 view navigationTree navigationState route =
     let
+        toggleState =
+            case (navigationState, route) of
+                (Closed, WagtailRoute page) ->
+                    if (UI.State.isNavigationPage navigationTree page) then
+                        OpenMenu
+                    else
+                        CloseOverlay
+
+                _ -> CloseMenu
+
         wrapper =
             styled div
                 [ position absolute
@@ -55,7 +74,7 @@ view navigationTree navigationState route =
                 , right (px -14)
                 ]
                   ++
-                    if navigationState == Closed then
+                    if toggleState == OpenMenu then
                         [ opacity (int 1)
                         , zIndex (int 10)
                         ]
@@ -73,7 +92,7 @@ view navigationTree navigationState route =
                 , right (px -20)
                 ]
                   ++
-                    if navigationState /= Closed then
+                    if toggleState /= OpenMenu then
                         [ opacity (int 1)
                         , zIndex (int 10)
                         ]
@@ -202,8 +221,15 @@ view navigationTree navigationState route =
                     [ burger svgColor
                     ]
                 , crossWrapper
-                    [ onClick (NavigationMsg <| ChangeNavigation Closed)
-                    ]
+                    (case toggleState of
+                        CloseOverlay ->
+                            -- Perhaps we should be looking here at what page the user came from.
+                            addLink "/"
+                        _ ->
+                            [ onClick
+                                (NavigationMsg <| ChangeNavigation Closed)
+                            ]
+                    )
                     [ cross "fff"
                     ]
                 ]
