@@ -33,6 +33,13 @@ getPageId page =
         CasePage { meta } -> meta.id
 
 
+getPageTheme : Page -> Theme
+getPageTheme page =
+    case page of
+        HomePage { theme } -> theme
+        CasePage { theme } -> theme
+
+
 getWagtailPage : Navigation.Location -> Cmd Msg
 getWagtailPage location =
     Http.request

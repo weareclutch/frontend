@@ -184,6 +184,14 @@ view navigationTree navigationState route =
                 _ ->
                     0
 
+        svgColor =
+            (case route of
+                WagtailRoute page -> Just <| getPageTheme page
+                _ -> Nothing
+            )
+            |> Maybe.map (\theme -> theme.textColor)
+            |> Maybe.withDefault "fff"
+
 
     in
         wrapper []
@@ -191,7 +199,7 @@ view navigationTree navigationState route =
                 [ burgerWrapper
                     [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
                     ]
-                    [ burger "fff"
+                    [ burger svgColor
                     ]
                 , crossWrapper
                     [ onClick (NavigationMsg <| ChangeNavigation Closed)
@@ -232,8 +240,8 @@ view navigationTree navigationState route =
             , logoWrapper (addLink "/")
                 [ logo <|
                     (case navigationState of
-                        Open _ -> "00FFB0"
-                        _ -> "fff"
+                        Closed -> svgColor
+                        _ -> "00ffb0"
                     )
                 ]
             ]

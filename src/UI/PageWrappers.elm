@@ -156,7 +156,7 @@ navigationPage navState index navItem active =
                 , top zero
                 , left zero
                 , zIndex (int <| 10 - index)
-                , property "transition" "all 0.26s ease-in-out"
+                , property "transition" "all 0.5s cubic-bezier(0.4, 0.2, 0.2, 1.05)"
                 , property "-webkit-overflow-scrolling" "touch"
                 , pseudoElement "-webkit-scrollbar"
                     [ display none
@@ -210,7 +210,6 @@ navigationPage navState index navItem active =
                         ]
                         []
                         [ text "" ]
-                        -- [ h2 [] [ text navItem.title ] ]
                     )
             ]
             
