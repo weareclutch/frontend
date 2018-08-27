@@ -9,9 +9,10 @@ import UI.Common exposing (addLink)
 import Style exposing (..)
 import UI.State exposing (..)
 import Types exposing (..)
+import Wagtail exposing (..)
 
-view : NavigationTree -> NavigationState -> Html Types.Msg
-view navigationTree navigationState =
+view : NavigationTree -> NavigationState -> Route -> Html Types.Msg
+view navigationTree navigationState route =
     let
         wrapper =
             styled div
@@ -48,9 +49,10 @@ view navigationTree navigationState =
         burgerWrapper =
             styled div <|
                 [ position absolute
-                , top (px 12)
-                , left (px 6)
                 , transition "opacity" 0.2 0 "linear"
+                , padding (px 20)
+                , top (px -8)
+                , right (px -14)
                 ]
                   ++
                     if navigationState == Closed then
@@ -58,7 +60,7 @@ view navigationTree navigationState =
                         , zIndex (int 10)
                         ]
                     else
-                        [ opacity (int 0)
+                        [ opacity zero
                         , zIndex (int 1)
                         ]
 
@@ -66,6 +68,9 @@ view navigationTree navigationState =
             styled div <|
                 [ transition "opacity" 0.2 0 "linear"
                 , position relative
+                , padding (px 20)
+                , top (px -20)
+                , right (px -20)
                 ]
                   ++
                     if navigationState /= Closed then
@@ -73,7 +78,7 @@ view navigationTree navigationState =
                         , zIndex (int 10)
                         ]
                     else
-                        [ opacity (int 0)
+                        [ opacity zero
                         , zIndex (int 1)
                         ]
 
@@ -105,10 +110,12 @@ view navigationTree navigationState =
                         case navigationState of
                             Closed ->
                                 [ opacity zero
+                                , visibility hidden
                                 ]
 
                             _ ->
                                 [ opacity (int 1)
+                                , visibility visible
                                 ]
                 in
                     styled ul <|
@@ -166,19 +173,29 @@ view navigationTree navigationState =
                     ]
             )
 
-        -- toggleAction =
-        --     []
-            -- [ onClick (NavigationMsg UI.State.ToggleMenu) ]
-            -- if model.activeOverlay == Nothing then
-            -- else
-            --     addLink "/"
+
+        activeIndex =
+            case route of
+                WagtailRoute page ->
+                    navigationTree.items
+                        |> List.indexedMap (,)
+                        |> List.foldl
+                            (\(index, item) acc ->
+                                if item.id == getPageId(page) then
+                                    index
+                                else
+                                    acc
+                            )
+                            0
+                _ ->
+                    0
 
 
     in
         wrapper []
             [ toggleWrapper []
                 [ burgerWrapper
-                    [ onClick (NavigationMsg <| ChangeNavigation Open)
+                    [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
                     ]
                     [ burger ]
                 , crossWrapper
@@ -189,11 +206,15 @@ view navigationTree navigationState =
                 ]
             , menuWrapper navigationState [] <|
                 (navigationTree.items
-                    |> List.map
-                        (\item ->
+                    |> List.indexedMap
+                        (\index item ->
                             menuItem
                                 False
-                                (addLink item.path)
+                                ( [ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
+                                  ]
+                                    ++
+                                    (addLink item.path)
+                                )
                                 [ text item.title ]
                         )
                   )

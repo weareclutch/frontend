@@ -2,10 +2,12 @@ module UI.PageWrappers exposing (..)
 
 import Wagtail exposing (Page, getPageId)
 import Html.Styled exposing (..)
+import Html.Styled.Events exposing (..)
 import Css exposing (..)
 import UI.Pages.Case
 import UI.Pages.Home
-import Types exposing (Msg, Route(..))
+import UI.Common exposing (addLink)
+import Types exposing (Msg(..), Route(..))
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree)
 
 
@@ -18,15 +20,6 @@ renderPage page =
         Wagtail.CasePage content ->
             UI.Pages.Case.view content
 
-
-
-isNavigationPage : NavigationTree -> Page -> Bool
-isNavigationPage nav page =
-    nav.items
-        |> List.any
-            (\item ->
-                item.id == (getPageId page)
-            )
 
 
 
@@ -62,15 +55,22 @@ navigationPages navState navItems route =
                     (\(index, item) acc ->
                         List.head acc
                             |> Maybe.map
-                                (\(_, lastItem, lastActive) ->
-                                    case route of
-                                        WagtailRoute page ->
-                                                if lastItem.id == getPageId(page) then
+                                (\(lastIndex, lastItem, lastActive) ->
+                                    case navState of
+                                        Open openIndex ->
+                                                if lastIndex == openIndex then
                                                     (index, item, False) :: acc
                                                 else
                                                     (index, item, lastActive) :: acc
                                         _ ->
-                                            (index, item, lastActive) :: acc
+                                            case route of
+                                                WagtailRoute page ->
+                                                    if lastItem.id == getPageId(page) then
+                                                        (index, item, False) :: acc
+                                                    else
+                                                        (index, item, lastActive) :: acc
+                                                _ ->
+                                                    (index, item, lastActive) :: acc
 
                                 )
                             |> Maybe.withDefault
@@ -85,56 +85,68 @@ navigationPages navState navItems route =
         )
 
 
+createTransform : Int -> Int -> Int -> List Style
+createTransform x z r =
+    let
+        value =
+            "perspective(1000px) translate3d(0, "
+              ++ (toString x)
+              ++ "vh, "
+              ++ (toString z)
+              ++ "px) "
+              ++ "rotateX("
+              ++ (toString r)
+              ++ "deg)"
+
+    in
+        [ property "-webkit-transform" value
+        , property "-moz-transform" value
+        , property "-ms-transform" value
+        , property "transform" value
+        ]
+
 
 navigationPage: NavigationState -> Int -> NavigationItem -> Bool -> Html Msg
 navigationPage navState index navItem active =
     let
+        zoomStart = -100
+        zoomStep = -50
+        topStart = 20
+        topStep = 6
+        rotateStart = -5
+        rotateStep = 1
+
         transformStyle =
             case (active, navState) of
-                (False, Closed) ->
-                    [ transforms
-                        [ translate2
-                            zero
-                            (px <| toFloat <| 80 * -index + 1100)
-                        ]
-                    , opacity zero
-                    , visibility hidden
-                    ]
-
                 (True, Closed) ->
-                    [ transforms []
-                    , opacity (int 1)
-                    ]
+                    createTransform
+                        0
+                        0
+                        0
 
-                (True, Open) ->
-                    [ transforms
-                        [ translate2
-                            zero
-                            (px <| toFloat <| 80 * -index + 300)
-                        , scale <| 0.06 * (toFloat -index) + 0.94
-                        ]
-                    , opacity (int 1)
-                    ]
+                (True, Open _) ->
+                    createTransform
+                        (topStart + -index * topStep)
+                        (zoomStart + index * zoomStep)
+                        0
 
-                (False, Open) ->
-                    [ transforms
-                        [ translate2
-                            zero
-                            (px <| toFloat <| 80 * -index + 1100)
-                        , scale <| 0.06 * (toFloat -index) + 0.94
-                        ]
-                    , opacity (int 1)
-                    ]
+                (False, Closed) ->
+                    createTransform
+                        (topStart + 50 + -index * topStep)
+                        (zoomStart + 340 + index * (Basics.round <| zoomStep * 0.5))
+                        (rotateStart + index * rotateStep)
+
+                (False, Open _) ->
+                    createTransform
+                        (topStart + 70 + -index * topStep)
+                        (zoomStart + index * (Basics.round <| zoomStep * 0.5))
+                        (rotateStart + index * rotateStep)
 
                 (_, OpenContact) ->
-                    [ transforms
-                        [ translate2
-                            zero
-                            (px <| toFloat <| 80 * -index + 1100)
-                        , scale <| 0.06 * (toFloat -index) + 0.94
-                        ]
-                    , opacity (int 1)
-                    ]
+                    createTransform
+                        (topStart + 70 + -index * topStep)
+                        (zoomStart + index * (Basics.round <| zoomStep * 0.5))
+                        (rotateStart + index * rotateStep)
 
         wrapper =
             styled div <|
@@ -145,7 +157,7 @@ navigationPage navState index navItem active =
                 , top zero
                 , left zero
                 , zIndex (int <| 10 - index)
-                , property "transition" "all 0.28s ease-in-out"
+                , property "transition" "all 0.26s ease-in-out"
                 , property "-webkit-overflow-scrolling" "touch"
                 , pseudoElement "-webkit-scrollbar"
                     [ display none
@@ -153,20 +165,41 @@ navigationPage navState index navItem active =
                 , property "-ms-overflow-style" "none"
                 , overflowX hidden
                 ] 
-                  ++
-                    (if navState == Closed then
-                        [ cursor default
-                        , overflowY scroll
-                        ]
-                    else
-                        [ cursor pointer
-                        , overflowY hidden
-                        ]
-                    )
                     ++
-                    transformStyle
+                        (if navState == Closed then
+                            [ cursor default
+                            , overflowY scroll
+                            ]
+                        else
+                            [ cursor pointer
+                            , overflowY hidden
+                            ]
+                        )
+                    ++
+                        (if (not active && navState == Closed) then
+                            [ visibility hidden
+                            , opacity zero
+                            ]
+                        else
+                            [ visibility visible
+                            , opacity (int 1)
+                            ]
+                        )
+                    ++
+                        transformStyle
+
+        attributes =
+            if navState /= Closed then
+                ( [ onMouseOver (NavigationMsg <| UI.State.ChangeNavigation <| Open index)
+                  ]
+                    ++
+                    (addLink navItem.path)
+                )
+            else
+                []
+
     in
-        wrapper []
+        wrapper attributes
             [ navItem.page
                 |> Maybe.map renderPage
                 |> Maybe.withDefault
@@ -174,9 +207,11 @@ navigationPage navState index navItem active =
                         [ height (pct 100)
                         , width (pct 100)
                         , backgroundColor (hex "fff")
+                        , padding (px 80)
                         ]
                         []
                         [ text "" ]
+                        -- [ h2 [] [ text navItem.title ] ]
                     )
             ]
             

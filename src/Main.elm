@@ -3,48 +3,18 @@ module Main exposing (..)
 import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import UI.Wrapper
-import Wagtail exposing (getWagtailPage)
+import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 import UI.State exposing (fetchNavigation)
-import UI.PageWrappers
 
 import Types exposing (..)
-
--- getPageCommand : Model -> Page -> Cmd Msg
--- getPageCommand model page =
---     case page of
---         Home content ->
---             if (Dict.get content.pageType model.pages == Nothing) then
---                 content.animation
---                     |> Maybe.map
---                         (Regex.replace
---                             Regex.All
---                             (Regex.regex "http://localhost")
---                             (\_ -> siteUrl)
---                         )
---                     |> Ports.showHomeIntro
---             else
---                 Cmd.none
--- 
---         _ ->
---             Cmd.none
 
 
 
 initModel : Model
 initModel =
     { route = UndefinedRoute
-    -- , pages = Dict.empty
-    -- , activePage = Nothing
-    -- , cases = Dict.empty
-    -- , activeCase = Nothing
-    -- , activeOverlay = Nothing
-    -- , activeService = Nothing
-    -- , casePosition = ( 0, 0 )
     , navigationState = UI.State.Closed
     , navigationTree = Nothing
-    -- , pageScrollPositions = Dict.empty
-    -- , parallaxPositions = Dict.empty
-    -- , windowDimensions = ( 0, 0 )
     }
 
 
@@ -76,29 +46,29 @@ update msg model =
 
         WagtailMsg msg ->
             case msg of
-                Wagtail.LoadPage (Ok page) ->
-                    let
-                        navigationTree =
+                Wagtail.PreloadPage (Ok page) ->
+                    ( { model
+                        | navigationTree =
                             model.navigationTree
-                                |> Maybe.andThen
-                                    (\navigationTree ->
-                                        case UI.PageWrappers.isNavigationPage navigationTree page of
-                                            True ->
-                                                Just <| UI.State.addPageToNavigationTree navigationTree page
-                                            _ ->
-                                                Just navigationTree
-                                    )
+                            |> Maybe.map (UI.State.addPageToNavigationTree page)
+                      }
+                    , Cmd.none
+                    )
 
-                        route =
-                            WagtailRoute page
-                    in
-                        ( { model
-                            | route = route
-                            , navigationTree = navigationTree
-                            -- , navigationState = UI.State.Closed
-                            }
-                        , Cmd.none
-                        )
+                Wagtail.PreloadPage (Err error) ->
+                    Debug.log (toString error) (\x -> x)
+                    ({ model | route = NotFoundRoute }, Cmd.none)
+
+                Wagtail.LoadPage (Ok page) ->
+                    ( { model
+                        | route = WagtailRoute page
+                        , navigationTree =
+                            model.navigationTree
+                            |> Maybe.map (UI.State.addPageToNavigationTree page)
+                        , navigationState = UI.State.Closed
+                        }
+                    , Cmd.none
+                    )
 
                 Wagtail.LoadPage (Err error) ->
                     Debug.log (toString error) (\x -> x)
@@ -114,60 +84,30 @@ update msg model =
                     ({ model | navigationTree = Nothing }, Cmd.none)
 
                 UI.State.ChangeNavigation newState ->
-                    Debug.log "newState" ({ model | navigationState = newState }, Cmd.none)
+                    case newState of
+                        UI.State.Open index ->
+                            let
+                                command =
+                                    model.navigationTree
+                                        |> Maybe.andThen
+                                            (\navigationTree ->
+                                                navigationTree.items
+                                                |> List.drop index
+                                                |> List.head
+                                            )
+                                        |> Maybe.map
+                                            (\activeNavItem ->
+                                                preloadWagtailPage activeNavItem.path
+                                                  |> Cmd.map (\cmd -> WagtailMsg cmd)
+                                            )
 
-                --UI.State.ToggleMenu ->
-                --    let
-                --        menuState =
-                --            case model.menuState of
-                --                Closed ->
-                --                    OpenTop
+                            in
+                                ({ model | navigationState = newState }
+                                , Maybe.withDefault Cmd.none command
+                                )
 
-                --                OpenTop ->
-                --                    Closed
-
-                --                OpenBottom ->
-                --                    Closed
-
-                --                OpenTopContact ->
-                --                    Closed
-
-                --                OpenBottomContact ->
-                --                    Closed
-
-                --    in
-                --        ( { model | menuState = menuState }, Cmd.none )
-
-                -- UI.State.OpenContact ->
-                --     let
-                --         menuState =
-                --             case model.menuState of
-                --                 OpenTop ->
-                --                     OpenTopContact
-
-                --                 OpenBottom ->
-                --                     OpenBottomContact
-
-                --                 _ ->
-                --                     OpenTopContact
-
-                --     in
-                --         ( { model | menuState = menuState }, Cmd.none )
-
-
-                -- (UI.State.OpenMenu state) ->
-                --     ( { model | menuState = state }, Cmd.none )
-
-
-
-
-        -- OpenService service ->
-        --     ( { model | activeService = Just service }, Cmd.none )
-
-        -- CloseService ->
-        --     ( { model | activeService = Nothing }, Cmd.none )
-
-        -- _ -> (model, Cmd.none)
+                        _ ->
+                            ({ model | navigationState = newState }, Cmd.none)
 
 
 

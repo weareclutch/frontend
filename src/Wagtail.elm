@@ -18,6 +18,7 @@ apiUrl =
 
 type Msg
     = LoadPage (Result Http.Error Page)
+    | PreloadPage (Result Http.Error Page)
 
 
 type Page
@@ -47,6 +48,23 @@ getWagtailPage location =
         , withCredentials = False
         }
         |> Http.send LoadPage
+
+
+preloadWagtailPage : String -> Cmd Msg
+preloadWagtailPage path =
+    Http.request
+        { method = "GET"
+        , headers = [header "Accept" "application/json"]
+        , url = apiUrl ++ "/pages/find/?html_path=" ++ path
+        , body = Http.emptyBody
+        , expect = expectJson (
+            decodePageType
+                |> D.andThen getPageDecoder
+        )
+        , timeout = Nothing
+        , withCredentials = False
+        }
+        |> Http.send PreloadPage
 
 
 decodePageType : D.Decoder String

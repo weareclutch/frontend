@@ -20,7 +20,6 @@ globalStyle =
             , overflow hidden
             , height (vh 100)
             , width (vw 100)
-            , border3 (px 1) solid (hex "f00")
             ]
         , selector "html"
             [ boxSizing borderBox
@@ -91,7 +90,7 @@ view model =
                                 (False, text "overlay: undefined route")
 
                             WagtailRoute page -> 
-                                case UI.PageWrappers.isNavigationPage navigationTree page of
+                                case UI.State.isNavigationPage navigationTree page of
                                     True ->
                                         (False, text "overlay: is nav page")
 
@@ -106,7 +105,7 @@ view model =
 
                 in
                     wrapper (model.route /= UndefinedRoute)
-                        [ UI.Components.Navigation.view navigationTree model.navigationState
+                        [ UI.Components.Navigation.view navigationTree model.navigationState model.route
                         , overlay
                         , UI.PageWrappers.navigationPages model.navigationState navigationTree.items model.route
                         ]

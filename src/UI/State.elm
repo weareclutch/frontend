@@ -1,4 +1,4 @@
-module UI.State exposing (NavigationState(..), Msg(..), NavigationTree, NavigationItem, fetchNavigation, addPageToNavigationTree)
+module UI.State exposing (..)
 
 import Json.Decode as D
 import Wagtail exposing (siteUrl, Page, getPageId)
@@ -7,7 +7,7 @@ import Http
 
 type NavigationState
     = Closed
-    | Open
+    | Open Int
     | OpenContact
 
 
@@ -18,19 +18,21 @@ type alias NavigationItem =
     , page : Maybe Page
     }
 
+
 type alias NavigationTree =
     { title : String
     , items: List NavigationItem
     }
+
+
 
 type Msg
     = FetchNavigation (Result Http.Error NavigationTree)
     | ChangeNavigation NavigationState
 
 
-
-addPageToNavigationTree : NavigationTree -> Page -> NavigationTree
-addPageToNavigationTree { title, items } page =
+addPageToNavigationTree : Page -> NavigationTree -> NavigationTree
+addPageToNavigationTree page { title, items } =
     { title = title
     , items =
         items
@@ -42,6 +44,17 @@ addPageToNavigationTree { title, items } page =
                         item
                 )
     }
+
+
+isNavigationPage : NavigationTree -> Page -> Bool
+isNavigationPage nav page =
+    nav.items
+        |> List.any
+            (\item ->
+                item.id == (getPageId page)
+            )
+
+
 
 
 fetchNavigation : Cmd Msg
@@ -61,4 +74,5 @@ decodeNavigation =
                 (D.at ["page", "path"] D.string)
                 (D.succeed Nothing)
         )
+
 
