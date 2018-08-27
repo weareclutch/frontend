@@ -1,7 +1,7 @@
 module UI.State exposing (..)
 
 import Json.Decode as D
-import Wagtail exposing (siteUrl, Page, getPageId)
+import Wagtail exposing (siteUrl, Page, getPageId, Theme, decodeTheme)
 import Http
 
 
@@ -16,6 +16,7 @@ type alias NavigationItem =
     , title : String
     , path : String
     , page : Maybe Page
+    , theme : Theme
     }
 
 
@@ -23,7 +24,6 @@ type alias NavigationTree =
     { title : String
     , items: List NavigationItem
     }
-
 
 
 type Msg
@@ -68,11 +68,12 @@ decodeNavigation =
     D.map2 NavigationTree
         (D.field "title" D.string)
         (D.field "structure" <| D.list <|
-            D.map4 NavigationItem
+            D.map5 NavigationItem
                 (D.at ["page", "id"] D.int)
                 (D.field "title" D.string)
                 (D.at ["page", "path"] D.string)
                 (D.succeed Nothing)
+                (D.field "page" decodeTheme)
         )
 
 

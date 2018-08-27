@@ -205,7 +205,7 @@ navigationPage navState index navItem active =
                     ( styled div
                         [ height (pct 100)
                         , width (pct 100)
-                        , backgroundColor (hex "fff")
+                        , backgroundColor (hex navItem.theme.backgroundColor)
                         , padding (px 80)
                         ]
                         []

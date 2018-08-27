@@ -12,12 +12,10 @@ import Types exposing (..)
 import Wagtail exposing (..)
 
 
-
 type ToggleState
     = CloseOverlay
     | OpenMenu
     | CloseMenu
-
 
 
 view : NavigationTree -> NavigationState -> Route -> Html Types.Msg
