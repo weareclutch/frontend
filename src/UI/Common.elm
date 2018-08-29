@@ -42,16 +42,15 @@ link url children =
     a (addLink url) children
 
 
-image : Image -> Html msg
-image data =
+
+image : List Style -> Image ->  Html msg
+image styles data =
     let
         imageUrl =
             siteUrl ++ data.image
 
         el =
-            styled img
-                [ maxWidth (pct 100)
-                ]
+            styled img styles
     in
         case data.caption of
             Just caption ->
@@ -59,6 +58,7 @@ image data =
 
             Nothing ->
                 el [ src imageUrl ] []
+
 
 
 backgroundImg : Image -> Attribute msg

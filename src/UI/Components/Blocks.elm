@@ -51,10 +51,11 @@ richText string =
 
 quote : Quote -> Html msg
 quote data =
-    div []
-        [ text data.text
-        , text <| Maybe.withDefault "" data.name
-        ]
+    div [] []
+    -- div []
+    --     [ text data.text
+    --     , text <| Maybe.withDefault "" data.name
+    --     ]
 
 
 imageBlock : Theme -> Image -> Html msg
@@ -64,31 +65,41 @@ imageBlock theme imageData =
             styled div
                 [ backgroundColor (hex theme.backgroundColor)
                 , width (pct 100)
-                , height (vh 80)
+                , height auto
                 , position relative
-                , bpLargeUp
-                    [ height (px 1100)
-                    ]
+                , overflow hidden
                 ]
 
         innerWrapper =
             styled div
-                [ position absolute
-                , top (pct 50)
-                , left (pct 50)
-                , transform <|
-                    translate2
-                        (pct -50)
-                        (pct -50)
-                , maxWidth (px 660)
-                , margin auto
-                , padding2 zero (px 25)
+                [ margin auto
+                , width auto
+                , height auto
+                , textAlign center
+                , padding2 (px 40) zero
                 ]
     in
         wrapper []
             [ innerWrapper []
-                [ image imageData
+                [ image [] imageData
                 ]
+            ]
+
+backgroundBlock : Image -> Html msg
+backgroundBlock imageData =
+    let
+        wrapper =
+            styled div
+                [ margin auto
+                , width auto
+                , height auto
+                ]
+    in
+        wrapper []
+            [ image
+                [ width (pct 100)
+                ]
+                imageData
             ]
 
 
@@ -120,59 +131,6 @@ contentBlock theme text =
             ]
 
 
-contentTallBlock : Theme -> String -> Html msg
-contentTallBlock theme text =
-    let
-        wrapper =
-            styled div
-                [ backgroundColor (hex theme.backgroundColor)
-                , color (hex theme.textColor)
-                , position relative
-                , padding2 (px 80) zero
-                , bpLargeUp
-                    [ height (px 1100)
-                    , padding zero
-                    ]
-                ]
-
-        innerWrapper =
-            styled div
-                [ position relative
-                , maxWidth (px 660)
-                , margin auto
-                , padding2 zero (px 25)
-                , bpLargeUp
-                    [ position absolute
-                    , padding2 zero (px 25)
-                    , top (pct 50)
-                    , left (pct 50)
-                    , transform <|
-                        translate2
-                            (pct -50)
-                            (pct -50)
-                    ]
-                ]
-    in
-        wrapper []
-            [ innerWrapper []
-                [ richText text
-                ]
-            ]
-
-
-backgroundBlock : Image -> Html msg
-backgroundBlock image =
-    let
-        wrapper =
-            styled div
-                [ width (pct 100)
-                , height (vh 80)
-                , backgroundSize cover
-                , backgroundPosition center
-                ]
-    in
-        wrapper [ backgroundImg image ] []
-
 
 columns : Column -> Column -> Html msg
 columns col1 col2 =
@@ -180,13 +138,14 @@ columns col1 col2 =
         wrapper =
             styled div
                 [ position relative
+                , backgroundColor (hex col1.theme.backgroundColor)
                 ]
 
         colWrapper =
             styled div
                 [ bpLargeUp
                     [ width (pct 50)
-                    , height (px 1100)
+                    , height (vh 100)
                     ]
                 , nthChild "even"
                     [ bpLargeUp
@@ -204,12 +163,81 @@ columns col1 col2 =
                 ]
             ]
 
+
 column : Column -> Html msg
 column col =
-    col.image
-        |> Maybe.map (imageBlock col.theme)
-        |> Maybe.withDefault
-            (col.richText
-                |> Maybe.map (contentTallBlock col.theme)
+    let
+        wrapper =
+            styled div
+                [ backgroundColor (hex col.theme.backgroundColor)
+                , width (pct 100)
+                , height (vh 100)
+                , paddingTop (pct 100)
+                , position relative
+                , overflow hidden
+                ]
+
+        imageWrapper =
+            styled div
+                [ position absolute
+                , top zero
+                , left zero
+                , margin auto
+                , width (pct 100)
+                , height (pct 100)
+                , backgroundSize2 (pct 100) auto
+                , col.theme.backgroundPosition
+                    |> Maybe.map
+                        (\pos ->
+                            case pos of
+                                ("top", _) -> top
+                                ("bottom", _) -> bottom
+                                _ -> center
+                        )
+                    |> Maybe.withDefault center
+                    |> backgroundPosition
+                ]
+
+        textWrapper =
+            styled div
+                [ position relative
+                , maxWidth (px 820)
+                , margin auto
+                , padding2 (px 40) (px 25)
+                , width (pct 100)
+                , bpLargeUp <|
+                    [ position absolute
+                    , left zero
+                    , padding2 (px 80) (px 40)
+                    , zIndex (int 100)
+                    ]
+                      ++
+                        ( col.theme.backgroundPosition
+                            |> Maybe.map
+                                (\pos ->
+                                    case pos of
+                                        ("center", _) ->
+                                            [ top (pct 50)
+                                            , transform <| translateY (pct -50)
+                                            ]
+                                        ("bottom", _) ->
+                                            [ bottom zero
+                                            ]
+                                        _ -> []
+                                )
+                            |> Maybe.withDefault []
+                        )
+                ]
+    in
+        wrapper []
+            [ ( col.image
+                |> Maybe.map (\imageData -> imageWrapper [ backgroundImg imageData ] [])
                 |> Maybe.withDefault (text "")
-            )
+              )
+            , ( col.richText
+                |> Maybe.map (\html -> textWrapper [] [ richText html ])
+                |> Maybe.withDefault (text "")
+              )
+            ]
+
+

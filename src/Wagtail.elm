@@ -262,8 +262,16 @@ decodeTheme =
         )
         (D.maybe <|
             D.map2 (,)
-                (D.field "background_position_x" D.string)
-                (D.field "background_position_y" D.string)
+                (D.oneOf
+                    [ D.field "background_position_x" D.string
+                    , D.field "position" D.string
+                    ]
+                )
+                (D.oneOf
+                    [ D.field "background_position_y" D.string
+                    , D.succeed "center"
+                    ]
+                )
         )
 
 

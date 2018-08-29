@@ -42,7 +42,7 @@ header content =
         outerWrapper =
             styled div <|
                 [ backgroundColor (hex "292A32")
-                , height (pct 100)
+                , height (pct 150)
                 , width (pct 100)
                 ]
 
