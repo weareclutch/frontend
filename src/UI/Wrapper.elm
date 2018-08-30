@@ -5,10 +5,9 @@ import Html.Styled exposing (..)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
 import Style exposing (..)
-import UI.State
 import UI.Components.Navigation
 import UI.Components.Contact
-import UI.PageWrappers
+import UI.PageWrappers exposing (mobileView, desktopView, overlays, navigationPages, renderPage)
 
 
 globalStyle : Html msg
@@ -18,9 +17,11 @@ globalStyle =
             [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin zero
             , padding zero
-            , overflow hidden
             , height (vh 100)
             , width (vw 100)
+            , bpMediumUp
+                [ overflow hidden
+                ]
             ]
         , selector "html"
             [ boxSizing borderBox
@@ -88,31 +89,28 @@ view model =
         |> Maybe.map
             (\navigationTree ->
                 let
-                    (overlayState, overlayPage) =
+                    mobilePage =
                         case model.route of
                             UndefinedRoute ->
-                                (False, text "overlay: undefined route")
+                                text "page: undefined route"
 
                             WagtailRoute page -> 
-                                case UI.State.isNavigationPage navigationTree page of
-                                    True ->
-                                        (False, text "overlay: is nav page")
-
-                                    False ->
-                                        (model.navigationState == UI.State.Closed, UI.PageWrappers.renderPage page)
+                                renderPage page
 
                             NotFoundRoute ->
-                                (False, text "overlay: not found")
-
-                    -- overlay =
-                    --     UI.PageWrappers.overlayWrapper overlayPage overlayState
+                                text "page: not found"
 
                 in
                     wrapper (model.route /= UndefinedRoute)
                         [ UI.Components.Navigation.view navigationTree model.navigationState model.route
-                        , UI.PageWrappers.overlays model.overlayState
-                        , UI.PageWrappers.navigationPages model.navigationState navigationTree.items model.route
-                        , UI.Components.Contact.view
+                        , desktopView
+                            <| overlays model.overlayState
+                        , desktopView
+                            <| navigationPages model.navigationState navigationTree.items model.route
+                        , desktopView
+                            <| UI.Components.Contact.view
+                        , mobileView
+                            <| mobilePage
                         ]
             )
         |> Maybe.withDefault

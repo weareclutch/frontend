@@ -6,12 +6,12 @@ import Css exposing (..)
 
 small : Int
 small =
-    570
+    670
 
 
 medium : Int
 medium =
-    940
+    1040
 
 
 large : Int

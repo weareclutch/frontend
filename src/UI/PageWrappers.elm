@@ -4,6 +4,7 @@ import Wagtail exposing (Page, getPageId)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
 import Css exposing (..)
+import Style exposing (..)
 import UI.Pages.Case
 import UI.Pages.Home
 import UI.Common exposing (addLink)
@@ -20,6 +21,32 @@ renderPage page =
         Wagtail.CasePage content ->
             UI.Pages.Case.view content
 
+
+mobileView : Html a -> Html a
+mobileView child =
+    let
+        wrapper =
+            styled div
+                [ bpMediumUp
+                    [ display none
+                    ]
+                ]
+    in
+        wrapper [] [ child ]
+
+
+desktopView : Html a -> Html a
+desktopView child =
+    let
+        wrapper =
+            styled div
+                [ display none
+                , bpMediumUp
+                    [ display block
+                    ]
+                ]
+    in
+        wrapper [] [ child ]
 
 
 overlays : OverlayState -> Html Msg
