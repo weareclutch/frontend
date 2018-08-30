@@ -4,7 +4,6 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes
 import Css exposing (..)
 import Style exposing (..)
-import UI.State exposing (..)
 
 view : Html msg
 view =

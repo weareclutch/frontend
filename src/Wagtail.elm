@@ -334,5 +334,89 @@ decodeContentBlock =
         (D.field "rich_text" D.string)
 
 
+-- type alias CaseContent =
+--     { meta :
+--         { id : Int
+--         , title : String
+--         , caption : String
+--         , releaseDate : String
+--         , websiteUrl : String
+--         }
+--     , intro : Maybe String
+--     , body : Maybe (List Block)
+--     , image : Maybe Image
+--     , backgroundImage : Maybe Image
+--     , theme : Theme
+--     }
+-- 
+-- 
+-- 
+-- type CaseState
+--     = Cover
+--     | Preview
+--     | Open
+-- 
+-- 
+-- type alias HomeContent =
+--     { pageType : String
+--     , cases : List CaseContent
+--     , animation : Maybe String
+--     , cover :
+--         { text : String
+--         , link : String
+--         }
+--     , theme : Theme
+--     , easterEggImages : List (String, Image)
+--     }
+-- 
+-- 
+-- type alias ServicesContent =
+--     { pageType : String
+--     , caption : String
+--     , body :
+--         List
+--             { title : String
+--             , body : String
+--             , services :
+--                 List
+--                     { text : String
+--                     , service : Service
+--                     }
+--             }
+--     }
+-- 
+-- 
+-- type alias Service =
+--     { title : String
+--     , body : String
+--     , slides : List Image
+--     }
+-- 
+-- 
+-- type alias Person =
+--     { firstName : String
+--     , lastName : String
+--     , jobTitle : String
+--     , photo : Image
+--     , email : Maybe String
+--     , phone : Maybe String
+--     }
+-- 
+-- 
+-- type alias CultureContent =
+--     { pageType : String
+--     , people : List Person
+--     , cases : List CaseContent
+--     , nextEvent : Maybe Event
+--     , ideas : Maybe (List String)
+--     }
+-- 
+-- 
+-- type alias Event =
+--     { date : String
+--     , title : String
+--     , image : Maybe Image
+--     }
+-- 
 
 

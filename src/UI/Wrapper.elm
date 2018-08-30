@@ -104,13 +104,13 @@ view model =
                             NotFoundRoute ->
                                 (False, text "overlay: not found")
 
-                    overlay =
-                        UI.PageWrappers.overlayWrapper overlayPage overlayState
+                    -- overlay =
+                    --     UI.PageWrappers.overlayWrapper overlayPage overlayState
 
                 in
                     wrapper (model.route /= UndefinedRoute)
                         [ UI.Components.Navigation.view navigationTree model.navigationState model.route
-                        , overlay
+                        , UI.PageWrappers.overlays model.overlayState
                         , UI.PageWrappers.navigationPages model.navigationState navigationTree.items model.route
                         , UI.Components.Contact.view
                         ]

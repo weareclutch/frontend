@@ -6,15 +6,17 @@ import Style exposing (..)
 import Html.Styled.Attributes exposing (class, href)
 import UI.Common exposing (button, addLink, loremIpsum, backgroundImg)
 import UI.Components.Blocks
+import Types exposing (Msg)
 import Wagtail
 
 
-view : Wagtail.CasePageContent -> Html msg
+view : Wagtail.CasePageContent -> Html Msg
 view content =
     let
         wrapper =
             styled div <|
                 [ position relative
+                , backgroundColor (hex "000")
                 ]
     in
         wrapper []

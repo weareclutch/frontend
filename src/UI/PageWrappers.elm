@@ -8,7 +8,7 @@ import UI.Pages.Case
 import UI.Pages.Home
 import UI.Common exposing (addLink)
 import Types exposing (Msg(..), Route(..))
-import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree)
+import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayState, OverlayPart)
 
 
 renderPage : Page -> Html Msg
@@ -22,21 +22,62 @@ renderPage page =
 
 
 
+overlays : OverlayState -> Html Msg
+overlays state =
+    let
+        wrapper =
+            styled div
+                [ position fixed
+                , top (if state.active then (vh 0) else (vh 100))
+                , zIndex (int 78)
+                , left zero
+                , width (vw 100)
+                , height (vh 100)
+                , property "transition" <|
+                    if state.active then
+                        "top 0s ease-in-out"
+                    else
+                        "top 0.5s ease-in-out"
+                ]
+    in
+        wrapper []
+            [ state.parts
+                |> Tuple.first
+                |> overlayPart
+            , state.parts
+                |> Tuple.second
+                |> overlayPart
+            ]
+
+
+overlayPart : Maybe OverlayPart -> Html Msg
+overlayPart part =
+    part
+        |> Maybe.map
+            (\{ page, active } ->
+                overlayWrapper (renderPage page) active
+            )
+        |> Maybe.withDefault (overlayWrapper (text "") False)
+
 
 overlayWrapper : Html msg -> Bool -> Html msg
 overlayWrapper child active =
     let
         wrapper =
             styled div
-                [ zIndex (if active then int 80 else int 0)
-                , opacity (if active then int 1 else int 0)
-                , position fixed
-                , top zero
+                [ position absolute
+                , zIndex (if active then int 80 else int 79)
+                , top (if active then (vh 0) else (vh 100))
                 , left zero
                 , width (vw 100)
                 , height (vh 100)
-                , property "transition" "all 0.28s ease-in-out"
+                , property "transition" <|
+                    if active then
+                        "top 0.5s ease-in-out"
+                    else
+                        "top 0.5s 0.5s ease-in-out"
                 , overflowY scroll
+                , property "-webkit-overflow-scrolling" "touch"
                 ]
 
     in

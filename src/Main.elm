@@ -10,14 +10,6 @@ import Types exposing (..)
 
 
 
-initModel : Model
-initModel =
-    { route = UndefinedRoute
-    , navigationState = UI.State.Closed
-    , navigationTree = Nothing
-    }
-
-
 getAndDecodePage : Location -> Cmd Msg
 getAndDecodePage location =
     getWagtailPage location
@@ -62,6 +54,17 @@ update msg model =
                 Wagtail.LoadPage (Ok page) ->
                     ( { model
                         | route = WagtailRoute page
+                        , overlayState =
+                            model.navigationTree
+                            |> Maybe.map
+                                  (\navigationTree ->
+                                        if (UI.State.isNavigationPage navigationTree page) then
+                                            UI.State.closeOverlay model.overlayState
+                                        else
+                                            UI.State.addPageToOverlayState model.overlayState page
+                                  )
+                            |> Maybe.withDefault model.overlayState
+
                         , navigationTree =
                             model.navigationTree
                             |> Maybe.map (UI.State.addPageToNavigationTree page)
