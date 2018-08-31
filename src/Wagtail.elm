@@ -106,6 +106,7 @@ type alias WagtailMetaContent =
     }
 
 
+metaDecoder : D.Decoder WagtailMetaContent
 metaDecoder =
     D.map6 WagtailMetaContent
         (D.field "id" D.int)
@@ -127,6 +128,7 @@ type alias HomePageContent =
     }
 
 
+homePageDecoder : D.Decoder Page
 homePageDecoder =
     D.map HomePage <|
         D.map4 HomePageContent
@@ -150,6 +152,7 @@ type alias CasePageContent =
         { caption : String
         , releaseDate : String
         , websiteUrl : String
+        , relatedCase : CasePreview
         }
     , intro : Maybe String
     , body : Maybe (List Block)
@@ -158,16 +161,24 @@ type alias CasePageContent =
     }
 
 
+casePageDecoder : D.Decoder Page
 casePageDecoder =
     D.map CasePage <|
         D.map7 CasePageContent
             metaDecoder
             decodeTheme
-            (D.map3
-                (\x y z -> { caption = x, releaseDate = y, websiteUrl = z })
+            (D.map4
+                (\x y z j ->
+                    { caption = x
+                    , releaseDate = y
+                    , websiteUrl = z
+                    , relatedCase = j
+                    }
+                )
                 (D.field "caption" D.string)
                 (D.field "release_date" D.string)
                 (D.field "website_url" D.string)
+                (D.field "related_case" decodeCasePreview)
             )
             (D.maybe <| D.field "intro" D.string)
             (D.maybe <| D.field "body" decodeBlocks)

@@ -25,6 +25,7 @@ view content =
 
         (evenCases, oddCases) =
             content.cases
+                |> List.reverse
                 |> List.indexedMap (,)
                 |> List.partition (\(index, x) -> index % 2 == 0)
 

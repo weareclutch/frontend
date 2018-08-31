@@ -6,6 +6,7 @@ import Style exposing (..)
 import Html.Styled.Attributes exposing (class, href)
 import UI.Common exposing (button, addLink, loremIpsum, backgroundImg)
 import UI.Components.Blocks
+import UI.Components.CasePoster
 import Types exposing (Msg)
 import Wagtail
 
@@ -16,12 +17,34 @@ view content =
         wrapper =
             styled div <|
                 [ position relative
-                , backgroundColor (hex "000")
+                , backgroundColor (hex "292A32")
+                ]
+
+        nextCaseWrapper =
+            styled div
+                [ height (vh 100)
+                , position relative
+                , padding (px 40)
+                ]
+        nextCase =
+            styled div
+                [ maxWidth (px 660)
+                , margin auto
+                , bpMediumUp
+                    [ top (pct 50)
+                    , transform <| translateY (pct -50)
+                    , position relative
+                    ]
                 ]
     in
         wrapper []
             [ header content
             , body content
+            , nextCaseWrapper []
+                [ nextCase []
+                    [ UI.Components.CasePoster.view content.info.relatedCase
+                    ]
+                ]
             ]
 
 

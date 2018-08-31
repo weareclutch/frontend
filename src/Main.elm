@@ -5,9 +5,8 @@ import Html.Styled exposing (..)
 import UI.Wrapper
 import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 import UI.State exposing (fetchNavigation)
-
+import Ports
 import Types exposing (..)
-
 
 
 getAndDecodePage : Location -> Cmd Msg
@@ -70,7 +69,7 @@ update msg model =
                             |> Maybe.map (UI.State.addPageToNavigationTree page)
                         , navigationState = UI.State.Closed
                         }
-                    , Cmd.none
+                    , Ports.resetScrollPosition ()
                     )
 
                 Wagtail.LoadPage (Err error) ->

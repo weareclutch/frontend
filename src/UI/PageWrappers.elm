@@ -3,6 +3,7 @@ module UI.PageWrappers exposing (..)
 import Wagtail exposing (Page, getPageId)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
+import Html.Styled.Attributes
 import Css exposing (..)
 import Style exposing (..)
 import UI.Pages.Case
@@ -108,7 +109,12 @@ overlayWrapper child active =
                 ]
 
     in
-        wrapper [] [ child ]
+        wrapper
+            [ Html.Styled.Attributes.attribute "data-active" (toString active)
+            , Html.Styled.Attributes.class "overlay"
+            ]
+            [ child
+            ]
 
 
 

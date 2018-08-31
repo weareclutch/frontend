@@ -205,6 +205,7 @@ column col =
                 , margin auto
                 , padding2 (px 40) (px 25)
                 , width (pct 100)
+                , color (hex col.theme.textColor)
                 , bpLargeUp <|
                     [ position absolute
                     , left zero
