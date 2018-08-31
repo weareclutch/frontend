@@ -175,7 +175,16 @@ column col =
                 , paddingTop (pct 100)
                 , position relative
                 , overflow hidden
+                , backgroundSize cover
+                , backgroundPosition center
                 ]
+
+        attributes =
+            ( col.backgroundImage
+                |> Maybe.map
+                    (\imageData -> [ backgroundImg imageData ])
+                |> Maybe.withDefault []
+            )
 
         imageWrapper =
             styled div
@@ -230,7 +239,7 @@ column col =
                         )
                 ]
     in
-        wrapper []
+        wrapper attributes
             [ ( col.image
                 |> Maybe.map (\imageData -> imageWrapper [ backgroundImg imageData ] [])
                 |> Maybe.withDefault (text "")

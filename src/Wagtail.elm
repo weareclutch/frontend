@@ -236,6 +236,7 @@ decodeQuote =
 type alias Column =
     { theme : Theme
     , image : Maybe Image
+    , backgroundImage : Maybe Image
     , richText : Maybe String
     }
 
@@ -249,9 +250,10 @@ decodeColumns =
 
 decodeColumn : D.Decoder Column
 decodeColumn =
-    D.map3 Column
+    D.map4 Column
         decodeTheme
         (D.maybe <| D.field "image" decodeImage)
+        (D.maybe <| D.field "background_image" decodeImage)
         (D.maybe <| D.field "rich_text" D.string)
 
 
