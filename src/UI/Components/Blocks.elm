@@ -122,6 +122,11 @@ contentBlock theme text =
                 [ margin auto
                 , maxWidth (px 660)
                 , padding2 zero (px 25)
+                , fontSize (px 20)
+                , lineHeight (px 34)
+                , bpMediumUp
+                    [ fontSize (px 22)
+                    ]
                 ]
     in
         wrapper []
@@ -171,12 +176,13 @@ column col =
             styled div
                 [ backgroundColor (hex col.theme.backgroundColor)
                 , width (pct 100)
-                , height (vh 100)
-                , paddingTop (pct 100)
                 , position relative
                 , overflow hidden
                 , backgroundSize cover
                 , backgroundPosition center
+                , bpLargeUp
+                    [ height (vh 100)
+                    ]
                 ]
 
         attributes =
@@ -188,13 +194,18 @@ column col =
 
         imageWrapper =
             styled div
-                [ position absolute
-                , top zero
-                , left zero
+                [ position relative
                 , margin auto
+                , paddingTop (pct 100)
                 , width (pct 100)
-                , height (pct 100)
                 , backgroundSize2 (pct 100) auto
+                , bpLargeUp
+                    [ position absolute
+                    , height (pct 100)
+                    , top zero
+                    , left zero
+                    , paddingTop zero
+                    ]
                 , col.theme.backgroundPosition
                     |> Maybe.map
                         (\pos ->

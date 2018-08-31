@@ -23,10 +23,13 @@ function debounce(func, wait, immediate) {
 
 
 app.ports.resetScrollPosition.subscribe(function(id) {
+  if (document.body.clientWidth < 670) {
+    return document.body.scrollTop = 0
+  }
+
   var overlays = [].slice.call(document.querySelectorAll('.overlay'))
 
   overlays.map(function(overlay) {
-    console.log(overlay.dataset.active)
     if (overlay.dataset.active == "False") {
       overlay.scrollTop = 0
     }

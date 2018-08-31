@@ -43,16 +43,12 @@ view casePreview =
                 , paddingRight (px 40)
                 , left (px 25)
                 , bottom (px 25)
-                , bpMedium
+                , case String.toLower casePreview.theme.textColor of
+                    "fff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+                    "ffffff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+                    _ -> textShadow none
+                , bpLargeUp
                     [ left (px 40)
-                    , bottom (px 40)
-                    ]
-                , bpLarge
-                    [ left (px 40)
-                    , bottom (px 60)
-                    ]
-                , bpXLargeUp
-                    [ left (px 270)
                     , bottom (px 100)
                     ]
                 ]
@@ -61,60 +57,55 @@ view casePreview =
         buttonWrapper =
             styled div
                 [ position absolute
-                , right (px 25)
-                , bottom (px 25)
-                , bpMedium
+                , right (px 20)
+                , bottom (px 20)
+                , transform <| scale2 0.7 0.7
+                , bpLargeUp
                     [ right (px 40)
-                    , bottom (px 50)
-                    ]
-                , bpLarge
-                    [ right (px 50)
+                    , transforms []
                     , bottom (px 100)
-                    ]
-                , bpXLargeUp
-                    [ right (px 50)
-                    , bottom (px 100)
-                    ]
-                ]
-
-        title =
-            styled h1
-                [ maxWidth (px 1200)
-                , fontSize (px 40)
-                , lineHeight (px 50)
-                , letterSpacing (px 2)
-                , bpMedium
-                    [ fontSize (px 60)
-                    , lineHeight (px 70)
-                    , letterSpacing (px 3.5)
-                    , paddingRight (pct 20)
-                    , maxWidth (px 600)
-                    ]
-                , bpLarge
-                    [ fontSize (px 72)
-                    , lineHeight (px 80)
-                    , letterSpacing (px 6.5)
-                    , maxWidth (px 700)
-                    ]
-                , bpXLargeUp
-                    [ fontSize (px 120)
-                    , lineHeight (px 130)
-                    , letterSpacing (px 8.5)
-                    , maxWidth (px 900)
                     ]
                 ]
 
         caption =
+            styled h1
+                [ maxWidth (px 1200)
+                , fontSize (px 28)
+                , lineHeight (px 36)
+                , letterSpacing (px 2.25)
+                , marginBottom (px 10)
+                , paddingRight (px 40)
+                , bpMediumUp
+                    [ paddingRight zero
+                    ]
+                , bpLargeUp
+                    [ fontSize (px 48)
+                    , marginBottom (px 35)
+                    , lineHeight (px 56)
+                    , letterSpacing (px 3.25)
+                    , maxWidth (px 400)
+                    ]
+                ]
+
+        title =
             styled span
-                [ fontSize (px 26)
+                [ fontSize (px 18)
                 , letterSpacing (px 2)
+                , paddingRight (px 40)
+                , bpMediumUp
+                    [ paddingRight zero
+                    ]
+                , bpLargeUp
+                    [ fontSize (px 22)
+                    , letterSpacing (px 2)
+                    ]
                 ]
 
     in
         wrapper (wrapperAttributes ++ addLink casePreview.url)
             [ titleWrapper []
-                [ title [] [ text casePreview.title ]
-                , caption [] [ text casePreview.caption ]
+                [ caption [] [ text casePreview.caption ]
+                , title [] [ text casePreview.title ]
                 ]
             , buttonWrapper []
                 [ UI.Common.button casePreview.theme [] Nothing

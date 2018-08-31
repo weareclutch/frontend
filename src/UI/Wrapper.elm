@@ -54,8 +54,20 @@ globalStyle =
             [ fontSize (px 22)
             , lineHeight (px 34)
             , fontFamilies [ "Roboto", "sans-serif" ]
-            , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
+            , padding zero
+            , letterSpacing (px 2)
+            ]
+        , selector "ul"
+            [ paddingLeft (px 20)
+            , margin4 zero zero (px 35) zero
+            ]
+        , selector "li"
+            [ fontSize (px 18)
+            , lineHeight (px 28)
+            , fontFamilies [ "Roboto", "sans-serif" ]
+            , fontWeight (int 400)
+            , margin4 zero zero (px 6) zero
             , padding zero
             , letterSpacing (px 2)
             ]

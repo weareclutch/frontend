@@ -67,8 +67,11 @@ header content =
         outerWrapper =
             styled div <|
                 [ backgroundColor (hex "292A32")
-                , height (pct 150)
                 , width (pct 100)
+                , height (pct 100)
+                , bpLargeUp
+                    [ height (pct 150)
+                    ]
                 ]
 
         wrapper =
@@ -89,10 +92,14 @@ header content =
         titleWrapper =
             styled div
                 [ color (hex content.theme.textColor)
+                , case String.toLower content.theme.textColor of
+                    "fff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+                    "ffffff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+                    _ -> textShadow none
                 , position absolute
                 , paddingRight (px 40)
                 , left (px 25)
-                , bottom (px 25)
+                , bottom (px 45)
                 , bpMedium
                     [ left (px 40)
                     , bottom (px 40)
@@ -109,12 +116,16 @@ header content =
                     ]
                 ]
 
-        title =
+        caption =
             styled h1
                 [ maxWidth (px 1200)
-                , fontSize (px 40)
-                , lineHeight (px 50)
-                , letterSpacing (px 2)
+                , fontSize (px 32)
+                , lineHeight (px 42)
+                , letterSpacing (px 2.24)
+                , paddingRight (px 40)
+                , bpMediumUp
+                    [ paddingRight zero
+                    ]
                 , bpMedium
                     [ fontSize (px 60)
                     , lineHeight (px 70)
@@ -136,18 +147,24 @@ header content =
                     ]
                 ]
 
-        caption =
+        title =
             styled span
                 [ fontSize (px 26)
+                , lineHeight (px 36)
                 , letterSpacing (px 2)
+                , paddingRight (px 40)
+                , bpMediumUp
+                    [ fontSize (px 26)
+                    , paddingRight zero
+                    ]
                 ]
     in
         outerWrapper []
             [ wrapper wrapperAttributes
                 [ image
                 , titleWrapper []
-                    [ title [] [ text content.meta.title ]
-                    , caption [] [ text content.info.caption ]
+                    [ caption [] [ text content.info.caption ]
+                    , title [] [ text content.meta.title ]
                     ]
                 ]
             ]
@@ -217,7 +234,7 @@ intro content =
                 , backgroundColor (hex "f8f8f8")
                 , color (hex "292A32")
                 , padding2 (px 80) zero
-                , bpMediumUp
+                , bpLargeUp
                     [ padding2 (px 200) zero
                     ]
                 ]
@@ -232,11 +249,15 @@ intro content =
 
         introWrapper =
             styled div
-                [ maxWidth (px 1345)
+                [ maxWidth (px 940)
                 , fontWeight (int 500)
+                , fontSize (px 20)
+                , lineHeight (px 40)
                 , padding2 zero (px 25)
-                , bpMediumUp
-                    [ padding4 zero (px 385) zero (px 40)
+                , fontWeight (int 500)
+                , bpLargeUp
+                    [ width (pct 60)
+                    , fontSize (px 28)
                     ]
                 ]
 
@@ -248,25 +269,37 @@ intro content =
         metaInfo =
             styled div
                 [ padding2 zero (px 25)
-                , bpMediumUp
-                    [ position absolute
-                    , top zero
+                , bpLargeUp
+                    [ width (pct 40)
+                    , position absolute
                     , right zero
-                    , maxWidth (px 360)
+                    , top zero
                     ]
                 ]
 
         metaSection =
             styled div
                 [ marginBottom (px 35)
+                , letterSpacing (px 1.43)
                 , lineHeight (px 34)
-                , fontSize (px 22)
-                , letterSpacing (px 3.85)
+                , fontSize (px 20)
+                , bpLargeUp
+                    [ fontSize (px 22)
+                    , letterSpacing (px 1.57)
+                    ]
                 ]
 
         description =
             styled div
                 [ fontFamilies [ "Qanelas ExtraBold" ]
+                , fontSize (px 20)
+                , lineHeight (px 20)
+                , letterSpacing (px 3.82)
+                , paddingBottom (px 10)
+                , bpLargeUp
+                    [ fontSize (px 22)
+                    , letterSpacing (px 3.85)
+                    ]
                 ]
     in
         wrapper []

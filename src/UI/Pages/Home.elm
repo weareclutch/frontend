@@ -33,9 +33,12 @@ view content =
             styled div
                 [ marginBottom (px 20)
                 , bpMedium
-                    [ marginBottom (px 80)
+                    [ marginBottom (px 20)
                     ]
                 , bpLarge
+                    [ marginBottom (px 50)
+                    ]
+                , bpXLargeUp
                     [ marginBottom (px 120)
                     ]
                 ]
@@ -43,10 +46,10 @@ view content =
         casesWrapper =
             styled div
                 [ bpMedium
-                    [ width <| calc (pct 50) minus (px 30)
+                    [ width <| calc (pct 50) minus (px 10)
                     ]
                 , bpLarge
-                    [ width <| calc (pct 50) minus (px 40)
+                    [ width <| calc (pct 50) minus (px 25)
                     ]
                 , bpXLargeUp
                     [ width <| calc (pct 50) minus (px 60)
@@ -94,7 +97,7 @@ pageWrapper children =
                 , backgroundColor (hex "292A32")
                 , padding4 (px 140) (px 25) (px 80) (px 25)
                 , bpMedium
-                    [ padding4 (px 280) (px 80) (px 140) (px 80)
+                    [ padding4 (px 280) (px 25) (px 140) (px 25)
                     ]
                 , bpLarge
                     [ padding4 (px 280) (px 140) (px 140) (px 140)
