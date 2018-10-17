@@ -37,3 +37,45 @@ app.ports.resetScrollPosition.subscribe(function(id) {
 })
 
 
+
+app.ports.scrollOverlayDown.subscribe(function() {
+    window.requestAnimationFrame(function() {
+      // scroll active overlay to the bottom
+      var activePage = document.querySelector('.active-page')
+      console.log(activePage.scrollTop, activePage.scrollHeight)
+      if (activePage) activePage.scrollTop = activePage.scrollHeight
+    })
+})
+
+
+
+app.ports.playAnimation.subscribe(function() {
+  window.requestAnimationFrame(function() {
+
+    // show animationFrame, and then hide it when done
+    var animationWrapper = document.getElementById('animation-wrapper')
+    animationWrapper.style.visibility = 'visible'
+    var totalDuration = 5800
+    window.setTimeout(function() {
+      animationWrapper.style.visibility = 'hidden'
+
+    }, totalDuration)
+
+    var animations = [ 'bg' , 'effects' , 'tagline' ]
+
+    animations.forEach(function(animationPath) {
+      var delay = animationPath === 'effects' ? 4000 : 0
+
+      window.setTimeout(function() {
+        var animation = bodymovin.loadAnimation({
+          container: document.getElementById(animationPath),
+          path: '/static/animation/' + animationPath + '.json',
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+        })
+      }, delay)
+    })
+  })
+})
+

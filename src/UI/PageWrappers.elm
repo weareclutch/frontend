@@ -261,15 +261,22 @@ navigationPage navState index navItem active =
                     ++
                         transformStyle
 
+        defaultAttributes =
+            [ Html.Styled.Attributes.class
+                (if active then "active-page" else "")
+            ]
+
         attributes =
             if navState /= Closed then
                 ( [ onMouseOver (NavigationMsg <| UI.State.ChangeNavigation <| Open index)
                   ]
                     ++
                     (addLink navItem.path)
+                    ++
+                    defaultAttributes
                 )
             else
-                []
+                defaultAttributes
 
     in
         wrapper attributes

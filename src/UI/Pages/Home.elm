@@ -22,7 +22,6 @@ view content =
                 , position relative
                 ]
 
-
         (evenCases, oddCases) =
             content.cases
                 |> List.reverse
@@ -63,7 +62,7 @@ view content =
                     ]
                 ]
     in
-        div [ class "home" ] <|
+        div [] <|
             [ pageWrapper
                 [ innerWrapper []
                     [ evenCases
@@ -128,6 +127,7 @@ introCover content =
                 , backgroundColor (hex content.theme.backgroundColor)
                 , position relative
                 , zIndex (int 5)
+                , overflow hidden
                 ]
 
         title =
@@ -149,27 +149,9 @@ introCover content =
                 , position absolute
                 ]
 
-        lottiePlayer =
-            styled div
-                [ position relative
-                , maxWidth (px 600)
-                , maxHeight (px 600)
-                , width (pct 100)
-                , height (pct 100)
-                , margin auto
-                , top (pct 50)
-                , transform <| translateY (pct -50)
-                ]
     in
         wrapper []
-            [ lottiePlayer
-                [ attribute "data-anim-loop" "true"
-                , attribute "data-animation-path" "animation/"
-                , attribute "data-name" "loader"
-                , id "home-animation"
-                ]
-                []
-            , textWrapper [ ]
+            [ textWrapper [ ]
                 [ title [] [ text "Uitgelicht" ]
                 , richText content.cover.text
                 , a [ href content.cover.link ]

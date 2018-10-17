@@ -2,6 +2,7 @@ module UI.Wrapper exposing (view)
 
 import Types exposing (..)
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
 import Style exposing (..)
@@ -29,7 +30,7 @@ globalStyle =
         , selector "*, *:before, *:after"
             [ boxSizing borderBox
             ]
-        , selector "svg path"
+        , selector "#app svg path"
             [ transition "all" 0.16 0 "linear"
             ]
         , selector "h1"
@@ -89,10 +90,56 @@ wrapper active children =
                     opacity zero
                 ]
 
+        animationWrapper =
+            styled div
+                [ position relative
+                , height (vh 100)
+                , width (vw 100)
+                , visibility hidden
+                ]
+
+        bg =
+            styled div
+                [ position absolute
+                , width (pct 200)
+                , height (pct 200)
+                , left (pct -50)
+                , top (pct -50)
+                , zIndex (int 500)
+                ]
+
+        effects =
+            styled div
+                [ position absolute
+                , width (pct 200)
+                , height (pct 200)
+                , left (pct -50)
+                , top (pct -50)
+                , zIndex (int 510)
+                ]
+
+        tagLine =
+            styled div
+                [ position absolute
+                , width (vw 100)
+                , height (vh 100)
+                , maxWidth (px 1400)
+                , margin auto
+                , left (pct 50)
+                , transform <| translateX (pct -50)
+                , top zero
+                , zIndex (int 520)
+                ]
     in
-        globalStyle
-            :: children
-            |> wrapperDiv []
+        div []
+          [ globalStyle
+          , animationWrapper [ id "animation-wrapper" ]
+            [ bg [ id "bg" ] []
+            , effects [ id "effects" ] []
+            , tagLine [ id "tagline" ] []
+            ]
+          , wrapperDiv [ id "app" ] children
+          ]
 
 
 view : Model -> Html Msg

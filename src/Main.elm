@@ -18,10 +18,15 @@ getAndDecodePage location =
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
-        commands =
+        defaultCommands =
             [ getAndDecodePage location
             , fetchNavigation |> Cmd.map (\cmd -> NavigationMsg cmd)
             ]
+
+        commands =
+            case location.pathname of
+                "/" -> Ports.playAnimation () :: defaultCommands
+                _ -> defaultCommands
     in
         ( initModel , Cmd.batch commands )
 
@@ -51,26 +56,37 @@ update msg model =
                     ({ model | route = NotFoundRoute }, Cmd.none)
 
                 Wagtail.LoadPage (Ok page) ->
-                    ( { model
-                        | route = WagtailRoute page
-                        , overlayState =
-                            model.navigationTree
-                            |> Maybe.map
-                                  (\navigationTree ->
-                                        if (UI.State.isNavigationPage navigationTree page) then
-                                            UI.State.closeOverlay model.overlayState
-                                        else
-                                            UI.State.addPageToOverlayState model.overlayState page
-                                  )
-                            |> Maybe.withDefault model.overlayState
+                    let
+                        defaultCommands =
+                          [ Ports.resetScrollPosition ()
+                          ] 
 
-                        , navigationTree =
-                            model.navigationTree
-                            |> Maybe.map (UI.State.addPageToNavigationTree page)
-                        , navigationState = UI.State.Closed
-                        }
-                    , Ports.resetScrollPosition ()
-                    )
+                        commands =
+                          case page of
+                              Wagtail.HomePage _ -> Ports.scrollOverlayDown ()
+                              _ -> Cmd.none
+
+                    in
+                        ( { model
+                            | route = WagtailRoute page
+                            , overlayState =
+                                model.navigationTree
+                                |> Maybe.map
+                                      (\navigationTree ->
+                                            if (UI.State.isNavigationPage navigationTree page) then
+                                                UI.State.closeOverlay model.overlayState
+                                            else
+                                                UI.State.addPageToOverlayState model.overlayState page
+                                      )
+                                |> Maybe.withDefault model.overlayState
+
+                            , navigationTree =
+                                model.navigationTree
+                                |> Maybe.map (UI.State.addPageToNavigationTree page)
+                            , navigationState = UI.State.Closed
+                            }
+                        , commands
+                        )
 
                 Wagtail.LoadPage (Err error) ->
                     Debug.log (toString error) (\x -> x)
