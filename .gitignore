@@ -8,7 +8,7 @@
 /public/app.js
 
 # local fonts
-fonts
+public/fonts
 
 # deploy
 deploy/log

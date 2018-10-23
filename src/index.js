@@ -69,7 +69,7 @@ app.ports.playAnimation.subscribe(function() {
       window.setTimeout(function() {
         var animation = bodymovin.loadAnimation({
           container: document.getElementById(animationPath),
-          path: '/static/animation/' + animationPath + '.json',
+          path: '/animation/' + animationPath + '.json',
           renderer: 'svg',
           loop: false,
           autoplay: true,

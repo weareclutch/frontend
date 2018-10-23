@@ -1,3 +1,5 @@
+const path = require('path')
+
 module.exports = {
   entry: {
     app: [
@@ -24,6 +26,7 @@ module.exports = {
   devServer: {
     inline: true,
     stats: { colors: true },
+    contentBase: path.join(__dirname, 'public'),
     historyApiFallback: {
       index: './public/index.html'
     }

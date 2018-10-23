@@ -44,14 +44,19 @@ namespace :deploy do
   desc 'Deploy latest code'
 
   task :build do
+    desc "Build code locally"
     run_locally do
       execute 'yarn build'
     end
+  end
 
+  task :upload do
+    desc "Upload static files"
     on roles(:all) do |host|
-      upload! '../public/app.js', "#{current_path}/public"
+      upload! '../public/.', "#{current_path}/public/", recursive: true
     end
   end
 
   after :publishing, :build
+  after :publishing, :upload
 end
