@@ -103,7 +103,7 @@ wrapper active children =
                 [ position absolute
                 , width (pct 200)
                 , height (pct 200)
-                , left (pct -50)
+                , left <| calc (pct -50) minus (vw 20)
                 , top (pct -50)
                 , zIndex (int 500)
                 ]
@@ -113,7 +113,7 @@ wrapper active children =
                 [ position absolute
                 , width (pct 200)
                 , height (pct 200)
-                , left (pct -50)
+                , left <| calc (pct -50) minus (vw 20)
                 , top (pct -50)
                 , zIndex (int 510)
                 ]

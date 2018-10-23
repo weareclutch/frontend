@@ -15,6 +15,7 @@ import Json.Decode as Decode
 import Icons.Arrow exposing (arrow)
 import Html.Styled.Attributes exposing (style, src, alt)
 import Css exposing (..)
+import Style exposing (..)
 import Wagtail exposing (siteUrl)
 import Types exposing (..)
 import Wagtail exposing (Theme, Image)
@@ -106,7 +107,6 @@ button theme attributes maybeText =
         wrapper =
             styled div
                 [ cursor pointer
-                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.35)
                 , backgroundColor (hex theme.backgroundColor)
                 , color (hex theme.textColor)
                 , borderRadius (px 60)
@@ -117,11 +117,16 @@ button theme attributes maybeText =
                 , position relative
                 , fontSize (px 22)
                 , fontWeight (int 500)
+                , transition "all" 0.16 0 "linear"
+                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.15)
                 , letterSpacing (px 2)
                 , if hasText then
                     padding4 zero (px 60) zero (px 30)
                   else
                     padding zero
+                , hover
+                    [ boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.35)
+                    ]
                 ]
 
         arrowWrapper =

@@ -123,6 +123,7 @@ type alias HomePageContent =
     , cover :
         { text : String
         , link : String
+        , image : Maybe Image
         }
     , cases : List CasePreview
     }
@@ -134,10 +135,11 @@ homePageDecoder =
         D.map4 HomePageContent
             metaDecoder
             decodeTheme
-            (D.map2
-                (\text link -> { text = text, link = link })
+            (D.map3
+                (\text link image -> { text = text, link = link, image = image })
                 (D.field "text" D.string)
                 (D.field "link" D.string)
+                (D.field "image_src" <| D.maybe decodeImage)
             )
             (D.field "value" decodeCasePreview
                 |> D.list

@@ -5,7 +5,7 @@ import Css exposing (..)
 import Html.Styled.Attributes exposing (class, attribute, id, href)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
-import UI.Common exposing (button)
+import UI.Common exposing (button, backgroundImg)
 import Style exposing (..)
 import Wagtail
 import Types exposing (Msg)
@@ -149,9 +149,29 @@ introCover content =
                 , position absolute
                 ]
 
+        imageDiv =
+            styled div
+                [ position absolute
+                , maxHeight (px 700)
+                , maxWidth (px 700)
+                , height (vw 40)
+                , width (vw 40)
+                , top (pct 50)
+                , left <| calc (pct 50) minus (vw 20)
+                , transform <| translate2 (pct -50) (pct -50)
+                , backgroundSize cover
+                , backgroundPosition center
+                ]
+
+        image =
+            case content.cover.image of
+                Just img -> imageDiv [ backgroundImg img ] []
+                Nothing -> text ""
+
     in
         wrapper []
-            [ textWrapper [ ]
+            [ image
+            , textWrapper [ ]
                 [ title [] [ text "Uitgelicht" ]
                 , richText content.cover.text
                 , a [ href content.cover.link ]
