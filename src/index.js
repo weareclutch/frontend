@@ -54,11 +54,10 @@ app.ports.playAnimation.subscribe(function() {
 
     // show animationFrame, and then hide it when done
     var animationWrapper = document.getElementById('animation-wrapper')
-    animationWrapper.style.visibility = 'visible'
+    animationWrapper.style.display = 'block'
     var totalDuration = 5800
     window.setTimeout(function() {
-      animationWrapper.style.visibility = 'hidden'
-
+      animationWrapper.style.display = 'none'
     }, totalDuration)
 
     var animations = [ 'bg' , 'effects' , 'tagline' ]

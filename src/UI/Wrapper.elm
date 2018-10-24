@@ -95,7 +95,7 @@ wrapper active children =
                 [ position relative
                 , height (vh 100)
                 , width (vw 100)
-                , visibility hidden
+                , display none
                 ]
 
         bg =

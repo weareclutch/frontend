@@ -8,6 +8,7 @@ import Css exposing (..)
 import Style exposing (..)
 import UI.Pages.Case
 import UI.Pages.Home
+import UI.Pages.Blog
 import UI.Common exposing (addLink)
 import Types exposing (Msg(..), Route(..))
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayState, OverlayPart)
@@ -21,6 +22,15 @@ renderPage page =
 
         Wagtail.CasePage content ->
             UI.Pages.Case.view content
+
+        Wagtail.BlogOverviewPage content ->
+            UI.Pages.Blog.overview content
+
+        Wagtail.BlogPostPage content ->
+            UI.Pages.Blog.post content
+
+        Wagtail.BlogCollectionPage content ->
+            UI.Pages.Blog.collection content
 
 
 mobileView : Html a -> Html a

@@ -24,6 +24,9 @@ type Msg
 type Page
     = HomePage HomePageContent
     | CasePage CasePageContent
+    | BlogOverviewPage BlogOverviewContent
+    | BlogCollectionPage BlogCollectionContent
+    | BlogPostPage BlogPostContent
 
 
 getPageId : Page -> Int
@@ -31,6 +34,9 @@ getPageId page =
     case page of
         HomePage { meta } -> meta.id
         CasePage { meta } -> meta.id
+        BlogOverviewPage { meta } -> meta.id
+        BlogCollectionPage { meta } -> meta.id
+        BlogPostPage { meta } -> meta.id
 
 
 getPageTheme : Page -> Theme
@@ -38,6 +44,11 @@ getPageTheme page =
     case page of
         HomePage { theme } -> theme
         CasePage { theme } -> theme
+        _  ->
+            { backgroundColor = "fff"
+            , textColor = "292A32"
+            , backgroundPosition = Nothing
+            }
 
 
 getWagtailPage : Navigation.Location -> Cmd Msg
@@ -85,6 +96,7 @@ getPageDecoder pageType =
     -- Register the page decoders here ( "page.Type" -> aDecoder ) --
     "home.HomePage" -> homePageDecoder
     "case.CasePage" -> casePageDecoder
+    "blog.BlogOverviewPage" -> blogOverviewPageDecoder
 
     -- Default handler forn unknown types (aka "we can't handle")  --
     _ -> D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
@@ -206,6 +218,42 @@ decodeCasePreview =
         (D.field "caption" D.string)
         (D.field "url" D.string)
         (D.maybe <| D.field "background_image_src" decodeImage)
+
+
+type alias BlogOverviewContent =
+    { meta : WagtailMetaContent
+    }
+
+
+blogOverviewPageDecoder : D.Decoder Page
+blogOverviewPageDecoder =
+    D.map BlogOverviewPage <|
+        D.map BlogOverviewContent
+            metaDecoder
+
+
+type alias BlogCollectionContent =
+    { meta : WagtailMetaContent
+    }
+
+
+blogCollectionPageDecoder : D.Decoder Page
+blogCollectionPageDecoder =
+    D.map BlogCollectionPage <|
+        D.map BlogCollectionContent
+            metaDecoder
+
+
+type alias BlogPostContent =
+    { meta : WagtailMetaContent
+    }
+
+
+blogPostPageDecoder : D.Decoder Page
+blogPostPageDecoder =
+    D.map BlogPostPage <|
+        D.map BlogPostContent
+            metaDecoder
 
 
 type alias Image =
@@ -347,91 +395,5 @@ decodeContentBlock =
         ContentBlock
         decodeTheme
         (D.field "rich_text" D.string)
-
-
--- type alias CaseContent =
---     { meta :
---         { id : Int
---         , title : String
---         , caption : String
---         , releaseDate : String
---         , websiteUrl : String
---         }
---     , intro : Maybe String
---     , body : Maybe (List Block)
---     , image : Maybe Image
---     , backgroundImage : Maybe Image
---     , theme : Theme
---     }
--- 
--- 
--- 
--- type CaseState
---     = Cover
---     | Preview
---     | Open
--- 
--- 
--- type alias HomeContent =
---     { pageType : String
---     , cases : List CaseContent
---     , animation : Maybe String
---     , cover :
---         { text : String
---         , link : String
---         }
---     , theme : Theme
---     , easterEggImages : List (String, Image)
---     }
--- 
--- 
--- type alias ServicesContent =
---     { pageType : String
---     , caption : String
---     , body :
---         List
---             { title : String
---             , body : String
---             , services :
---                 List
---                     { text : String
---                     , service : Service
---                     }
---             }
---     }
--- 
--- 
--- type alias Service =
---     { title : String
---     , body : String
---     , slides : List Image
---     }
--- 
--- 
--- type alias Person =
---     { firstName : String
---     , lastName : String
---     , jobTitle : String
---     , photo : Image
---     , email : Maybe String
---     , phone : Maybe String
---     }
--- 
--- 
--- type alias CultureContent =
---     { pageType : String
---     , people : List Person
---     , cases : List CaseContent
---     , nextEvent : Maybe Event
---     , ideas : Maybe (List String)
---     }
--- 
--- 
--- type alias Event =
---     { date : String
---     , title : String
---     , image : Maybe Image
---     }
--- 
 
 
