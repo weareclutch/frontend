@@ -99,6 +99,7 @@ update msg model =
                     ({ model | navigationTree = Just navigationTree }, Cmd.none)
 
                 UI.State.FetchNavigation (Err error) ->
+                    Debug.log (toString error)
                     ({ model | navigationTree = Nothing }, Cmd.none)
 
                 UI.State.ChangeNavigation newState ->

@@ -21,13 +21,12 @@ type alias NavigationItem =
     , title : String
     , path : String
     , page : Maybe Page
-    , theme : Theme
     }
 
 
+
 type alias NavigationTree =
-    { title : String
-    , items: List NavigationItem
+    { items: List NavigationItem
     }
 
 
@@ -92,9 +91,8 @@ addPageToOverlayState state page =
 
 
 addPageToNavigationTree : Page -> NavigationTree -> NavigationTree
-addPageToNavigationTree page { title, items } =
-    { title = title
-    , items =
+addPageToNavigationTree page { items } =
+    { items =
         items
             |> List.map
                 (\item ->
@@ -120,20 +118,18 @@ isNavigationPage nav page =
 fetchNavigation : Cmd Msg
 fetchNavigation =
     Http.send FetchNavigation <|
-        Http.get (siteUrl ++ "/api/navigation") decodeNavigation
+        Http.get (siteUrl ++ "/api/navigation/2/") decodeNavigation
 
 
 decodeNavigation : D.Decoder NavigationTree
 decodeNavigation =
-    D.map2 NavigationTree
-        (D.field "title" D.string)
-        (D.field "structure" <| D.list <|
-            D.map5 NavigationItem
-                (D.at ["page", "id"] D.int)
+    D.map NavigationTree
+        (D.field "items" <| D.list <|
+            D.map4 NavigationItem
+                (D.field "id" D.int)
                 (D.field "title" D.string)
-                (D.at ["page", "path"] D.string)
+                (D.field "slug" D.string)
                 (D.succeed Nothing)
-                (D.field "page" decodeTheme)
         )
 
 
