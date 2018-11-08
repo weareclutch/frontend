@@ -42,7 +42,6 @@ app.ports.scrollOverlayDown.subscribe(function() {
     window.requestAnimationFrame(function() {
       // scroll active overlay to the bottom
       var activePage = document.querySelector('.active-page')
-      console.log(activePage.scrollTop, activePage.scrollHeight)
       if (activePage) activePage.scrollTop = activePage.scrollHeight
     })
 })
