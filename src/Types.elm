@@ -23,18 +23,20 @@ initModel : Model
 initModel =
     { route = UndefinedRoute
     , overlayState =
-        { active = False 
+        { active = False
         , parts = (Nothing, Nothing)
         }
     , navigationState = UI.State.Closed
     , navigationTree = Nothing
     }
 
+type alias SiteIdentifier = Maybe String
 
 type Route
     = UndefinedRoute
-    | WagtailRoute Wagtail.Page
-    | NotFoundRoute
+    | WagtailRoute SiteIdentifier Wagtail.Page
+    | NotFoundRoute SiteIdentifier
+    | ErrorRoute
 
 
 

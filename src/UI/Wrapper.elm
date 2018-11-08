@@ -153,11 +153,15 @@ view model =
                             UndefinedRoute ->
                                 text "page: undefined route"
 
-                            WagtailRoute page -> 
+                            WagtailRoute _ page ->
                                 renderPage page
 
-                            NotFoundRoute ->
+                            NotFoundRoute _ ->
                                 text "page: not found"
+
+                            ErrorRoute ->
+                                text "It's not a bug - it's an undocumented feature."
+
 
                 in
                     wrapper (model.route /= UndefinedRoute)

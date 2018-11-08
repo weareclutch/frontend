@@ -23,7 +23,7 @@ view navigationTree navigationState route =
     let
         toggleState =
             case (navigationState, route) of
-                (Closed, WagtailRoute page) ->
+                (Closed, WagtailRoute _ page) ->
                     if (UI.State.isNavigationPage navigationTree page) then
                         OpenMenu
                     else
@@ -187,7 +187,7 @@ view navigationTree navigationState route =
 
         activeIndex =
             case route of
-                WagtailRoute page ->
+                WagtailRoute _ page ->
                     navigationTree.items
                         |> List.indexedMap (,)
                         |> List.foldl
@@ -203,7 +203,7 @@ view navigationTree navigationState route =
 
         svgColor =
             (case route of
-                WagtailRoute page -> Just <| getPageTheme page
+                WagtailRoute _ page -> Just <| getPageTheme page
                 _ -> Nothing
             )
             |> Maybe.map (\theme -> theme.textColor)
@@ -260,7 +260,7 @@ view navigationTree navigationState route =
                       (navigationState == OpenContact)
                       (
                           [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
-                          , onClick (NavigationMsg <| ChangeNavigation OpenContact) 
+                          , onClick (NavigationMsg <| ChangeNavigation OpenContact)
                           ]
                       )
                       [ text "Contact" ]

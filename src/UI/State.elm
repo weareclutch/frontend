@@ -67,7 +67,7 @@ addPageToOverlayState state page =
         case state.parts of
             (Nothing, Nothing) ->
                 ( Just { page = page, active = True }
-                , Nothing 
+                , Nothing
                 )
 
             (Just a, Nothing) ->
@@ -115,10 +115,10 @@ isNavigationPage nav page =
 
 
 
-fetchNavigation : Cmd Msg
-fetchNavigation =
+fetchNavigation : String -> Cmd Msg
+fetchNavigation identifier =
     Http.send FetchNavigation <|
-        Http.get (siteUrl ++ "/api/navigation/2/") decodeNavigation
+        Http.get (siteUrl ++ "/api/navigation/" ++ identifier ++ "/") decodeNavigation
 
 
 decodeNavigation : D.Decoder NavigationTree

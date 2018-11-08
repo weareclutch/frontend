@@ -7,6 +7,8 @@ import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 import UI.State exposing (fetchNavigation)
 import Ports
 import Types exposing (..)
+import Http
+import Dict
 
 
 getAndDecodePage : Location -> Cmd Msg
@@ -14,13 +16,31 @@ getAndDecodePage location =
     getWagtailPage location
       |> Cmd.map (\cmd -> WagtailMsg cmd)
 
+fetchSiteDependentResources : Route -> Maybe String -> Cmd Msg
+fetchSiteDependentResources previousRoute currentIdentifier =
+
+    let
+        previousIdentifier = case previousRoute of
+            WagtailRoute identifier _ -> identifier
+            NotFoundRoute identifier -> identifier
+            _ -> Nothing
+
+        fetchNavigationForSite id =
+            fetchNavigation id
+            |> Cmd.map NavigationMsg
+    in
+        case (previousIdentifier, currentIdentifier) of
+            (_, Nothing) -> Cmd.none
+            (Nothing, Just id) -> fetchNavigationForSite id
+            (Just prevId, Just id) ->
+                if prevId == id then Cmd.none else fetchNavigationForSite id
+
 
 init : Location -> ( Model, Cmd Msg )
 init location =
     let
         defaultCommands =
             [ getAndDecodePage location
-            , fetchNavigation |> Cmd.map (\cmd -> NavigationMsg cmd)
             ]
 
         commands =
@@ -52,23 +72,21 @@ update msg model =
                     )
 
                 Wagtail.PreloadPage (Err error) ->
-                    Debug.log (toString error) (\x -> x)
-                    ({ model | route = NotFoundRoute }, Cmd.none)
+                    Debug.log (toString error)
+                    ({ model | route = NotFoundRoute Nothing }, Cmd.none)
 
-                Wagtail.LoadPage (Ok page) ->
+                Wagtail.LoadPage (Ok (response, page)) ->
                     let
-                        defaultCommands =
-                          [ Ports.resetScrollPosition ()
-                          ] 
-
                         commands =
                           case page of
                               Wagtail.HomePage _ -> Ports.scrollOverlayDown ()
                               _ -> Cmd.none
 
+                        siteIdentifier =
+                            Dict.get "x-current-site" response.headers
                     in
                         ( { model
-                            | route = WagtailRoute page
+                            | route = WagtailRoute siteIdentifier page
                             , overlayState =
                                 model.navigationTree
                                 |> Maybe.map
@@ -85,12 +103,26 @@ update msg model =
                                 |> Maybe.map (UI.State.addPageToNavigationTree page)
                             , navigationState = UI.State.Closed
                             }
-                        , commands
+                        , Cmd.batch [commands, fetchSiteDependentResources model.route siteIdentifier]
                         )
 
                 Wagtail.LoadPage (Err error) ->
-                    Debug.log (toString error) (\x -> x)
-                    ({ model | route = NotFoundRoute }, Cmd.none)
+                    -- Debug.log (toString error)
+                    let
+                        route =
+                            case error of
+                                Http.BadStatus response  ->
+                                    if response.status.code == 404 then
+                                        NotFoundRoute (Dict.get "x-current-site" response.headers)
+                                    else ErrorRoute
+                                _ ->
+                                    ErrorRoute
+                        cmd =
+                            case route of
+                                NotFoundRoute siteIdentifier -> fetchSiteDependentResources model.route siteIdentifier
+                                _ -> Cmd.none
+                    in
+                        ({ model | route = route }, cmd)
 
 
         NavigationMsg msg ->

@@ -148,7 +148,7 @@ navigationPages navState navItems route =
                                                     (index, item, lastActive) :: acc
                                         _ ->
                                             case route of
-                                                WagtailRoute page ->
+                                                WagtailRoute _ page ->
                                                     if lastItem.id == getPageId(page) then
                                                         (index, item, False) :: acc
                                                     else
@@ -247,7 +247,7 @@ navigationPage navState index navItem active =
                     ]
                 , property "-ms-overflow-style" "none"
                 , overflowX hidden
-                ] 
+                ]
                     ++
                         (if navState == Closed then
                             [ cursor default
