@@ -1,4 +1,4 @@
-module Icons.Logo exposing (..)
+module Icons.Logo exposing (logo)
 
 import Html.Styled exposing (Html)
 import Svg.Styled exposing (..)

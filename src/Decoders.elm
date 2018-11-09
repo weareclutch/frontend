@@ -1,7 +1,8 @@
 module Decoders exposing (..)
 
-import Types exposing (..)
 import Json.Decode as Decode
+import Types exposing (..)
+
 
 
 -- mapCoverContent : String -> String -> { text : String, link : String }
@@ -9,8 +10,8 @@ import Json.Decode as Decode
 --     { text = text
 --     , link = link
 --     }
--- 
--- 
+--
+--
 -- decodeCultureContent : Decode.Decoder Page
 -- decodeCultureContent =
 --     Decode.map Culture <|
@@ -20,16 +21,16 @@ import Json.Decode as Decode
 --             (Decode.field "cases" <| Decode.list (Decode.field "value" <| decodeCaseContent))
 --             (Decode.maybe <| Decode.field "next_event" decodeEvent)
 --             (Decode.maybe <| Decode.field "ideas" <| Decode.list Decode.string)
--- 
--- 
+--
+--
 -- decodeEvent : Decode.Decoder Event
 -- decodeEvent =
 --     Decode.map3 Event
 --         (Decode.field "date" Decode.string)
 --         (Decode.field "title" Decode.string)
 --         (Decode.maybe <| Decode.field "image" decodeImage)
--- 
--- 
+--
+--
 -- decodeCaseContent : Decode.Decoder CaseContent
 -- decodeCaseContent =
 --     Decode.map6 CaseContent
@@ -53,8 +54,8 @@ import Json.Decode as Decode
 --         (Decode.maybe <| Decode.field "image_src" decodeImage)
 --         (Decode.maybe <| Decode.field "background_image_src" decodeImage)
 --         decodeTheme
--- 
--- 
+--
+--
 -- decodeServicesContent : Decode.Decoder Page
 -- decodeServicesContent =
 --     Decode.map Services <|
@@ -81,16 +82,16 @@ import Json.Decode as Decode
 --                 |> Decode.list
 --                 |> Decode.field "body"
 --             )
--- 
--- 
+--
+--
 -- decodeService : Decode.Decoder Service
 -- decodeService =
 --     Decode.map3 Service
 --         (Decode.field "title" Decode.string)
 --         (Decode.field "body" Decode.string)
 --         (Decode.field "slides" <| Decode.list decodeImage)
--- 
--- 
+--
+--
 -- decodePerson : Decode.Decoder Person
 -- decodePerson =
 --     Decode.map6 Person
@@ -100,15 +101,15 @@ import Json.Decode as Decode
 --         (Decode.field "photo" decodeImage)
 --         (Decode.maybe <| Decode.field "email" Decode.string)
 --         (Decode.maybe <| Decode.field "phone" Decode.string)
--- 
--- 
+--
+--
 -- decodeImage : Decode.Decoder Image
 -- decodeImage =
 --     Decode.map2 Image
 --         (Decode.field "url" Decode.string)
 --         (Decode.maybe <| Decode.field "caption" Decode.string)
--- 
--- 
+--
+--
 -- decodeTheme : Decode.Decoder Theme
 -- decodeTheme =
 --     Decode.map3 Theme
@@ -123,8 +124,8 @@ import Json.Decode as Decode
 --                 (Decode.field "background_position_x" Decode.string)
 --                 (Decode.field "background_position_y" Decode.string)
 --         )
--- 
--- 
+--
+--
 -- decodeBlocks : Decode.Decoder (List Block)
 -- decodeBlocks =
 --     Decode.field "type" Decode.string
@@ -133,40 +134,40 @@ import Json.Decode as Decode
 --                 case blockType of
 --                     "quote" ->
 --                         Decode.field "value" decodeQuote
--- 
+--
 --                     "image" ->
 --                         Decode.field "value" decodeImageBlock
--- 
+--
 --                     "background" ->
 --                         Decode.field "value" decodeBackgroundBlock
--- 
+--
 --                     "content" ->
 --                         Decode.field "value" decodeContentBlock
--- 
+--
 --                     "columns" ->
 --                         Decode.field "value" decodeColumns
--- 
+--
 --                     _ ->
 --                         Decode.succeed (UnknownBlock blockType)
 --             )
 --         |> Decode.list
--- 
--- 
+--
+--
 -- decodeColumns : Decode.Decoder Block
 -- decodeColumns =
 --     Decode.map2 ColumnBlock
 --         (Decode.field "left" decodeColumn)
 --         (Decode.field "right" decodeColumn)
--- 
--- 
+--
+--
 -- decodeColumn : Decode.Decoder Column
 -- decodeColumn =
 --     Decode.map3 Column
 --         decodeTheme
 --         (Decode.maybe <| Decode.field "image" decodeImage)
 --         (Decode.maybe <| Decode.field "rich_text" Decode.string)
--- 
--- 
+--
+--
 -- decodeQuote : Decode.Decoder Block
 -- decodeQuote =
 --     Decode.map2 Quote
@@ -176,26 +177,25 @@ import Json.Decode as Decode
 --             (\quote ->
 --                 Decode.succeed <| QuoteBlock quote
 --             )
--- 
--- 
+--
+--
 -- decodeImageBlock : Decode.Decoder Block
 -- decodeImageBlock =
 --     Decode.map2
 --         ImageBlock
 --         decodeTheme
 --         (Decode.field "image" decodeImage)
--- 
--- 
+--
+--
 -- decodeBackgroundBlock : Decode.Decoder Block
 -- decodeBackgroundBlock =
 --     Decode.map BackgroundBlock
 --         (Decode.field "image" decodeImage)
--- 
--- 
+--
+--
 -- decodeContentBlock : Decode.Decoder Block
 -- decodeContentBlock =
 --     Decode.map2
 --         ContentBlock
 --         decodeTheme
 --         (Decode.field "rich_text" Decode.string)
-

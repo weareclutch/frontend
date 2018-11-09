@@ -1,11 +1,10 @@
-module UI.Pages.Services exposing (view, overlay)
+module UI.Pages.Services exposing (overlay, view)
 
-import Types exposing (..)
-import Html.Styled exposing (..)
-import UI.Common exposing (loremIpsum)
 import Css exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Events exposing (onClick)
-import UI.Common exposing (backgroundImg)
+import Types exposing (..)
+import UI.Common exposing (backgroundImg, loremIpsum)
 
 
 view : ServicesContent -> Html Msg
@@ -27,17 +26,17 @@ renderBody content =
                             |> List.map
                                 (\service ->
                                     li
-                                        [ -- onClick <| OpenService service.service
+                                        [-- onClick <| OpenService service.service
                                         ]
                                         [ text service.text
                                         ]
                                 )
                 in
-                    div []
-                        [ h1 [] [ text title ]
-                        , p [] [ text body ]
-                        , ul [] serviceLinks
-                        ]
+                div []
+                    [ h1 [] [ text title ]
+                    , p [] [ text body ]
+                    , ul [] serviceLinks
+                    ]
             )
         |> div []
 
@@ -75,27 +74,27 @@ overlay service =
                 , display inlineBlock
                 ]
     in
-        service
-            |> Maybe.map
-                (\service ->
-                    let
-                        slides =
-                            service.slides
-                                |> List.map
-                                    (\image ->
-                                        slide [ backgroundImg image ] []
-                                    )
-                    in
-                        outerWrapper []
-                            [ wrapper []
-                                [ h1 [] [ text service.title ]
-                                , p [] [ text service.body ]
-                                , div [] slides
-                                , button
-                                    -- [ onClick CloseService ]
-                                    []
-                                    [ text "close" ]
-                                ]
-                            ]
-                )
-            |> Maybe.withDefault (text "")
+    service
+        |> Maybe.map
+            (\service ->
+                let
+                    slides =
+                        service.slides
+                            |> List.map
+                                (\image ->
+                                    slide [ backgroundImg image ] []
+                                )
+                in
+                outerWrapper []
+                    [ wrapper []
+                        [ h1 [] [ text service.title ]
+                        , p [] [ text service.body ]
+                        , div [] slides
+                        , button
+                            -- [ onClick CloseService ]
+                            []
+                            [ text "close" ]
+                        ]
+                    ]
+            )
+        |> Maybe.withDefault (text "")

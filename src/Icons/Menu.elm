@@ -1,4 +1,4 @@
-module Icons.Menu exposing (..)
+module Icons.Menu exposing (burger, cross)
 
 import Html.Styled exposing (Html)
 import Svg.Styled exposing (..)

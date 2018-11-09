@@ -1,17 +1,17 @@
-module UI.PageWrappers exposing (..)
+module UI.PageWrappers exposing (createTransform, desktopView, mobileView, navigationPage, navigationPages, overlayPart, overlayWrapper, overlays, renderPage)
 
-import Wagtail exposing (Page, getPageId)
-import Html.Styled exposing (..)
-import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes
 import Css exposing (..)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes
+import Html.Styled.Events exposing (..)
 import Style exposing (..)
+import Types exposing (Msg(..), Route(..))
+import UI.Common exposing (addLink)
+import UI.Pages.Blog
 import UI.Pages.Case
 import UI.Pages.Home
-import UI.Pages.Blog
-import UI.Common exposing (addLink)
-import Types exposing (Msg(..), Route(..))
-import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayState, OverlayPart)
+import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState)
+import Wagtail exposing (Page, getPageId)
 
 
 renderPage : Page -> Html Msg
@@ -43,7 +43,7 @@ mobileView child =
                     ]
                 ]
     in
-        wrapper [] [ child ]
+    wrapper [] [ child ]
 
 
 desktopView : Html a -> Html a
@@ -57,7 +57,7 @@ desktopView child =
                     ]
                 ]
     in
-        wrapper [] [ child ]
+    wrapper [] [ child ]
 
 
 overlays : OverlayState -> Html Msg
@@ -66,7 +66,13 @@ overlays state =
         wrapper =
             styled div
                 [ position fixed
-                , top (if state.active then (vh 0) else (vh 100))
+                , top
+                    (if state.active then
+                        vh 0
+
+                     else
+                        vh 100
+                    )
                 , zIndex (int 78)
                 , left zero
                 , width (vw 100)
@@ -74,18 +80,19 @@ overlays state =
                 , property "transition" <|
                     if state.active then
                         "top 0s ease-in-out"
+
                     else
                         "top 0.5s ease-in-out"
                 ]
     in
-        wrapper []
-            [ state.parts
-                |> Tuple.first
-                |> overlayPart
-            , state.parts
-                |> Tuple.second
-                |> overlayPart
-            ]
+    wrapper []
+        [ state.parts
+            |> Tuple.first
+            |> overlayPart
+        , state.parts
+            |> Tuple.second
+            |> overlayPart
+        ]
 
 
 overlayPart : Maybe OverlayPart -> Html Msg
@@ -104,67 +111,79 @@ overlayWrapper child active =
         wrapper =
             styled div
                 [ position absolute
-                , zIndex (if active then int 80 else int 79)
-                , top (if active then (vh 0) else (vh 100))
+                , zIndex
+                    (if active then
+                        int 80
+
+                     else
+                        int 79
+                    )
+                , top
+                    (if active then
+                        vh 0
+
+                     else
+                        vh 100
+                    )
                 , left zero
                 , width (vw 100)
                 , height (vh 100)
                 , property "transition" <|
                     if active then
                         "top 0.5s ease-in-out"
+
                     else
                         "top 0.5s 0.5s ease-in-out"
                 , overflowY scroll
                 , property "-webkit-overflow-scrolling" "touch"
                 ]
-
     in
-        wrapper
-            [ Html.Styled.Attributes.attribute "data-active" (toString active)
-            , Html.Styled.Attributes.class "overlay"
-            ]
-            [ child
-            ]
+    wrapper
+        [ Html.Styled.Attributes.attribute "data-active" (toString active)
+        , Html.Styled.Attributes.class "overlay"
+        ]
+        [ child
+        ]
 
 
-
-
-navigationPages : NavigationState -> List (NavigationItem) -> Route -> Html Msg
+navigationPages : NavigationState -> List NavigationItem -> Route -> Html Msg
 navigationPages navState navItems route =
     div []
-        (
-            navItems
-                |> List.indexedMap (,)
-                |> List.foldr
-                    (\(index, item) acc ->
-                        List.head acc
-                            |> Maybe.map
-                                (\(lastIndex, lastItem, lastActive) ->
-                                    case navState of
-                                        Open openIndex ->
-                                                if lastIndex == openIndex then
-                                                    (index, item, False) :: acc
-                                                else
-                                                    (index, item, lastActive) :: acc
-                                        _ ->
-                                            case route of
-                                                WagtailRoute _ page ->
-                                                    if lastItem.id == getPageId(page) then
-                                                        (index, item, False) :: acc
-                                                    else
-                                                        (index, item, lastActive) :: acc
-                                                _ ->
-                                                    (index, item, lastActive) :: acc
+        (navItems
+            |> List.indexedMap (,)
+            |> List.foldr
+                (\( index, item ) acc ->
+                    List.head acc
+                        |> Maybe.map
+                            (\( lastIndex, lastItem, lastActive ) ->
+                                case navState of
+                                    Open openIndex ->
+                                        if lastIndex == openIndex then
+                                            ( index, item, False ) :: acc
 
-                                )
-                            |> Maybe.withDefault
-                                ((index, item, True) :: acc)
-                    )
-                    []
-                |> List.map
-                    (\(index, item, active) ->
-                        navigationPage navState index item active
-                    )
+                                        else
+                                            ( index, item, lastActive ) :: acc
+
+                                    _ ->
+                                        case route of
+                                            WagtailRoute _ page ->
+                                                if lastItem.id == getPageId page then
+                                                    ( index, item, False ) :: acc
+
+                                                else
+                                                    ( index, item, lastActive ) :: acc
+
+                                            _ ->
+                                                ( index, item, lastActive ) :: acc
+                            )
+                        |> Maybe.withDefault
+                            (( index, item, True ) :: acc)
+                )
+                []
+            |> List.map
+                (\( index, item, active ) ->
+                    navigationPage navState index item active
+                )
         )
 
 
@@ -173,59 +192,69 @@ createTransform x z r =
     let
         value =
             "perspective(1000px) translate3d(0, "
-              ++ (toString x)
-              ++ "vh, "
-              ++ (toString z)
-              ++ "px) "
-              ++ "rotateX("
-              ++ (toString r)
-              ++ "deg)"
-
+                ++ toString x
+                ++ "vh, "
+                ++ toString z
+                ++ "px) "
+                ++ "rotateX("
+                ++ toString r
+                ++ "deg)"
     in
-        [ property "-webkit-transform" value
-        , property "-moz-transform" value
-        , property "-ms-transform" value
-        , property "transform" value
-        ]
+    [ property "-webkit-transform" value
+    , property "-moz-transform" value
+    , property "-ms-transform" value
+    , property "transform" value
+    ]
 
 
-navigationPage: NavigationState -> Int -> NavigationItem -> Bool -> Html Msg
+navigationPage : NavigationState -> Int -> NavigationItem -> Bool -> Html Msg
 navigationPage navState index navItem active =
     let
-        zoomStart = -100
-        zoomStep = -50
-        topStart = 26
-        topStep = 6
-        rotateStart = -5
-        rotateStep = 1
+        zoomStart =
+            -100
+
+        zoomStep =
+            -50
+
+        topStart =
+            26
+
+        topStep =
+            6
+
+        rotateStart =
+            -5
+
+        rotateStep =
+            1
 
         transformStyle =
-            case (active, navState) of
-                (True, Closed) ->
+            case ( active, navState ) of
+                ( True, Closed ) ->
                     createTransform
                         0
                         0
                         0
 
-                (True, Open _) ->
+                ( True, Open _ ) ->
                     createTransform
                         (topStart + -index * topStep)
                         (zoomStart + index * zoomStep)
                         0
 
-                (False, Closed) ->
+                ( False, Closed ) ->
                     createTransform
                         (topStart + 50 + -index * topStep)
                         (zoomStart + 340 + index * (Basics.round <| zoomStep * 0.5))
                         (rotateStart + index * rotateStep)
 
-                (False, Open _) ->
+                ( False, Open _ ) ->
                     createTransform
                         (topStart + 70 + -index * topStep)
                         (zoomStart + index * (Basics.round <| zoomStep * 0.5))
                         (rotateStart + index * rotateStep)
 
-                (_, OpenContact) ->
+                ( _, OpenContact ) ->
                     createTransform
                         (topStart + 70 + -index * topStep)
                         (zoomStart + index * (Basics.round <| zoomStep * 0.5))
@@ -248,62 +277,59 @@ navigationPage navState index navItem active =
                 , property "-ms-overflow-style" "none"
                 , overflowX hidden
                 ]
-                    ++
-                        (if navState == Closed then
+                    ++ (if navState == Closed then
                             [ cursor default
                             , overflowY scroll
                             ]
+
                         else
                             [ cursor pointer
                             , overflowY hidden
                             ]
-                        )
-                    ++
-                        (if (not active && navState == Closed) then
+                       )
+                    ++ (if not active && navState == Closed then
                             [ visibility hidden
                             , opacity zero
                             ]
+
                         else
                             [ visibility visible
                             , opacity (int 1)
                             ]
-                        )
-                    ++
-                        transformStyle
+                       )
+                    ++ transformStyle
 
         defaultAttributes =
             [ Html.Styled.Attributes.class
-                (if active then "active-page" else "")
+                (if active then
+                    "active-page"
+
+                 else
+                    ""
+                )
             ]
 
         attributes =
             if navState /= Closed then
-                ( [ onMouseOver (NavigationMsg <| UI.State.ChangeNavigation <| Open index)
-                  ]
-                    ++
-                    (addLink navItem.path)
-                    ++
-                    defaultAttributes
-                )
+                [ onMouseOver (NavigationMsg <| UI.State.ChangeNavigation <| Open index)
+                ]
+                    ++ addLink navItem.path
+                    ++ defaultAttributes
+
             else
                 defaultAttributes
-
     in
-        wrapper attributes
-            [ navItem.page
-                |> Maybe.map renderPage
-                |> Maybe.withDefault
-                    ( styled div
-                        [ height (pct 100)
-                        , width (pct 100)
-                        , backgroundColor (hex "fff")
-                        , padding (px 80)
-                        ]
-                        []
-                        [ text "" ]
-                    )
-            ]
-
-
-
-
+    wrapper attributes
+        [ navItem.page
+            |> Maybe.map renderPage
+            |> Maybe.withDefault
+                (styled div
+                    [ height (pct 100)
+                    , width (pct 100)
+                    , backgroundColor (hex "fff")
+                    , padding (px 80)
+                    ]
+                    []
+                    [ text "" ]
+                )
+        ]

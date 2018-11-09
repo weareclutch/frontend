@@ -1,12 +1,12 @@
-module UI.Components.Blocks exposing (..)
+module UI.Components.Blocks exposing (backgroundBlock, column, columns, contentBlock, imageBlock, quote, richText, streamfield)
 
+import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (property)
-import UI.Common exposing (backgroundImg, image)
-import Css exposing (..)
 import Json.Encode
 import Style exposing (..)
-import Wagtail exposing (Block(..), Theme, Image, Column, Quote)
+import UI.Common exposing (backgroundImg, image)
+import Wagtail exposing (Block(..), Column, Image, Quote, Theme)
 
 
 streamfield : List Block -> Html msg
@@ -38,13 +38,13 @@ streamfield blockData =
                                     (text "")
                     )
     in
-        div [] blocks
+    div [] blocks
 
 
 richText : String -> Html msg
 richText string =
     div
-        [ (Html.Styled.Attributes.property "innerHTML" (Json.Encode.string string))
+        [ Html.Styled.Attributes.property "innerHTML" (Json.Encode.string string)
         ]
         []
 
@@ -52,10 +52,13 @@ richText string =
 quote : Quote -> Html msg
 quote data =
     div [] []
-    -- div []
-    --     [ text data.text
-    --     , text <| Maybe.withDefault "" data.name
-    --     ]
+
+
+
+-- div []
+--     [ text data.text
+--     , text <| Maybe.withDefault "" data.name
+--     ]
 
 
 imageBlock : Theme -> Image -> Html msg
@@ -79,11 +82,12 @@ imageBlock theme imageData =
                 , padding2 (px 40) zero
                 ]
     in
-        wrapper []
-            [ innerWrapper []
-                [ image [] imageData
-                ]
+    wrapper []
+        [ innerWrapper []
+            [ image [] imageData
             ]
+        ]
+
 
 backgroundBlock : Image -> Html msg
 backgroundBlock imageData =
@@ -95,12 +99,12 @@ backgroundBlock imageData =
                 , height auto
                 ]
     in
-        wrapper []
-            [ image
-                [ width (pct 100)
-                ]
-                imageData
+    wrapper []
+        [ image
+            [ width (pct 100)
             ]
+            imageData
+        ]
 
 
 contentBlock : Theme -> String -> Html msg
@@ -129,12 +133,11 @@ contentBlock theme text =
                     ]
                 ]
     in
-        wrapper []
-            [ innerWrapper []
-                [ richText text
-                ]
+    wrapper []
+        [ innerWrapper []
+            [ richText text
             ]
-
+        ]
 
 
 columns : Column -> Column -> Html msg
@@ -161,12 +164,12 @@ columns col1 col2 =
                     ]
                 ]
     in
-        wrapper []
-            [ div []
-                [ colWrapper [] [ column col1 ]
-                , colWrapper [] [ column col2 ]
-                ]
+    wrapper []
+        [ div []
+            [ colWrapper [] [ column col1 ]
+            , colWrapper [] [ column col2 ]
             ]
+        ]
 
 
 column : Column -> Html msg
@@ -186,11 +189,10 @@ column col =
                 ]
 
         attributes =
-            ( col.backgroundImage
+            col.backgroundImage
                 |> Maybe.map
                     (\imageData -> [ backgroundImg imageData ])
                 |> Maybe.withDefault []
-            )
 
         imageWrapper =
             styled div
@@ -210,9 +212,14 @@ column col =
                     |> Maybe.map
                         (\pos ->
                             case pos of
-                                ("top", _) -> top
-                                ("bottom", _) -> bottom
-                                _ -> center
+                                ( "top", _ ) ->
+                                    top
+
+                                ( "bottom", _ ) ->
+                                    bottom
+
+                                _ ->
+                                    center
                         )
                     |> Maybe.withDefault center
                     |> backgroundPosition
@@ -232,33 +239,31 @@ column col =
                     , padding2 (px 80) (px 40)
                     , zIndex (int 100)
                     ]
-                      ++
-                        ( col.theme.backgroundPosition
-                            |> Maybe.map
-                                (\pos ->
-                                    case pos of
-                                        ("center", _) ->
-                                            [ top (pct 50)
-                                            , transform <| translateY (pct -50)
-                                            ]
-                                        ("bottom", _) ->
-                                            [ bottom zero
-                                            ]
-                                        _ -> []
-                                )
-                            |> Maybe.withDefault []
-                        )
+                        ++ (col.theme.backgroundPosition
+                                |> Maybe.map
+                                    (\pos ->
+                                        case pos of
+                                            ( "center", _ ) ->
+                                                [ top (pct 50)
+                                                , transform <| translateY (pct -50)
+                                                ]
+
+                                            ( "bottom", _ ) ->
+                                                [ bottom zero
+                                                ]
+
+                                            _ ->
+                                                []
+                                    )
+                                |> Maybe.withDefault []
+                           )
                 ]
     in
-        wrapper attributes
-            [ ( col.image
-                |> Maybe.map (\imageData -> imageWrapper [ backgroundImg imageData ] [])
-                |> Maybe.withDefault (text "")
-              )
-            , ( col.richText
-                |> Maybe.map (\html -> textWrapper [] [ richText html ])
-                |> Maybe.withDefault (text "")
-              )
-            ]
-
-
+    wrapper attributes
+        [ col.image
+            |> Maybe.map (\imageData -> imageWrapper [ backgroundImg imageData ] [])
+            |> Maybe.withDefault (text "")
+        , col.richText
+            |> Maybe.map (\html -> textWrapper [] [ richText html ])
+            |> Maybe.withDefault (text "")
+        ]

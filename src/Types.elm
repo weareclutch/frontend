@@ -1,14 +1,16 @@
-module Types exposing (..)
+module Types exposing (Model, Msg(..), Route(..), SiteIdentifier, initModel)
 
 import Navigation exposing (Location)
-import Wagtail
 import UI.State
+import Wagtail
+
 
 type Msg
     = OnLocationChange Location
     | ChangeLocation String
     | NavigationMsg UI.State.Msg
     | WagtailMsg Wagtail.Msg
+
 
 type alias Model =
     { route : Route
@@ -24,20 +26,20 @@ initModel =
     { route = UndefinedRoute
     , overlayState =
         { active = False
-        , parts = (Nothing, Nothing)
+        , parts = ( Nothing, Nothing )
         }
     , navigationState = UI.State.Closed
     , navigationTree = Nothing
     , contactInformation = Nothing
     }
 
-type alias SiteIdentifier = Maybe String
+
+type alias SiteIdentifier =
+    Maybe String
+
 
 type Route
     = UndefinedRoute
     | WagtailRoute SiteIdentifier Wagtail.Page
     | NotFoundRoute SiteIdentifier
     | ErrorRoute
-
-
-

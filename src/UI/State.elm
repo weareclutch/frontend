@@ -1,8 +1,8 @@
-module UI.State exposing (..)
+module UI.State exposing (ContactInformation, Msg(..), NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState, addPageToNavigationTree, addPageToOverlayState, closeOverlay, decodeContactInformation, decodeNavigation, fetchContactInformation, fetchNavigation, isNavigationPage)
 
-import Json.Decode as D
-import Wagtail exposing (siteUrl, Page, getPageId, Theme, decodeTheme)
 import Http
+import Json.Decode as D
+import Wagtail exposing (Page, Theme, decodeTheme, getPageId, siteUrl)
 
 
 type NavigationState
@@ -25,22 +25,22 @@ type alias NavigationItem =
     }
 
 
-
 type alias NavigationTree =
-    { items: List NavigationItem
+    { items : List NavigationItem
     }
 
 
 type alias OverlayState =
     { active : Bool
-    , parts : (Maybe OverlayPart, Maybe OverlayPart)
+    , parts : ( Maybe OverlayPart, Maybe OverlayPart )
     }
 
 
 type alias OverlayPart =
-    { page: Wagtail.Page
+    { page : Wagtail.Page
     , active : Bool
     }
+
 
 type alias ContactInformation =
     { title : String
@@ -55,14 +55,16 @@ closeOverlay state =
     { active = False
     , parts =
         case state.parts of
-            (Just a, Nothing) ->
+            ( Just a, Nothing ) ->
                 ( Just { page = a.page, active = False }
                 , Nothing
                 )
-            (Just a, Just b) ->
+
+            ( Just a, Just b ) ->
                 ( Just { page = a.page, active = False }
                 , Just { page = b.page, active = False }
                 )
+
             _ ->
                 state.parts
     }
@@ -73,28 +75,29 @@ addPageToOverlayState state page =
     { active = True
     , parts =
         case state.parts of
-            (Nothing, Nothing) ->
+            ( Nothing, Nothing ) ->
                 ( Just { page = page, active = True }
                 , Nothing
                 )
 
-            (Just a, Nothing) ->
+            ( Just a, Nothing ) ->
                 ( Just { page = a.page, active = False }
                 , Just { page = page, active = True }
                 )
 
-            (Just a, Just b) ->
+            ( Just a, Just b ) ->
                 if a.active && not b.active then
                     ( Just { page = a.page, active = False }
                     , Just { page = page, active = True }
                     )
+
                 else
                     ( Just { page = page, active = True }
                     , Just { page = b.page, active = False }
                     )
 
-            _ -> state.parts
-
+            _ ->
+                state.parts
     }
 
 
@@ -106,6 +109,7 @@ addPageToNavigationTree page { items } =
                 (\item ->
                     if item.id == getPageId page then
                         { item | page = Just page }
+
                     else
                         item
                 )
@@ -117,10 +121,8 @@ isNavigationPage nav page =
     nav.items
         |> List.any
             (\item ->
-                item.id == (getPageId page)
+                item.id == getPageId page
             )
-
-
 
 
 fetchNavigation : String -> Cmd Msg
@@ -128,21 +130,25 @@ fetchNavigation siteIdentifier =
     Http.send FetchNavigation <|
         Http.get (siteUrl ++ "/api/navigation/" ++ siteIdentifier ++ "/") decodeNavigation
 
+
 fetchContactInformation : String -> Cmd Msg
 fetchContactInformation siteIdentifier =
     Http.send FetchContactInformation <|
         Http.get (siteUrl ++ "/api/contact/" ++ siteIdentifier ++ "/") decodeContactInformation
 
+
 decodeNavigation : D.Decoder NavigationTree
 decodeNavigation =
     D.map NavigationTree
-        (D.field "items" <| D.list <|
-            D.map4 NavigationItem
-                (D.field "id" D.int)
-                (D.field "title" D.string)
-                (D.field "slug" D.string)
-                (D.succeed Nothing)
+        (D.field "items" <|
+            D.list <|
+                D.map4 NavigationItem
+                    (D.field "id" D.int)
+                    (D.field "title" D.string)
+                    (D.field "slug" D.string)
+                    (D.succeed Nothing)
         )
+
 
 decodeContactInformation : D.Decoder ContactInformation
 decodeContactInformation =
@@ -151,6 +157,3 @@ decodeContactInformation =
         (D.field "phone" D.string)
         (D.field "email" D.string)
         (D.field "address" D.string)
-
-
-

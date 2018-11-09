@@ -1,14 +1,14 @@
 module UI.Wrapper exposing (view)
 
-import Types exposing (..)
-import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (id)
 import Css exposing (..)
 import Css.Foreign exposing (global, selector)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (id)
 import Style exposing (..)
-import UI.Components.Navigation
+import Types exposing (..)
 import UI.Components.Contact
-import UI.PageWrappers exposing (mobileView, desktopView, overlays, navigationPages, renderPage)
+import UI.Components.Navigation
+import UI.PageWrappers exposing (desktopView, mobileView, navigationPages, overlays, renderPage)
 
 
 globalStyle : Html msg
@@ -86,7 +86,8 @@ wrapper active children =
                 , height (pct 100)
                 , if active then
                     opacity (int 1)
-                else
+
+                  else
                     opacity zero
                 ]
 
@@ -131,15 +132,15 @@ wrapper active children =
                 , zIndex (int 520)
                 ]
     in
-        div []
-          [ globalStyle
-          , animationWrapper [ id "animation-wrapper" ]
+    div []
+        [ globalStyle
+        , animationWrapper [ id "animation-wrapper" ]
             [ bg [ id "bg" ] []
             , effects [ id "effects" ] []
             , tagLine [ id "tagline" ] []
             ]
-          , wrapperDiv [ id "app" ] children
-          ]
+        , wrapperDiv [ id "app" ] children
+        ]
 
 
 view : Model -> Html Msg
@@ -161,27 +162,23 @@ view model =
 
                             ErrorRoute ->
                                 text "It's not a bug - it's an undocumented feature."
-
-
                 in
-                    wrapper (model.route /= UndefinedRoute)
-                        [ UI.Components.Navigation.view navigationTree model.navigationState model.route
-                        , desktopView
-                            <| overlays model.overlayState
-                        , desktopView
-                            <| navigationPages model.navigationState navigationTree.items model.route
-                        , desktopView
-                            <| ( Maybe.map
-                                    UI.Components.Contact.view
-                                    model.contactInformation
-                                    |> Maybe.withDefault
-                                        (text "")
-                                )
-
-                        , mobileView
-                            <| mobilePage
-                        ]
+                wrapper (model.route /= UndefinedRoute)
+                    [ UI.Components.Navigation.view navigationTree model.navigationState model.route
+                    , desktopView <|
+                        overlays model.overlayState
+                    , desktopView <|
+                        navigationPages model.navigationState navigationTree.items model.route
+                    , desktopView <|
+                        (Maybe.map
+                            UI.Components.Contact.view
+                            model.contactInformation
+                            |> Maybe.withDefault
+                                (text "")
+                        )
+                    , mobileView <|
+                        mobilePage
+                    ]
             )
         |> Maybe.withDefault
-            ( wrapper False [] )
-
+            (wrapper False [])

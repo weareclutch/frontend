@@ -1,7 +1,7 @@
-module Style exposing (..)
+module Style exposing (bpLarge, bpLargeUp, bpMedium, bpMediumUp, bpSmallOnly, bpXLargeUp, large, medium, small, transition, transitionString, transitions)
 
-import Css.Media exposing (..)
 import Css exposing (..)
+import Css.Media exposing (..)
 
 
 small : Int
@@ -30,7 +30,7 @@ bpSmallOnly styles =
 bpMedium : List Style -> Style
 bpMedium styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ (toString small) ++ "px) and (max-width: " ++ (toString <| medium - 1) ++ "px)"
+        [ "only screen and (min-width: " ++ toString small ++ "px) and (max-width: " ++ (toString <| medium - 1) ++ "px)"
         ]
         styles
 
@@ -38,7 +38,7 @@ bpMedium styles =
 bpMediumUp : List Style -> Style
 bpMediumUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ (toString small) ++ "px)"
+        [ "only screen and (min-width: " ++ toString small ++ "px)"
         ]
         styles
 
@@ -46,7 +46,7 @@ bpMediumUp styles =
 bpLarge : List Style -> Style
 bpLarge styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ (toString medium) ++ "px) and (max-width: " ++ (toString <| large - 1) ++ "px)"
+        [ "only screen and (min-width: " ++ toString medium ++ "px) and (max-width: " ++ (toString <| large - 1) ++ "px)"
         ]
         styles
 
@@ -54,7 +54,7 @@ bpLarge styles =
 bpLargeUp : List Style -> Style
 bpLargeUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ (toString medium) ++ "px)"
+        [ "only screen and (min-width: " ++ toString medium ++ "px)"
         ]
         styles
 
@@ -62,14 +62,14 @@ bpLargeUp styles =
 bpXLargeUp : List Style -> Style
 bpXLargeUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ (toString large) ++ "px)"
+        [ "only screen and (min-width: " ++ toString large ++ "px)"
         ]
         styles
 
 
 transitionString : String -> Float -> Float -> String -> String
 transitionString prop duration delay easing =
-    prop ++ " " ++ (toString duration) ++ "s " ++ (toString delay) ++ "s " ++ easing
+    prop ++ " " ++ toString duration ++ "s " ++ toString delay ++ "s " ++ easing
 
 
 transitions : List ( String, Float, Float, String ) -> Style

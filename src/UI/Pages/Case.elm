@@ -1,13 +1,13 @@
 module UI.Pages.Case exposing (view)
 
-import Html.Styled exposing (..)
 import Css exposing (..)
-import Style exposing (..)
+import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class, href)
-import UI.Common exposing (button, addLink, loremIpsum, backgroundImg)
+import Style exposing (..)
+import Types exposing (Msg)
+import UI.Common exposing (addLink, backgroundImg, button, loremIpsum)
 import UI.Components.Blocks
 import UI.Components.CasePoster
-import Types exposing (Msg)
 import Wagtail
 
 
@@ -26,6 +26,7 @@ view content =
                 , position relative
                 , padding (px 40)
                 ]
+
         nextCase =
             styled div
                 [ maxWidth (px 660)
@@ -37,15 +38,15 @@ view content =
                     ]
                 ]
     in
-        wrapper []
-            [ header content
-            , body content
-            , nextCaseWrapper []
-                [ nextCase []
-                    [ UI.Components.CasePoster.view content.info.relatedCase
-                    ]
+    wrapper []
+        [ header content
+        , body content
+        , nextCaseWrapper []
+            [ nextCase []
+                [ UI.Components.CasePoster.view content.info.relatedCase
                 ]
             ]
+        ]
 
 
 header : Wagtail.CasePageContent -> Html msg
@@ -93,9 +94,14 @@ header content =
             styled div
                 [ color (hex content.theme.textColor)
                 , case String.toLower content.theme.textColor of
-                    "fff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
-                    "ffffff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
-                    _ -> textShadow none
+                    "fff" ->
+                        textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+
+                    "ffffff" ->
+                        textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+
+                    _ ->
+                        textShadow none
                 , position absolute
                 , paddingRight (px 40)
                 , left (px 25)
@@ -159,15 +165,15 @@ header content =
                     ]
                 ]
     in
-        outerWrapper []
-            [ wrapper wrapperAttributes
-                [ image
-                , titleWrapper []
-                    [ caption [] [ text content.info.caption ]
-                    , title [] [ text content.meta.title ]
-                    ]
+    outerWrapper []
+        [ wrapper wrapperAttributes
+            [ image
+            , titleWrapper []
+                [ caption [] [ text content.info.caption ]
+                , title [] [ text content.meta.title ]
                 ]
             ]
+        ]
 
 
 layerImage : Wagtail.Theme -> Wagtail.Image -> Html msg
@@ -200,7 +206,7 @@ layerImage theme image =
                     ++ positionStyles
                     ++ size
     in
-        wrapper [ backgroundImg image ] []
+    wrapper [ backgroundImg image ] []
 
 
 body : Wagtail.CasePageContent -> Html msg
@@ -219,10 +225,10 @@ body content =
                     )
                 |> Maybe.withDefault (text "")
     in
-        wrapper []
-            [ intro content
-            , blocks
-            ]
+    wrapper []
+        [ intro content
+        , blocks
+        ]
 
 
 intro : Wagtail.CasePageContent -> Html msg
@@ -263,7 +269,7 @@ intro content =
 
         introEl =
             content.intro
-                |> Maybe.map (UI.Components.Blocks.richText)
+                |> Maybe.map UI.Components.Blocks.richText
                 |> Maybe.withDefault (text "")
 
         metaInfo =
@@ -302,23 +308,23 @@ intro content =
                     ]
                 ]
     in
-        wrapper []
-            [ innerWrapper []
-                [ introWrapper []
-                    [ introEl
+    wrapper []
+        [ innerWrapper []
+            [ introWrapper []
+                [ introEl
+                ]
+            , metaInfo []
+                [ metaSection []
+                    [ description [] [ text "Diensten" ]
                     ]
-                , metaInfo []
-                    [ metaSection []
-                        [ description [] [ text "Diensten" ]
-                        ]
-                    , metaSection []
-                        [ description [] [ text "Periode" ]
-                        , div [] [ text "Jan 2018" ]
-                        ]
-                    , metaSection []
-                        [ description [] [ text "Bekijken" ]
-                        , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
-                        ]
+                , metaSection []
+                    [ description [] [ text "Periode" ]
+                    , div [] [ text "Jan 2018" ]
+                    ]
+                , metaSection []
+                    [ description [] [ text "Bekijken" ]
+                    , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
                     ]
                 ]
             ]
+        ]
