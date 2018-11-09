@@ -4,7 +4,7 @@ import Navigation exposing (Location)
 import Html.Styled exposing (..)
 import UI.Wrapper
 import Wagtail exposing (getWagtailPage, preloadWagtailPage)
-import UI.State exposing (fetchNavigation)
+import UI.State exposing (fetchNavigation, fetchContactInformation)
 import Ports
 import Types exposing (..)
 import Http
@@ -25,15 +25,18 @@ fetchSiteDependentResources previousRoute currentIdentifier =
             NotFoundRoute identifier -> identifier
             _ -> Nothing
 
-        fetchNavigationForSite id =
-            fetchNavigation id
-            |> Cmd.map NavigationMsg
+        fetchResourcesForSite id =
+            Cmd.batch
+                [ fetchNavigation id
+                , fetchContactInformation id
+                ]
+                |> Cmd.map NavigationMsg
     in
         case (previousIdentifier, currentIdentifier) of
             (_, Nothing) -> Cmd.none
-            (Nothing, Just id) -> fetchNavigationForSite id
+            (Nothing, Just id) -> fetchResourcesForSite id
             (Just prevId, Just id) ->
-                if prevId == id then Cmd.none else fetchNavigationForSite id
+                if prevId == id then Cmd.none else fetchResourcesForSite id
 
 
 init : Location -> ( Model, Cmd Msg )
@@ -156,10 +159,15 @@ update msg model =
                                 ({ model | navigationState = newState }
                                 , Maybe.withDefault Cmd.none command
                                 )
-
                         _ ->
                             ({ model | navigationState = newState }, Cmd.none)
 
+                UI.State.FetchContactInformation (Ok contactInfo) ->
+                    ({ model | contactInformation = Just contactInfo }, Cmd.none)
+
+                UI.State.FetchContactInformation (Err error) ->
+                    Debug.log (toString error)
+                        (model, Cmd.none)
 
 
 subscriptions : Model -> Sub Msg

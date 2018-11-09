@@ -4,9 +4,10 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes
 import Css exposing (..)
 import Style exposing (..)
+import UI.State exposing (ContactInformation)
 
-view : Html msg
-view =
+view : ContactInformation -> Html msg
+view contactInfo =
     let
         outerWrapper =
             styled div
@@ -57,13 +58,13 @@ view =
                 [ paragraph []
                     [ text "Mail ons op "
                     , link
-                        [ Html.Styled.Attributes.href "mailto:info@weareclutch.nl" ]
-                        [ text "info@weareclutch.nl" ]
+                        [ Html.Styled.Attributes.href ("mailto:" ++ contactInfo.email) ]
+                        [ text contactInfo.email ]
                     , br [] []
                     , text "Bel ons via "
                     , link
-                        [ Html.Styled.Attributes.href "phone:+31627333700" ]
-                        [ text "06 27 333 700" ]
+                        [ Html.Styled.Attributes.href ("phone:" ++ contactInfo.phone) ]
+                        [ text contactInfo.phone ]
                     , br [] []
                     , link
                         [ Html.Styled.Attributes.href "https://www.instagram.com/clutch_amsterdam/"

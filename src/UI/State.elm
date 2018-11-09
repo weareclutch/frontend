@@ -14,6 +14,7 @@ type NavigationState
 type Msg
     = FetchNavigation (Result Http.Error NavigationTree)
     | ChangeNavigation NavigationState
+    | FetchContactInformation (Result Http.Error ContactInformation)
 
 
 type alias NavigationItem =
@@ -39,6 +40,13 @@ type alias OverlayState =
 type alias OverlayPart =
     { page: Wagtail.Page
     , active : Bool
+    }
+
+type alias ContactInformation =
+    { title : String
+    , phone : String
+    , email : String
+    , address : String
     }
 
 
@@ -116,10 +124,14 @@ isNavigationPage nav page =
 
 
 fetchNavigation : String -> Cmd Msg
-fetchNavigation identifier =
+fetchNavigation siteIdentifier =
     Http.send FetchNavigation <|
-        Http.get (siteUrl ++ "/api/navigation/" ++ identifier ++ "/") decodeNavigation
+        Http.get (siteUrl ++ "/api/navigation/" ++ siteIdentifier ++ "/") decodeNavigation
 
+fetchContactInformation : String -> Cmd Msg
+fetchContactInformation siteIdentifier =
+    Http.send FetchContactInformation <|
+        Http.get (siteUrl ++ "/api/contact/" ++ siteIdentifier ++ "/") decodeContactInformation
 
 decodeNavigation : D.Decoder NavigationTree
 decodeNavigation =
@@ -131,5 +143,14 @@ decodeNavigation =
                 (D.field "slug" D.string)
                 (D.succeed Nothing)
         )
+
+decodeContactInformation : D.Decoder ContactInformation
+decodeContactInformation =
+    D.map4 ContactInformation
+        (D.field "title" D.string)
+        (D.field "phone" D.string)
+        (D.field "email" D.string)
+        (D.field "address" D.string)
+
 
 

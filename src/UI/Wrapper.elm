@@ -171,7 +171,13 @@ view model =
                         , desktopView
                             <| navigationPages model.navigationState navigationTree.items model.route
                         , desktopView
-                            <| UI.Components.Contact.view
+                            <| ( Maybe.map
+                                    UI.Components.Contact.view
+                                    model.contactInformation
+                                    |> Maybe.withDefault
+                                        (text "")
+                                )
+
                         , mobileView
                             <| mobilePage
                         ]

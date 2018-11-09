@@ -10,12 +10,12 @@ type Msg
     | NavigationMsg UI.State.Msg
     | WagtailMsg Wagtail.Msg
 
-
 type alias Model =
     { route : Route
     , overlayState : UI.State.OverlayState
     , navigationState : UI.State.NavigationState
     , navigationTree : Maybe UI.State.NavigationTree
+    , contactInformation : Maybe UI.State.ContactInformation
     }
 
 
@@ -28,6 +28,7 @@ initModel =
         }
     , navigationState = UI.State.Closed
     , navigationTree = Nothing
+    , contactInformation = Nothing
     }
 
 type alias SiteIdentifier = Maybe String
