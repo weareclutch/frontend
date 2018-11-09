@@ -10,5 +10,8 @@
     "start": "webpack-dev-server",
     "build": "webpack -p --config webpack.config.production.js",
     "test": "echo 'no tests'"
+  },
+  "devDependencies": {
+    "elm-format": "^0.8.1"
   }
 }
