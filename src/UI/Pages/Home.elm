@@ -1,14 +1,14 @@
 module UI.Pages.Home exposing (view)
 
-import Html.Styled exposing (..)
 import Css exposing (..)
-import Html.Styled.Attributes exposing (class, attribute, id, href)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (attribute, class, href, id)
+import Style exposing (..)
+import Types exposing (Msg)
+import UI.Common exposing (backgroundImg, button)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
-import UI.Common exposing (button, backgroundImg)
-import Style exposing (..)
 import Wagtail
-import Types exposing (Msg)
 
 
 view : Wagtail.HomePageContent -> Html Msg
@@ -22,11 +22,11 @@ view content =
                 , position relative
                 ]
 
-        (evenCases, oddCases) =
+        ( evenCases, oddCases ) =
             content.cases
                 |> List.reverse
                 |> List.indexedMap (,)
-                |> List.partition (\(index, x) -> index % 2 == 0)
+                |> List.partition (\( index, x ) -> index % 2 == 0)
 
         caseWrapper =
             styled div
@@ -62,27 +62,27 @@ view content =
                     ]
                 ]
     in
-        div [] <|
-            [ pageWrapper
-                [ innerWrapper []
-                    [ evenCases
-                        |> List.map Tuple.second
-                        |> List.map
-                            (\x ->
-                                caseWrapper [] [ UI.Components.CasePoster.view x ]
-                            )
-                        |> casesWrapper []
-                    , oddCases
-                        |> List.map Tuple.second
-                        |> List.map
-                            (\x ->
-                                caseWrapper [] [ UI.Components.CasePoster.view x ]
-                            )
-                        |> casesWrapper []
-                    ]
+    div [] <|
+        [ pageWrapper
+            [ innerWrapper []
+                [ evenCases
+                    |> List.map Tuple.second
+                    |> List.map
+                        (\x ->
+                            caseWrapper [] [ UI.Components.CasePoster.view x ]
+                        )
+                    |> casesWrapper []
+                , oddCases
+                    |> List.map Tuple.second
+                    |> List.map
+                        (\x ->
+                            caseWrapper [] [ UI.Components.CasePoster.view x ]
+                        )
+                    |> casesWrapper []
                 ]
-            , introCover content
             ]
+        , introCover content
+        ]
 
 
 pageWrapper : List (Html msg) -> Html msg
@@ -112,9 +112,9 @@ pageWrapper children =
                 , padding4 zero zero (px 280) zero
                 ]
     in
-        wrapper []
-            [ innerWrapper [] children
-            ]
+    wrapper []
+        [ innerWrapper [] children
+        ]
 
 
 introCover : Wagtail.HomePageContent -> Html msg
@@ -165,19 +165,19 @@ introCover content =
 
         image =
             case content.cover.image of
-                Just img -> imageDiv [ backgroundImg img ] []
-                Nothing -> text ""
+                Just img ->
+                    imageDiv [ backgroundImg img ] []
 
+                Nothing ->
+                    text ""
     in
-        wrapper []
-            [ image
-            , textWrapper [ ]
-                [ title [] [ text "Uitgelicht" ]
-                , richText content.cover.text
-                , a [ href content.cover.link ]
-                    [ UI.Common.button content.theme [] (Just "lees verder")
-                    ]
+    wrapper []
+        [ image
+        , textWrapper []
+            [ title [] [ text "Uitgelicht" ]
+            , richText content.cover.text
+            , a [ href content.cover.link ]
+                [ UI.Common.button content.theme [] (Just "lees verder")
                 ]
             ]
-
-
+        ]

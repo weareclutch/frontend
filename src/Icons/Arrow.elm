@@ -1,4 +1,4 @@
-module Icons.Arrow exposing (..)
+module Icons.Arrow exposing (arrow)
 
 import Html.Styled exposing (Html)
 import Svg.Styled exposing (..)

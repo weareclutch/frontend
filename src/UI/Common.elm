@@ -1,24 +1,21 @@
-module UI.Common
-    exposing
-        ( addLink
-        , link
-        , loremIpsum
-        , image
-        , backgroundImg
-        , button
-        )
+module UI.Common exposing
+    ( addLink
+    , backgroundImg
+    , button
+    , image
+    , link
+    , loremIpsum
+    )
 
+import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (..)
 import Html.Styled.Events exposing (..)
-import Json.Decode as Decode
 import Icons.Arrow exposing (arrow)
-import Html.Styled.Attributes exposing (style, src, alt)
-import Css exposing (..)
+import Json.Decode as Decode
 import Style exposing (..)
-import Wagtail exposing (siteUrl)
 import Types exposing (..)
-import Wagtail exposing (Theme, Image)
+import Wagtail exposing (Image, Theme, siteUrl)
 
 
 addLink : String -> List (Attribute Msg)
@@ -35,7 +32,7 @@ addLink url =
         onLinkClick =
             onWithOptions "click" options (Decode.succeed message)
     in
-        [ (href url), onLinkClick ]
+    [ href url, onLinkClick ]
 
 
 link : String -> List (Html Msg) -> Html Msg
@@ -43,8 +40,7 @@ link url children =
     a (addLink url) children
 
 
-
-image : List Style -> Image ->  Html msg
+image : List Style -> Image -> Html msg
 image styles data =
     let
         imageUrl =
@@ -53,13 +49,12 @@ image styles data =
         el =
             styled img styles
     in
-        case data.caption of
-            Just caption ->
-                el [ src imageUrl, alt caption ] []
+    case data.caption of
+        Just caption ->
+            el [ src imageUrl, alt caption ] []
 
-            Nothing ->
-                el [ src imageUrl ] []
-
+        Nothing ->
+            el [ src imageUrl ] []
 
 
 backgroundImg : Image -> Attribute msg
@@ -68,10 +63,10 @@ backgroundImg data =
         imageUrl =
             siteUrl ++ data.image
     in
-        css
-            [ backgroundImage (url imageUrl)
-            , backgroundRepeat noRepeat
-            ]
+    css
+        [ backgroundImage (url imageUrl)
+        , backgroundRepeat noRepeat
+        ]
 
 
 loremIpsum : Html msg
@@ -89,8 +84,6 @@ loremIpsum =
            Phasellus et sapien quis tellus ultrices mattis. Sed viverra dolor at augue efficitur iaculis. Nam ultricies luctus dui sed tempus. Nam mattis tempus pretium. Sed sed quam fringilla ante euismod rhoncus. Nam magna mauris, interdum in aliquet non, imperdiet sed nibh. Nulla ut faucibus lacus, at euismod tortor. Suspendisse ac bibendum eros.
           """
         ]
-
-
 
 
 button : Theme -> List (Attribute msg) -> Maybe String -> Html msg
@@ -122,6 +115,7 @@ button theme attributes maybeText =
                 , letterSpacing (px 2)
                 , if hasText then
                     padding4 zero (px 60) zero (px 30)
+
                   else
                     padding zero
                 , hover
@@ -136,7 +130,7 @@ button theme attributes maybeText =
                 , top (px 21)
                 ]
     in
-        wrapper attributes
-            [ children
-            , arrowWrapper [] [ arrow theme.textColor ]
-            ]
+    wrapper attributes
+        [ children
+        , arrowWrapper [] [ arrow theme.textColor ]
+        ]

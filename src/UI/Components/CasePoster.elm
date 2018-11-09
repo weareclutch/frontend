@@ -1,11 +1,11 @@
 module UI.Components.CasePoster exposing (view)
 
-import Html.Styled exposing (..)
 import Css exposing (..)
+import Html.Styled exposing (..)
 import Style exposing (..)
-import UI.Common exposing (backgroundImg, addLink)
-import Wagtail
 import Types exposing (Msg)
+import UI.Common exposing (addLink, backgroundImg)
+import Wagtail
 
 
 view : Wagtail.CasePreview -> Html Msg
@@ -44,15 +44,19 @@ view casePreview =
                 , left (px 25)
                 , bottom (px 25)
                 , case String.toLower casePreview.theme.textColor of
-                    "fff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
-                    "ffffff" -> textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
-                    _ -> textShadow none
+                    "fff" ->
+                        textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+
+                    "ffffff" ->
+                        textShadow4 zero (px 15) (px 30) (rgba 0 0 0 0.4)
+
+                    _ ->
+                        textShadow none
                 , bpLargeUp
                     [ left (px 40)
                     , bottom (px 100)
                     ]
                 ]
-
 
         buttonWrapper =
             styled div
@@ -100,16 +104,13 @@ view casePreview =
                     , letterSpacing (px 2)
                     ]
                 ]
-
     in
-        wrapper (wrapperAttributes ++ addLink casePreview.url)
-            [ titleWrapper []
-                [ caption [] [ text casePreview.caption ]
-                , title [] [ text casePreview.title ]
-                ]
-            , buttonWrapper []
-                [ UI.Common.button casePreview.theme [] Nothing
-                ]
+    wrapper (wrapperAttributes ++ addLink casePreview.url)
+        [ titleWrapper []
+            [ caption [] [ text casePreview.caption ]
+            , title [] [ text casePreview.title ]
             ]
-
-
+        , buttonWrapper []
+            [ UI.Common.button casePreview.theme [] Nothing
+            ]
+        ]

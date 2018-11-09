@@ -1,10 +1,11 @@
 module UI.Components.Contact exposing (view)
 
+import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes
-import Css exposing (..)
 import Style exposing (..)
 import UI.State exposing (ContactInformation)
+
 
 view : ContactInformation -> Html msg
 view contactInfo =
@@ -33,13 +34,11 @@ view contactInfo =
                     ]
                 ]
 
-
         link =
             styled a
                 [ color (hex "00FFB0")
                 , textDecoration none
                 ]
-
 
         paragraph =
             styled p
@@ -48,31 +47,28 @@ view contactInfo =
                 , letterSpacing (px 3.25)
                 , fontFamilies [ "Qanelas ExtraBold" ]
                 , bpMediumUp
-                    [ ]
+                    []
                 ]
-
-
     in
-        outerWrapper []
-            [ wrapper []
-                [ paragraph []
-                    [ text "Mail ons op "
-                    , link
-                        [ Html.Styled.Attributes.href ("mailto:" ++ contactInfo.email) ]
-                        [ text contactInfo.email ]
-                    , br [] []
-                    , text "Bel ons via "
-                    , link
-                        [ Html.Styled.Attributes.href ("phone:" ++ contactInfo.phone) ]
-                        [ text contactInfo.phone ]
-                    , br [] []
-                    , link
-                        [ Html.Styled.Attributes.href "https://www.instagram.com/clutch_amsterdam/"
-                        , Html.Styled.Attributes.target "_blank"
-                        ]
-                        [ text "Volg ons" ]
-                    , text " op instagram "
+    outerWrapper []
+        [ wrapper []
+            [ paragraph []
+                [ text "Mail ons op "
+                , link
+                    [ Html.Styled.Attributes.href ("mailto:" ++ contactInfo.email) ]
+                    [ text contactInfo.email ]
+                , br [] []
+                , text "Bel ons via "
+                , link
+                    [ Html.Styled.Attributes.href ("phone:" ++ contactInfo.phone) ]
+                    [ text contactInfo.phone ]
+                , br [] []
+                , link
+                    [ Html.Styled.Attributes.href "https://www.instagram.com/clutch_amsterdam/"
+                    , Html.Styled.Attributes.target "_blank"
                     ]
+                    [ text "Volg ons" ]
+                , text " op instagram "
                 ]
             ]
-
+        ]

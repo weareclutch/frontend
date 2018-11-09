@@ -1,9 +1,9 @@
-module Wagtail exposing (..)
+module Wagtail exposing (Block(..), BlogCollectionContent, BlogOverviewContent, BlogPostContent, CasePageContent, CasePreview, Column, HomePageContent, Image, Msg(..), Page(..), Quote, Theme, WagtailMetaContent, apiUrl, blogCollectionPageDecoder, blogOverviewPageDecoder, blogPostPageDecoder, casePageDecoder, dateDecoder, decodeBackgroundBlock, decodeBlocks, decodeCasePreview, decodeColumn, decodeColumns, decodeContentBlock, decodeImage, decodeImageBlock, decodePageType, decodeQuote, decodeTheme, getPageDecoder, getPageId, getPageTheme, getWagtailPage, homePageDecoder, metaDecoder, preloadWagtailPage, siteUrl)
 
-import Http exposing (..)
-import Navigation
-import Json.Decode as D
 import Date exposing (Date)
+import Http exposing (..)
+import Json.Decode as D
+import Navigation
 
 
 siteUrl : String
@@ -17,7 +17,7 @@ apiUrl =
 
 
 type Msg
-    = LoadPage (Result Http.Error (Response String, Page))
+    = LoadPage (Result Http.Error ( Response String, Page ))
     | PreloadPage (Result Http.Error Page)
 
 
@@ -32,19 +32,32 @@ type Page
 getPageId : Page -> Int
 getPageId page =
     case page of
-        HomePage { meta } -> meta.id
-        CasePage { meta } -> meta.id
-        BlogOverviewPage { meta } -> meta.id
-        BlogCollectionPage { meta } -> meta.id
-        BlogPostPage { meta } -> meta.id
+        HomePage { meta } ->
+            meta.id
+
+        CasePage { meta } ->
+            meta.id
+
+        BlogOverviewPage { meta } ->
+            meta.id
+
+        BlogCollectionPage { meta } ->
+            meta.id
+
+        BlogPostPage { meta } ->
+            meta.id
 
 
 getPageTheme : Page -> Theme
 getPageTheme page =
     case page of
-        HomePage { theme } -> theme
-        CasePage { theme } -> theme
-        _  ->
+        HomePage { theme } ->
+            theme
+
+        CasePage { theme } ->
+            theme
+
+        _ ->
             { backgroundColor = "fff"
             , textColor = "292A32"
             , backgroundPosition = Nothing
@@ -55,17 +68,19 @@ getWagtailPage : Navigation.Location -> Cmd Msg
 getWagtailPage location =
     Http.request
         { method = "GET"
-        , headers = [header "Accept" "application/json"]
+        , headers = [ header "Accept" "application/json" ]
         , url = apiUrl ++ "/pages/find/?html_path=" ++ location.pathname
         , body = Http.emptyBody
-        , expect = expectStringResponse (\r ->
-            D.decodeString
-                (decodePageType
-                    |> D.andThen getPageDecoder
-                    |> D.map (\page -> (r, page))
+        , expect =
+            expectStringResponse
+                (\r ->
+                    D.decodeString
+                        (decodePageType
+                            |> D.andThen getPageDecoder
+                            |> D.map (\page -> ( r, page ))
+                        )
+                        r.body
                 )
-                r.body
-        )
 
         -- (
         --     decodePageType
@@ -81,13 +96,14 @@ preloadWagtailPage : String -> Cmd Msg
 preloadWagtailPage path =
     Http.request
         { method = "GET"
-        , headers = [header "Accept" "application/json"]
+        , headers = [ header "Accept" "application/json" ]
         , url = apiUrl ++ "/pages/find/?html_path=" ++ path
         , body = Http.emptyBody
-        , expect = expectJson (
-            decodePageType
-                |> D.andThen getPageDecoder
-        )
+        , expect =
+            expectJson
+                (decodePageType
+                    |> D.andThen getPageDecoder
+                )
         , timeout = Nothing
         , withCredentials = False
         }
@@ -96,25 +112,31 @@ preloadWagtailPage path =
 
 decodePageType : D.Decoder String
 decodePageType =
-    D.at ["meta", "type"] D.string
+    D.at [ "meta", "type" ] D.string
 
 
 getPageDecoder : String -> D.Decoder Page
 getPageDecoder pageType =
-  case pageType of
-    -- Register the page decoders here ( "page.Type" -> aDecoder ) --
-    "home.HomePage" -> homePageDecoder
-    "case.CasePage" -> casePageDecoder
-    "blog.BlogOverviewPage" -> blogOverviewPageDecoder
+    case pageType of
+        -- Register the page decoders here ( "page.Type" -> aDecoder ) --
+        "home.HomePage" ->
+            homePageDecoder
 
-    -- Default handler forn unknown types (aka "we can't handle")  --
-    _ -> D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
+        "case.CasePage" ->
+            casePageDecoder
+
+        "blog.BlogOverviewPage" ->
+            blogOverviewPageDecoder
+
+        -- Default handler forn unknown types (aka "we can't handle")  --
+        _ ->
+            D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
 
 
 dateDecoder : D.Decoder Date
-dateDecoder  =
+dateDecoder =
     D.string
-        |> D.andThen ( \s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
+        |> D.andThen (\s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
 
 
 type alias WagtailMetaContent =
@@ -132,10 +154,10 @@ metaDecoder =
     D.map6 WagtailMetaContent
         (D.field "id" D.int)
         (D.field "title" D.string)
-        (D.at ["meta", "type"] D.string)
-        (D.at ["meta", "slug"] D.string)
-        (D.at ["meta", "first_published_at"] dateDecoder)
-        (D.at ["meta", "seo_title"] D.string)
+        (D.at [ "meta", "type" ] D.string)
+        (D.at [ "meta", "slug" ] D.string)
+        (D.at [ "meta", "first_published_at" ] dateDecoder)
+        (D.at [ "meta", "seo_title" ] D.string)
 
 
 type alias HomePageContent =
@@ -278,11 +300,11 @@ decodeImage =
         (D.maybe <| D.field "caption" D.string)
 
 
-
 type alias Quote =
     { text : String
     , name : Maybe String
     }
+
 
 decodeQuote : D.Decoder Block
 decodeQuote =
@@ -379,7 +401,6 @@ decodeBlocks =
 
                     _ ->
                         D.succeed (UnknownBlock blockType)
-
             )
         |> D.list
 
@@ -404,5 +425,3 @@ decodeContentBlock =
         ContentBlock
         decodeTheme
         (D.field "rich_text" D.string)
-
-
