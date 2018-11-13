@@ -170,11 +170,11 @@ update msg model =
                                     )
 
                                 _ ->
-                                    ( Just navigationTree, model.overlayState )
+                                    ( navigationTree, model.overlayState )
                     in
                     ( { model
                         | overlayState = overlayState
-                        , navigationTree = navTree
+                        , navigationTree = Just navTree
                         , navigationState = UI.State.Closed
                       }
                     , Cmd.none
