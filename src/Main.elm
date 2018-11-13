@@ -157,7 +157,28 @@ update msg model =
         NavigationMsg msg ->
             case msg of
                 UI.State.FetchNavigation (Ok navigationTree) ->
-                    ( { model | navigationTree = Just navigationTree }, Cmd.none )
+                    let
+                        ( navTree, overlayState ) =
+                            case model.route of
+                                WagtailRoute _ page ->
+                                    ( Just <| UI.State.addPageToNavigationTree page navigationTree
+                                    , if UI.State.isNavigationPage navigationTree page then
+                                        UI.State.closeOverlay model.overlayState
+
+                                      else
+                                        UI.State.addPageToOverlayState model.overlayState page
+                                    )
+
+                                _ ->
+                                    ( Just navigationTree, model.overlayState )
+                    in
+                    ( { model
+                        | overlayState = overlayState
+                        , navigationTree = navTree
+                        , navigationState = UI.State.Closed
+                      }
+                    , Cmd.none
+                    )
 
                 UI.State.FetchNavigation (Err error) ->
                     Debug.log (toString error)
