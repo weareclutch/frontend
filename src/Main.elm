@@ -161,13 +161,18 @@ update msg model =
                         ( navTree, overlayState ) =
                             case model.route of
                                 WagtailRoute _ page ->
-                                    ( UI.State.addPageToNavigationTree page navigationTree
-                                    , if UI.State.isNavigationPage navigationTree page then
-                                        UI.State.closeOverlay model.overlayState
+                                    let
+                                        overlayState =
+                                            if UI.State.isNavigationPage navigationTree page then
+                                                UI.State.closeOverlay model.overlayState
 
-                                      else
-                                        UI.State.addPageToOverlayState model.overlayState page
-                                    )
+                                            else
+                                                UI.State.addPageToOverlayState model.overlayState page
+
+                                        navTree =
+                                            UI.State.addPageToNavigationTree page navigationTree
+                                    in
+                                    ( navTree, overlayState )
 
                                 _ ->
                                     ( navigationTree, model.overlayState )
