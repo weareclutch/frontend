@@ -105,25 +105,32 @@ update msg model =
                                 _ ->
                                     Cmd.none
 
+                        ( navigationTree, overlayState ) =
+                            case model.navigationTree of
+                                Nothing ->
+                                    ( model.navigationTree, model.overlayState )
+
+                                Just navigationTree ->
+                                    let
+                                        overlayState =
+                                            if UI.State.isNavigationPage navigationTree page then
+                                                UI.State.closeOverlay model.overlayState
+
+                                            else
+                                                UI.State.addPageToOverlayState model.overlayState page
+
+                                        navTree =
+                                            UI.State.addPageToNavigationTree page navigationTree
+                                    in
+                                    ( Just navTree, overlayState )
+
                         siteIdentifier =
                             Dict.get "x-current-site" response.headers
                     in
                     ( { model
                         | route = WagtailRoute siteIdentifier page
-                        , overlayState =
-                            model.navigationTree
-                                |> Maybe.map
-                                    (\navigationTree ->
-                                        if UI.State.isNavigationPage navigationTree page then
-                                            UI.State.closeOverlay model.overlayState
-
-                                        else
-                                            UI.State.addPageToOverlayState model.overlayState page
-                                    )
-                                |> Maybe.withDefault model.overlayState
-                        , navigationTree =
-                            model.navigationTree
-                                |> Maybe.map (UI.State.addPageToNavigationTree page)
+                        , overlayState = overlayState
+                        , navigationTree = navigationTree
                         , navigationState = UI.State.Closed
                       }
                     , Cmd.batch [ commands, fetchSiteDependentResources model.route siteIdentifier ]
