@@ -128,6 +128,12 @@ getPageDecoder pageType =
         "blog.BlogOverviewPage" ->
             blogOverviewPageDecoder
 
+        "blog.BlogSeriesPage" ->
+            blogCollectionPageDecoder
+
+        "blog.BlogPostPage" ->
+            blogPostPageDecoder
+
         -- Default handler forn unknown types (aka "we can't handle")  --
         _ ->
             D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
@@ -332,26 +338,44 @@ blogOverviewPageDecoder =
 
 type alias BlogCollectionContent =
     { meta : WagtailMetaContent
+    , title : String
+    , intro : String
+    , image : Image
+    , blogPosts : List BlogPostPreview
     }
 
 
 blogCollectionPageDecoder : D.Decoder Page
 blogCollectionPageDecoder =
     D.map BlogCollectionPage <|
-        D.map BlogCollectionContent
+        D.map5 BlogCollectionContent
             metaDecoder
+            (D.field "title" D.string)
+            (D.field "intro" D.string)
+            (D.field "main_image" decodeImage)
+            (D.field "blog_posts" <| D.list blogPostPreviewDecoder)
 
 
 type alias BlogPostContent =
     { meta : WagtailMetaContent
+    , title : String
+    , intro : String
+    , readingTime : Int
+    , image : Image
+    , body : Maybe (List Block)
     }
 
 
 blogPostPageDecoder : D.Decoder Page
 blogPostPageDecoder =
     D.map BlogPostPage <|
-        D.map BlogPostContent
+        D.map6 BlogPostContent
             metaDecoder
+            (D.field "title" D.string)
+            (D.field "intro" D.string)
+            (D.field "reading_time" D.int)
+            (D.field "main_image" decodeImage)
+            (D.maybe <| D.field "body" decodeBlocks)
 
 
 type alias Image =

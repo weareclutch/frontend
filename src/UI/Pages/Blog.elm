@@ -39,7 +39,7 @@ overview content =
         ]
 
 
-collection : Wagtail.BlogCollectionContent -> Html msg
+collection : Wagtail.BlogCollectionContent -> Html Msg
 collection content =
     let
         wrapper =
@@ -48,13 +48,19 @@ collection content =
                 , minHeight (pct 100)
                 , minWidth (pct 100)
                 ]
+
+        posts =
+            List.map
+                (\post -> li (addLink post.slug) [ text post.title ])
+                content.blogPosts
     in
     wrapper []
-        [ h1 [] [ text "blog collection" ]
+        [ h1 [] [ text <| "blog collection for: " ++ content.title ]
+        , ol [] posts
         ]
 
 
-post : Wagtail.BlogPostContent -> Html msg
+post : Wagtail.BlogPostContent -> Html Msg
 post content =
     let
         wrapper =
@@ -65,5 +71,5 @@ post content =
                 ]
     in
     wrapper []
-        [ h1 [] [ text "blog post" ]
+        [ h1 [] [ text <| "blog post: " ++ content.title ]
         ]
