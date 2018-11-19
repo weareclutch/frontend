@@ -27,8 +27,6 @@ module.exports = {
     inline: true,
     stats: { colors: true },
     contentBase: path.join(__dirname, 'public'),
-    historyApiFallback: {
-      index: './public/index.html'
-    }
+    historyApiFallback: true
   }
 };
