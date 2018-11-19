@@ -251,16 +251,83 @@ decodeCasePreview =
         (D.maybe <| D.field "background_image_src" decodeImage)
 
 
+type alias BlogPostSeries =
+    { slug : String
+    , title : String
+    , seriesSize : Int
+    , seriesIndex : Int
+    }
+
+
+type alias BlogPostPreview =
+    { id : Int
+    , slug : String
+    , title : String
+    , readingTime : Int
+    , intro : String
+    , series : Maybe BlogPostSeries
+    , image : Image
+    }
+
+
+blogPostPreviewDecoder : D.Decoder BlogPostPreview
+blogPostPreviewDecoder =
+    D.map7 BlogPostPreview
+        (D.field "id" D.int)
+        (D.field "slug" D.string)
+        (D.field "title" D.string)
+        (D.field "reading_time" D.int)
+        (D.field "intro" D.string)
+        (D.field "series" <|
+            D.maybe <|
+                D.map4 BlogPostSeries
+                    (D.field "slug" D.string)
+                    (D.field "title" D.string)
+                    (D.field "series_amount" D.int)
+                    (D.field "series_index" D.int)
+        )
+        (D.field "main_image" decodeImage)
+
+
+type alias BlogSeriesPreview =
+    { slug : String
+    , title : String
+    , seriesSize : Int
+    , intro : String
+    , image : Image
+    }
+
+
+blogSeriesPreviewDecoder : D.Decoder BlogSeriesPreview
+blogSeriesPreviewDecoder =
+    D.map5 BlogSeriesPreview
+        (D.field "slug" D.string)
+        (D.field "title" D.string)
+        (D.field "series_amount" D.int)
+        (D.field "intro" D.string)
+        (D.field "image" decodeImage)
+
+
 type alias BlogOverviewContent =
     { meta : WagtailMetaContent
+    , title : String
+    , introduction : String
+    , images : List Image
+    , blogSeries : List BlogSeriesPreview
+    , blogPosts : List BlogPostPreview
     }
 
 
 blogOverviewPageDecoder : D.Decoder Page
 blogOverviewPageDecoder =
     D.map BlogOverviewPage <|
-        D.map BlogOverviewContent
+        D.map6 BlogOverviewContent
             metaDecoder
+            (D.field "title" D.string)
+            (D.field "introduction" D.string)
+            (D.field "images" <| D.list decodeImage)
+            (D.field "blog_series" <| D.list blogSeriesPreviewDecoder)
+            (D.field "blog_posts" <| D.list blogPostPreviewDecoder)
 
 
 type alias BlogCollectionContent =
