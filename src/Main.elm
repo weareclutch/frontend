@@ -137,7 +137,6 @@ update msg model =
                     )
 
                 Wagtail.LoadPage (Err error) ->
-                    -- Debug.log (toString error)
                     let
                         route =
                             case error of
@@ -158,6 +157,9 @@ update msg model =
 
                                 _ ->
                                     Cmd.none
+
+                        _ =
+                            Debug.log "Error loading page" error
                     in
                     ( { model | route = route }, cmd )
 

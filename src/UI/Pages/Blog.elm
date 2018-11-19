@@ -17,10 +17,25 @@ overview content =
                 , minHeight (pct 100)
                 , minWidth (pct 100)
                 ]
+
+        makeListLink s =
+            li (addLink s.slug) [ text s.title ]
+
+        series =
+            List.map
+                makeListLink
+                content.blogSeries
+
+        posts =
+            List.map
+                makeListLink
+                content.blogPosts
     in
     wrapper []
-        [ h2 (addLink "/blog/chatbot-series/") [ text "to blog series" ]
-        , h2 (addLink "/blog/blog-post-non-series/") [ text "to blog post" ]
+        [ h2 [] [ text " blog series" ]
+        , ol [] series
+        , h2 [] [ text " blog posts" ]
+        , ol [] posts
         ]
 
 
