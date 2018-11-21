@@ -97,14 +97,6 @@ update msg model =
 
                 Wagtail.LoadPage (Ok ( response, page )) ->
                     let
-                        commands =
-                            case page of
-                                Wagtail.HomePage _ ->
-                                    Ports.scrollOverlayDown ()
-
-                                _ ->
-                                    Cmd.none
-
                         ( navigationTree, overlayState ) =
                             case model.navigationTree of
                                 Nothing ->
@@ -126,6 +118,20 @@ update msg model =
 
                         siteIdentifier =
                             Dict.get "x-current-site" response.headers
+
+                        defaultCommands =
+                            [ fetchSiteDependentResources model.route siteIdentifier
+                            , Ports.resetScrollPosition ()
+                            ]
+
+                        commands =
+                            case page of
+                                Wagtail.HomePage _ ->
+                                    Ports.scrollOverlayDown () :: defaultCommands
+
+                                _ ->
+                                    defaultCommands
+
                     in
                     ( { model
                         | route = WagtailRoute siteIdentifier page
@@ -133,7 +139,7 @@ update msg model =
                         , navigationTree = navigationTree
                         , navigationState = UI.State.Closed
                       }
-                    , Cmd.batch [ commands, fetchSiteDependentResources model.route siteIdentifier ]
+                    , Cmd.batch commands
                     )
 
                 Wagtail.LoadPage (Err error) ->
