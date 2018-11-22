@@ -1,4 +1,4 @@
-module UI.State exposing (ContactInformation, Msg(..), NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState, addPageToNavigationTree, addPageToOverlayState, closeOverlay, decodeContactInformation, decodeNavigation, fetchContactInformation, fetchNavigation, isNavigationPage)
+module UI.State exposing (ContactInformation, Msg(..), NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState, addPageToNavigationTree, addPageToOverlayState, closeOverlay, decodeContactInformation, decodeNavigation, fetchContactInformation, fetchNavigation, isNavigationPage, setNavigationPageActive)
 
 import Http
 import Json.Decode as D
@@ -22,6 +22,7 @@ type alias NavigationItem =
     , title : String
     , path : String
     , page : Maybe Page
+    , active : Bool
     }
 
 
@@ -116,6 +117,25 @@ addPageToNavigationTree page { items } =
     }
 
 
+setNavigationPageActive : Page -> NavigationTree -> NavigationTree
+setNavigationPageActive page nav =
+    if isNavigationPage nav page then
+        { items =
+            nav.items
+                |> List.map
+                    (\item ->
+                        if item.id == getPageId page then
+                            { item | active = True }
+
+                        else
+                            { item | active = False }
+                    )
+        }
+
+    else
+        nav
+
+
 isNavigationPage : NavigationTree -> Page -> Bool
 isNavigationPage nav page =
     nav.items
@@ -142,11 +162,12 @@ decodeNavigation =
     D.map NavigationTree
         (D.field "items" <|
             D.list <|
-                D.map4 NavigationItem
+                D.map5 NavigationItem
                     (D.field "id" D.int)
                     (D.field "title" D.string)
                     (D.field "slug" D.string)
                     (D.succeed Nothing)
+                    (D.succeed False)
         )
 
 

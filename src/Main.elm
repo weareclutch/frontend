@@ -112,7 +112,9 @@ update msg model =
                                                 UI.State.addPageToOverlayState model.overlayState page
 
                                         navTree =
-                                            UI.State.addPageToNavigationTree page navigationTree
+                                            navigationTree
+                                                |> UI.State.addPageToNavigationTree page
+                                                |> UI.State.setNavigationPageActive page
                                     in
                                     ( Just navTree, overlayState )
 

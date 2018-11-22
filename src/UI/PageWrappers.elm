@@ -167,7 +167,7 @@ navigationPages navState navItems route =
                                     _ ->
                                         case route of
                                             WagtailRoute _ page ->
-                                                if lastItem.id == getPageId page then
+                                                if lastItem.active then
                                                     ( index, item, False ) :: acc
 
                                                 else

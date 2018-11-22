@@ -13,7 +13,7 @@ import Wagtail exposing (..)
 
 
 type ToggleState
-    = CloseOverlay
+    = Overlay
     | OpenMenu
     | CloseMenu
 
@@ -28,7 +28,7 @@ view navigationTree navigationState route =
                         OpenMenu
 
                     else
-                        CloseOverlay
+                        Overlay
 
                 _ ->
                     CloseMenu
@@ -46,21 +46,21 @@ view navigationTree navigationState route =
         toggleWrapper =
             styled div
                 [ position absolute
-                , zIndex (int 110)
+                , zIndex <| if toggleState == Overlay then (int 0) else (int 110)
                 , cursor pointer
                 , padding (px 8)
-                , right (px 20)
+                , left (px 20)
                 , top (px 12)
                 , bpMedium
-                    [ right (px 40)
+                    [ left (px 40)
                     , top (px 25)
                     ]
                 , bpLarge
-                    [ right (px 40)
+                    [ left (px 40)
                     , top (px 30)
                     ]
                 , bpXLargeUp
-                    [ right (px 100)
+                    [ left (px 100)
                     , top (px 75)
                     ]
                 ]
@@ -71,7 +71,7 @@ view navigationTree navigationState route =
                 , transition "opacity" 0.2 0 "linear"
                 , padding (px 20)
                 , top (px -8)
-                , right (px -14)
+                , left (px -14)
                 ]
                     ++ (if toggleState == OpenMenu then
                             [ opacity (int 1)
@@ -90,9 +90,9 @@ view navigationTree navigationState route =
                 , position relative
                 , padding (px 20)
                 , top (px -20)
-                , right (px -20)
+                , left (px -20)
                 ]
-                    ++ (if toggleState /= OpenMenu then
+                    ++ (if toggleState == CloseMenu then
                             [ opacity (int 1)
                             , zIndex (int 10)
                             ]
@@ -108,18 +108,18 @@ view navigationTree navigationState route =
                 [ position absolute
                 , zIndex (int 110)
                 , cursor pointer
-                , left (px 20)
+                , right (px 20)
                 , top (px 20)
                 , bpMedium
-                    [ left (px 40)
+                    [ right (px 40)
                     , top (px 25)
                     ]
                 , bpLarge
-                    [ left (px 40)
+                    [ right (px 40)
                     , top (px 40)
                     ]
                 , bpXLargeUp
-                    [ left (px 100)
+                    [ right (px 100)
                     , top (px 80)
                     ]
                 ]
@@ -141,19 +141,19 @@ view navigationTree navigationState route =
                 in
                 styled ul <|
                     [ listStyle none
-                    , textAlign center
+                    , textAlign left
                     , position absolute
                     , width (pct 100)
-                    , margin2 (px 20) (px 25)
+                    , margin4 (px 20) (px 25) (px 20) (px 25)
                     , transition "all" 0.2 0 "ease-in-out"
                     , bpMedium
-                        [ margin2 (px 25) (px 40)
+                        [ margin4 (px 25) (px 40) (px 25) (px 150)
                         ]
                     , bpLarge
-                        [ margin2 (px 40) (px 40)
+                        [ margin4 (px 40) (px 40) (px 40) (px 150)
                         ]
                     , bpXLargeUp
-                        [ margin2 (px 82) (px 40)
+                        [ margin4 (px 82) (px 40) (px 82) (px 150)
                         ]
                     ]
                         ++ extraStyle
@@ -168,7 +168,7 @@ view navigationTree navigationState route =
 
                         else
                             hex "fff"
-                    , margin2 zero (px 30)
+                    , margin4 zero (px 30) zero zero
                     , fontFamilies [ "Qanelas ExtraBold" ]
                     , fontWeight (int 400)
                     , letterSpacing (px 3.5)
@@ -238,16 +238,9 @@ view navigationTree navigationState route =
                 [ burger svgColor
                 ]
             , crossWrapper
-                (case toggleState of
-                    CloseOverlay ->
-                        -- Perhaps we should be looking here at what page the user came from.
-                        addLink "/"
-
-                    _ ->
-                        [ onClick
-                            (NavigationMsg <| ChangeNavigation Closed)
-                        ]
-                )
+                [ onClick
+                    (NavigationMsg <| ChangeNavigation Closed)
+                ]
                 [ cross
                     (case navigationState of
                         Closed ->
