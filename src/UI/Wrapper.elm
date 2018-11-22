@@ -20,6 +20,8 @@ globalStyle =
             , padding zero
             , height (vh 100)
             , width (vw 100)
+            , fontSize (px 22)
+            , lineHeight (px 32)
             , bpMediumUp
                 [ overflow hidden
                 ]
@@ -34,18 +36,45 @@ globalStyle =
             [ transition "all" 0.16 0 "linear"
             ]
         , selector "h1"
-            [ fontSize (px 120)
-            , lineHeight (px 130)
+            [ fontSize (px 160)
+            , lineHeight (px 160)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , letterSpacing (px 8.4)
+            , letterSpacing (px 8)
             , margin4 zero zero (px 35) zero
             , padding zero
             ]
         , selector "h2"
-            [ fontSize (px 50)
+            [ fontSize (px 100)
+            , lineHeight (px 100)
+            , letterSpacing (px 5)
+            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontWeight (int 400)
+            , margin4 zero zero (px 35) zero
+            , padding zero
+            ]
+        , selector "h3"
+            [ fontSize (px 60)
             , lineHeight (px 60)
-            , letterSpacing (px 3.5)
+            , letterSpacing (px 4)
+            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontWeight (int 400)
+            , margin4 zero zero (px 35) zero
+            , padding zero
+            ]
+        , selector "h4"
+            [ fontSize (px 40)
+            , lineHeight (px 40)
+            , letterSpacing (px 2.5)
+            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontWeight (int 400)
+            , margin4 zero zero (px 35) zero
+            , padding zero
+            ]
+        , selector "h5"
+            [ fontSize (px 28)
+            , lineHeight (px 28)
+            , letterSpacing (px 2)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 35) zero
@@ -53,11 +82,11 @@ globalStyle =
             ]
         , selector "p"
             [ fontSize (px 22)
-            , lineHeight (px 34)
+            , lineHeight (px 32)
             , fontFamilies [ "Roboto", "sans-serif" ]
             , margin4 zero zero (px 35) zero
             , padding zero
-            , letterSpacing (px 2)
+            , letterSpacing (px 1.5)
             ]
         , selector "ul"
             [ paddingLeft (px 20)

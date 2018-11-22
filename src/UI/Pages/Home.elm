@@ -132,10 +132,7 @@ introCover content =
 
         title =
             styled div
-                [ letterSpacing (px 2)
-                , fontSize (px 22)
-                , fontWeight (int 500)
-                , marginBottom (px 6)
+                [ marginBottom (px 6)
                 ]
 
         textWrapper =

@@ -125,37 +125,25 @@ header content =
         caption =
             styled h1
                 [ maxWidth (px 1200)
-                , fontSize (px 32)
-                , lineHeight (px 42)
-                , letterSpacing (px 2.24)
                 , paddingRight (px 40)
                 , bpMediumUp
                     [ paddingRight zero
                     ]
                 , bpMedium
-                    [ fontSize (px 60)
-                    , lineHeight (px 70)
-                    , letterSpacing (px 3.5)
-                    , paddingRight (pct 20)
+                    [ paddingRight (pct 20)
                     , maxWidth (px 600)
                     ]
                 , bpLarge
-                    [ fontSize (px 72)
-                    , lineHeight (px 80)
-                    , letterSpacing (px 6.5)
-                    , maxWidth (px 700)
+                    [ maxWidth (px 700)
                     ]
                 , bpXLargeUp
-                    [ fontSize (px 120)
-                    , lineHeight (px 130)
-                    , letterSpacing (px 8.5)
-                    , maxWidth (px 900)
+                    [ maxWidth (px 900)
                     ]
                 ]
 
         title =
             styled span
-                [ fontSize (px 26)
+                [ fontSize (px 28)
                 , lineHeight (px 36)
                 , letterSpacing (px 2)
                 , paddingRight (px 40)
@@ -286,26 +274,12 @@ intro content =
         metaSection =
             styled div
                 [ marginBottom (px 35)
-                , letterSpacing (px 1.43)
-                , lineHeight (px 34)
-                , fontSize (px 20)
-                , bpLargeUp
-                    [ fontSize (px 22)
-                    , letterSpacing (px 1.57)
-                    ]
                 ]
 
         description =
             styled div
                 [ fontFamilies [ "Qanelas ExtraBold" ]
-                , fontSize (px 20)
-                , lineHeight (px 20)
-                , letterSpacing (px 3.82)
                 , paddingBottom (px 10)
-                , bpLargeUp
-                    [ fontSize (px 22)
-                    , letterSpacing (px 3.85)
-                    ]
                 ]
     in
     wrapper []

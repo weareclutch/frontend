@@ -72,36 +72,24 @@ view casePreview =
                 ]
 
         caption =
-            styled h1
+            styled h3
                 [ maxWidth (px 1200)
-                , fontSize (px 28)
-                , lineHeight (px 36)
-                , letterSpacing (px 2.25)
                 , marginBottom (px 10)
                 , paddingRight (px 40)
                 , bpMediumUp
                     [ paddingRight zero
                     ]
                 , bpLargeUp
-                    [ fontSize (px 48)
-                    , marginBottom (px 35)
-                    , lineHeight (px 56)
-                    , letterSpacing (px 3.25)
+                    [ marginBottom (px 35)
                     , maxWidth (px 400)
                     ]
                 ]
 
         title =
             styled span
-                [ fontSize (px 18)
-                , letterSpacing (px 2)
-                , paddingRight (px 40)
+                [ paddingRight (px 40)
                 , bpMediumUp
                     [ paddingRight zero
-                    ]
-                , bpLargeUp
-                    [ fontSize (px 22)
-                    , letterSpacing (px 2)
                     ]
                 ]
     in
