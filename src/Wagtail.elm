@@ -1,4 +1,4 @@
-module Wagtail exposing (Block(..), BlogCollectionContent, BlogOverviewContent, BlogPostContent, CasePageContent, CasePreview, Column, HomePageContent, Image, Msg(..), Page(..), Quote, Theme, WagtailMetaContent, apiUrl, blogCollectionPageDecoder, blogOverviewPageDecoder, blogPostPageDecoder, casePageDecoder, dateDecoder, decodeBackgroundBlock, decodeBlocks, decodeCasePreview, decodeColumn, decodeColumns, decodeContentBlock, decodeImage, decodeImageBlock, decodePageType, decodeQuote, decodeTheme, getPageDecoder, getPageId, getPageTheme, getWagtailPage, homePageDecoder, metaDecoder, preloadWagtailPage, siteUrl)
+module Wagtail exposing (..)
 
 import Date exposing (Date)
 import Http exposing (..)
@@ -318,7 +318,6 @@ type alias BlogOverviewContent =
     { meta : WagtailMetaContent
     , title : String
     , introduction : String
-    , images : List Image
     , blogSeries : List BlogSeriesPreview
     , blogPosts : List BlogPostPreview
     }
@@ -327,11 +326,10 @@ type alias BlogOverviewContent =
 blogOverviewPageDecoder : D.Decoder Page
 blogOverviewPageDecoder =
     D.map BlogOverviewPage <|
-        D.map6 BlogOverviewContent
+        D.map5 BlogOverviewContent
             metaDecoder
             (D.field "title" D.string)
             (D.field "introduction" D.string)
-            (D.field "images" <| D.list decodeImage)
             (D.field "blog_series" <| D.list blogSeriesPreviewDecoder)
             (D.field "blog_posts" <| D.list blogPostPreviewDecoder)
 
@@ -516,3 +514,6 @@ decodeContentBlock =
         ContentBlock
         decodeTheme
         (D.field "rich_text" D.string)
+
+
+

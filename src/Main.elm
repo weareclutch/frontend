@@ -73,12 +73,20 @@ init location =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
+    let
+        debugger =
+            Debug.log "msg" msg
+
+    in
     case msg of
         OnLocationChange location ->
             ( model, getAndDecodePage location )
 
         ChangeLocation path ->
             ( model, Navigation.newUrl path )
+
+        UpdateSlideshow id direction ->
+            ( model, Ports.updateSlideshow (id, toString direction) )
 
         WagtailMsg msg ->
             case msg of
@@ -171,6 +179,7 @@ update msg model =
                     in
                     ( { model | route = route }, cmd )
 
+
         NavigationMsg msg ->
             case msg of
                 UI.State.FetchNavigation (Ok navigationTree) ->
@@ -187,7 +196,10 @@ update msg model =
                                                 UI.State.addPageToOverlayState model.overlayState page
 
                                         navTree =
-                                            UI.State.addPageToNavigationTree page navigationTree
+                                            navigationTree
+                                                |> UI.State.addPageToNavigationTree page
+                                                |> UI.State.setNavigationPageActive page
+
                                     in
                                     ( navTree, overlayState )
 

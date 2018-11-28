@@ -117,6 +117,7 @@ addPageToNavigationTree page { items } =
     }
 
 
+
 setNavigationPageActive : Page -> NavigationTree -> NavigationTree
 setNavigationPageActive page nav =
     if isNavigationPage nav page then

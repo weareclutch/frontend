@@ -1,4 +1,4 @@
-module Types exposing (Model, Msg(..), Route(..), SiteIdentifier, initModel)
+module Types exposing (Model, Direction(..), Msg(..), Route(..), SiteIdentifier, initModel)
 
 import Navigation exposing (Location)
 import UI.State
@@ -10,6 +10,12 @@ type Msg
     | ChangeLocation String
     | NavigationMsg UI.State.Msg
     | WagtailMsg Wagtail.Msg
+    | UpdateSlideshow String Direction
+
+
+type Direction
+    = Left
+    | Right
 
 
 type alias Model =

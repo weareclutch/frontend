@@ -5,11 +5,13 @@ module UI.Common exposing
     , image
     , link
     , loremIpsum
+    , siteMargins
+    , slideshow
     )
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (..)
+import Html.Styled.Attributes exposing (css, src, alt, href)
 import Html.Styled.Events exposing (..)
 import Icons.Arrow exposing (arrow)
 import Json.Decode as Decode
@@ -86,6 +88,23 @@ loremIpsum =
         ]
 
 
+siteMargins : List (Attribute msg) -> List (Html msg) -> Html msg
+siteMargins =
+    styled div
+        [ position relative
+        , margin2 zero (px 25)
+        , bpMedium
+            [ margin2 zero (px 80)
+            ]
+        , bpLarge
+            [ margin2 zero (px 140)
+            ]
+        , bpXLargeUp
+            [ margin2 zero (px 280)
+            ]
+        ]
+
+
 button : Theme -> List (Attribute msg) -> Maybe String -> Html msg
 button theme attributes maybeText =
     let
@@ -126,7 +145,7 @@ button theme attributes maybeText =
         arrowWrapper =
             styled div
                 [ position absolute
-                , right (px 23)
+                , right (px 24)
                 , top (px 21)
                 ]
     in
@@ -134,3 +153,145 @@ button theme attributes maybeText =
         [ children
         , arrowWrapper [] [ arrow theme.textColor ]
         ]
+
+
+slideshow : String -> (Float, Float, Float) -> (a -> Html Msg) -> List a -> Html Msg
+slideshow id (fXLarge, fLarge, fMedium) render slides =
+    let
+        numSlides = toFloat <| List.length slides
+        totalScreensXLarge = numSlides / fXLarge
+        totalScreensLarge = numSlides / fLarge
+        totalScreensMedium = numSlides / fMedium
+
+        outerWrapper =
+            styled div
+                [ position relative
+                , width (pct 100)
+                ]
+
+        wrapper =
+            styled div
+                [ position relative
+                , overflowX scroll
+                , width (pct 100)
+                , marginBottom (px 40)
+                , bpMediumUp
+                    [ overflowX hidden
+                    ]
+                ]
+
+        wrapperInner =
+            styled div
+                [ position relative
+                , width
+                    <| pct
+                    <| numSlides * 100
+                , paddingLeft (px 25)
+                , bpMedium
+                    [ width
+                        <| pct
+                        <| totalScreensMedium * 100
+                    , paddingLeft (px 80)
+                    ]
+                , bpLarge
+                    [ width
+                        <| pct
+                        <| totalScreensLarge * 100
+                    , paddingLeft (px 140)
+                    ]
+                , bpXLargeUp
+                    [ width
+                        <| pct
+                        <| totalScreensXLarge * 100
+                    , paddingLeft (px 280)
+                    ]
+                ]
+
+
+        slide =
+            styled div
+                [ display inlineBlock
+                , width 
+                    <| pct
+                    <| 100 / numSlides
+                , bpMedium
+                    [ width
+                        <| pct
+                        <| 100 / fMedium / totalScreensMedium
+                    ]
+                , bpLarge
+                    [ width
+                        <| pct
+                        <| 100 / fLarge / totalScreensLarge
+                    ]
+                , bpXLargeUp
+                    [ width
+                        <| pct
+                        <| 100 / fXLarge / totalScreensXLarge
+                    ]
+                ]
+
+        controls =
+            styled div
+                [ position absolute
+                , bottom (px -30)
+                , left zero
+                , width (pct 100)
+                , textAlign right
+                ]
+
+        button =
+            styled div
+                [ width (px 60)
+                , height (px 60)
+                , backgroundColor (hex "001AE0")
+                , display inlineBlock
+                , marginLeft (px 25)
+                , cursor pointer
+                , borderRadius (pct 50)
+                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)
+                , position relative
+                ]
+
+        arrowWrapper =
+            \rotated ->
+                styled div
+                    [ position absolute
+                    , right (px 24)
+                    , top (px 21)
+                    , transform 
+                        <| rotate
+                        <| if rotated then
+                            (deg 180)
+                        else
+                            (deg 0)
+                    ]
+
+    in
+        outerWrapper []
+            [ wrapper
+                [ Html.Styled.Attributes.id id
+                ]
+                [ wrapperInner []
+                    ( List.map
+                        (\s -> slide [] [ render s ])
+                        slides
+                    )
+                ]
+            , controls []
+                [ siteMargins []
+                    [ button
+                        [ onClick (UpdateSlideshow id Left)
+                        ]
+                        [ arrowWrapper True [] [ arrow "ffffff" ]
+                        ]
+                    , button
+                        [ onClick (UpdateSlideshow id Right)
+                        ]
+                        [ arrowWrapper False [] [ arrow "ffffff" ]
+                        ]
+                    ]
+                ]
+            ]
+
+

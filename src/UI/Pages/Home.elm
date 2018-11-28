@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, class, href, id)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (backgroundImg, button)
+import UI.Common exposing (backgroundImg, button, siteMargins)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
@@ -14,14 +14,6 @@ import Wagtail
 view : Wagtail.HomePageContent -> Html Msg
 view content =
     let
-        innerWrapper =
-            styled div
-                [ width (pct 100)
-                , maxWidth (px 1400)
-                , margin auto
-                , position relative
-                ]
-
         ( evenCases, oddCases ) =
             content.cases
                 |> List.reverse
@@ -64,7 +56,7 @@ view content =
     in
     div [] <|
         [ pageWrapper
-            [ innerWrapper []
+            [ siteMargins []
                 [ evenCases
                     |> List.map Tuple.second
                     |> List.map
@@ -94,15 +86,15 @@ pageWrapper children =
                 , position relative
                 , zIndex (int 10)
                 , backgroundColor (hex "292A32")
-                , padding4 (px 140) (px 25) (px 80) (px 25)
+                , padding4 (px 140) zero (px 80) zero
                 , bpMedium
-                    [ padding4 (px 280) (px 25) (px 140) (px 25)
+                    [ padding4 (px 280) zero (px 140) zero
                     ]
                 , bpLarge
-                    [ padding4 (px 280) (px 140) (px 140) (px 140)
+                    [ padding4 (px 280) zero (px 140) zero
                     ]
                 , bpXLargeUp
-                    [ padding4 (px 280) (px 240) (px 140) (px 240)
+                    [ padding4 (px 280) zero (px 140) zero
                     ]
                 ]
 

@@ -1,6 +1,8 @@
-port module Ports exposing (playAnimation, resetScrollPosition, scrollOverlayDown)
+port module Ports exposing (updateSlideshow, playAnimation, resetScrollPosition, scrollOverlayDown)
+import Types
 
-import Types exposing (..)
+
+port updateSlideshow : (String, String) -> Cmd msg
 
 
 port resetScrollPosition : () -> Cmd msg

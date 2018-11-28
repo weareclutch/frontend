@@ -22,6 +22,22 @@ function debounce(func, wait, immediate) {
 };
 
 
+app.ports.updateSlideshow.subscribe(function(data) {
+  var direction = data[1]
+  var element = document.getElementById(data[0])
+
+  if (!element) return false
+
+  var currentY = element.scrollLeft
+  var screenWidth = window.innerWidth
+  var newY = direction === 'Left' ? currentY - screenWidth :
+    direction === 'Right' ? currentY + screenWidth :
+    currentY
+
+  element.scrollTo({ left: newY, behavior: 'smooth' })
+})
+
+
 app.ports.resetScrollPosition.subscribe(function(id) {
   if (document.body.clientWidth < 670) {
     return document.body.scrollTop = 0
@@ -49,6 +65,7 @@ app.ports.scrollOverlayDown.subscribe(function() {
 
 
 app.ports.playAnimation.subscribe(function() {
+  return;
   window.requestAnimationFrame(function() {
 
     // show animationFrame, and then hide it when done

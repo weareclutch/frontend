@@ -41,7 +41,7 @@ globalStyle =
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , letterSpacing (px 8)
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             ]
         , selector "h2"
@@ -50,7 +50,7 @@ globalStyle =
             , letterSpacing (px 5)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             ]
         , selector "h3"
@@ -59,7 +59,7 @@ globalStyle =
             , letterSpacing (px 4)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             ]
         , selector "h4"
@@ -68,7 +68,7 @@ globalStyle =
             , letterSpacing (px 2.5)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             ]
         , selector "h5"
@@ -77,16 +77,25 @@ globalStyle =
             , letterSpacing (px 2)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             ]
         , selector "p"
             [ fontSize (px 22)
             , lineHeight (px 32)
             , fontFamilies [ "Roboto", "sans-serif" ]
-            , margin4 zero zero (px 35) zero
+            , margin4 zero zero (px 32) zero
             , padding zero
             , letterSpacing (px 1.5)
+            ]
+        , selector ".intro p, p.intro"
+            [ fontSize (px 28)
+            , lineHeight (px 44)
+            , fontFamilies [ "Roboto", "sans-serif" ]
+            , fontWeight (int 500)
+            , margin4 zero zero (px 44) zero
+            , padding zero
+            , letterSpacing (px 2)
             ]
         , selector "ul"
             [ paddingLeft (px 20)
