@@ -27,6 +27,7 @@ type Page
     | BlogOverviewPage BlogOverviewContent
     | BlogCollectionPage BlogCollectionContent
     | BlogPostPage BlogPostContent
+    | ServicesPage ServicesContent
 
 
 getPageId : Page -> Int
@@ -45,6 +46,9 @@ getPageId page =
             meta.id
 
         BlogPostPage { meta } ->
+            meta.id
+
+        ServicesPage { meta } ->
             meta.id
 
 
@@ -81,11 +85,6 @@ getWagtailPage location =
                         )
                         r.body
                 )
-
-        -- (
-        --     decodePageType
-        --         |> D.andThen getPageDecoder
-        -- )
         , timeout = Nothing
         , withCredentials = False
         }
@@ -133,6 +132,9 @@ getPageDecoder pageType =
 
         "blog.BlogPostPage" ->
             blogPostPageDecoder
+
+        "service.ServicesPage" ->
+            servicesPageDecoder
 
         -- Default handler forn unknown types (aka "we can't handle")  --
         _ ->
@@ -193,6 +195,52 @@ homePageDecoder =
             (D.field "value" decodeCasePreview
                 |> D.list
                 |> D.field "cases"
+            )
+
+
+type alias Service =
+    { body : String
+    , title : String
+    }
+
+
+type alias Expertise =
+    { body : String
+    , keywords : List String
+    , title : String
+    }
+
+
+type alias ServicesContent =
+    { meta : WagtailMetaContent
+    , title : String
+    , introduction : String
+    , images : List Image
+    , services : List Service
+    , expertises : List Expertise
+    }
+
+
+servicesPageDecoder : D.Decoder Page
+servicesPageDecoder =
+    D.map ServicesPage
+        <| D.map6 ServicesContent
+            metaDecoder
+            (D.field "title" D.string)
+            (D.field "introduction" D.string)
+            (D.field "images" <| D.list <| D.field "image" decodeImage)
+            (D.field "what_we_do"
+                <| D.list
+                <| D.map2 Service
+                    (D.field "body_text" D.string)
+                    (D.field "title" D.string)
+            )
+            (D.field "services"
+                <| D.list
+                <| D.map3 Expertise
+                    (D.field "description" D.string)
+                    (D.field "keywords" <| D.list D.string)
+                    (D.field "title" D.string)
             )
 
 

@@ -1,100 +1,59 @@
-module UI.Pages.Services exposing (overlay, view)
+module UI.Pages.Services exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (onClick)
+import Html.Styled.Attributes exposing (class)
 import Types exposing (..)
-import UI.Common exposing (backgroundImg, loremIpsum)
+import Wagtail
+import UI.Common exposing (slideshow, backgroundImg, loremIpsum, siteMargins)
 
 
-view : ServicesContent -> Html Msg
+view : Wagtail.ServicesContent -> Html Msg
 view content =
-    div [] <|
-        [ text content.caption
-        , renderBody content
+    let
+        wrapper =
+            styled div
+                [ backgroundColor (hex "fff")
+                , minHeight (pct 100)
+                , minWidth (pct 100)
+                , padding2 (pct 20) zero
+                ]
+
+
+        title =
+            styled h1
+                [ color (hex "001AE0")
+                ]
+
+
+    in
+    wrapper []
+        [ siteMargins []
+            [ title [] [ text content.title ]
+            , p [ class "intro" ] [ text content.introduction ]
+            ]
+
+        , slideshow
+            "services-slideshow"
+            (1, 1, 1)
+            slideImage
+            content.images
         ]
 
 
-renderBody : ServicesContent -> Html Msg
-renderBody content =
-    content.body
-        |> List.map
-            (\{ title, body, services } ->
-                let
-                    serviceLinks =
-                        services
-                            |> List.map
-                                (\service ->
-                                    li
-                                        [-- onClick <| OpenService service.service
-                                        ]
-                                        [ text service.text
-                                        ]
-                                )
-                in
-                div []
-                    [ h1 [] [ text title ]
-                    , p [] [ text body ]
-                    , ul [] serviceLinks
-                    ]
-            )
-        |> div []
-
-
-overlay : Maybe Service -> Html Msg
-overlay service =
+slideImage : Wagtail.Image -> Html msg
+slideImage image =
     let
-        outerWrapper =
-            styled div
-                [ position absolute
-                , left zero
-                , top zero
-                , height (vh 100)
-                , width (vw 100)
-                , backgroundColor (rgba 0 0 0 0.2)
-                , zIndex (int 200)
-                ]
-
         wrapper =
             styled div
-                [ position absolute
-                , top (pct 50)
-                , left (pct 50)
-                , transform (translate2 (pct -50) (pct -50))
-                , minHeight (px 300)
-                , minWidth (px 300)
-                , backgroundColor (hex "fff")
-                , zIndex (int 200)
+                [ paddingTop (pct 40)
+                , width (pct 100)
+                , backgroundSize cover
+                , backgroundPosition center
                 ]
 
-        slide =
-            styled div
-                [ width (px 320)
-                , height (px 200)
-                , display inlineBlock
-                ]
     in
-    service
-        |> Maybe.map
-            (\service ->
-                let
-                    slides =
-                        service.slides
-                            |> List.map
-                                (\image ->
-                                    slide [ backgroundImg image ] []
-                                )
-                in
-                outerWrapper []
-                    [ wrapper []
-                        [ h1 [] [ text service.title ]
-                        , p [] [ text service.body ]
-                        , div [] slides
-                        , button
-                            -- [ onClick CloseService ]
-                            []
-                            [ text "close" ]
-                        ]
-                    ]
-            )
-        |> Maybe.withDefault (text "")
+        wrapper [ backgroundImg image ] []
+
+

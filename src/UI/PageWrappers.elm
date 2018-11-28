@@ -10,6 +10,7 @@ import UI.Common exposing (addLink)
 import UI.Pages.Blog
 import UI.Pages.Case
 import UI.Pages.Home
+import UI.Pages.Services
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState)
 import Wagtail exposing (Page, getPageId)
 
@@ -31,6 +32,9 @@ renderPage page =
 
         Wagtail.BlogCollectionPage content ->
             UI.Pages.Blog.collection content
+
+        Wagtail.ServicesPage content ->
+            UI.Pages.Services.view content
 
 
 mobileView : Html a -> Html a

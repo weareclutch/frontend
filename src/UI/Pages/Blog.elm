@@ -142,7 +142,7 @@ overview content =
     in
     wrapper []
         [ siteMargins []
-            [ title [] [ text "blog" ]
+            [ title [] [ text content.title ]
             , p [ class "intro" ] [ text content.introduction ]
             ]
         , series

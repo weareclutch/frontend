@@ -238,6 +238,10 @@ slideshow id (fXLarge, fLarge, fMedium) render slides =
                 , left zero
                 , width (pct 100)
                 , textAlign right
+                , display none
+                , bpMediumUp
+                    [ display block
+                    ]
                 ]
 
         button =
