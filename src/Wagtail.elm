@@ -19,6 +19,8 @@ apiUrl =
 type Msg
     = LoadPage (Result Http.Error ( Response String, Page ))
     | PreloadPage (Result Http.Error Page)
+    | UpdateServicesState Int
+    | UpdateExpertisesState Int
 
 
 type Page
@@ -208,6 +210,7 @@ type alias Expertise =
     { body : String
     , keywords : List String
     , title : String
+    , active : Bool
     }
 
 
@@ -216,7 +219,7 @@ type alias ServicesContent =
     , title : String
     , introduction : String
     , images : List Image
-    , services : List Service
+    , services : (Int, List Service)
     , expertises : List Expertise
     }
 
@@ -230,6 +233,7 @@ servicesPageDecoder =
             (D.field "introduction" D.string)
             (D.field "images" <| D.list <| D.field "image" decodeImage)
             (D.field "what_we_do"
+                <| D.map (\list -> (0, list))
                 <| D.list
                 <| D.map2 Service
                     (D.field "body_text" D.string)
@@ -237,10 +241,11 @@ servicesPageDecoder =
             )
             (D.field "services"
                 <| D.list
-                <| D.map3 Expertise
+                <| D.map4 Expertise
                     (D.field "description" D.string)
                     (D.field "keywords" <| D.list D.string)
                     (D.field "title" D.string)
+                    (D.succeed False)
             )
 
 

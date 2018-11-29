@@ -179,6 +179,73 @@ update msg model =
                     in
                     ( { model | route = route }, cmd )
 
+                Wagtail.UpdateServicesState index ->
+                    case (model.route, model.navigationTree) of
+                        (WagtailRoute identifier originalPage, Just originalNavigationTree) ->
+                            let
+                                page =
+                                    case originalPage of
+                                        Wagtail.ServicesPage content ->
+                                            Wagtail.ServicesPage
+                                              { content
+                                              | services = (index, Tuple.second content.services)
+                                              }
+
+                                        _ ->
+                                            originalPage
+
+                                navigationTree =
+                                    originalNavigationTree
+                                        |> UI.State.addPageToNavigationTree page
+
+                            in
+                                ( { model
+                                  | route = WagtailRoute identifier page
+                                  , navigationTree = Just navigationTree
+                                  }
+                                , Cmd.none )
+
+                        _ ->
+                            ( model, Cmd.none )
+
+                Wagtail.UpdateExpertisesState index ->
+                    case (model.route, model.navigationTree) of
+                        (WagtailRoute identifier originalPage, Just originalNavigationTree) ->
+                            let
+                                page =
+                                    case originalPage of
+                                        Wagtail.ServicesPage content ->
+                                            Wagtail.ServicesPage
+                                              { content
+                                              | expertises =
+                                                  content.expertises
+                                                    |> List.indexedMap
+                                                        (\i expertise ->
+                                                            if index == i then
+                                                                { expertise | active = not expertise.active }
+                                                            else
+                                                                expertise
+                                                        )
+                                              }
+
+                                        _ ->
+                                            originalPage
+
+                                navigationTree =
+                                    originalNavigationTree
+                                        |> UI.State.addPageToNavigationTree page
+
+                            in
+                                ( { model
+                                  | route = WagtailRoute identifier page
+                                  , navigationTree = Just navigationTree
+                                  }
+                                , Cmd.none )
+
+                        _ ->
+                            ( model, Cmd.none )
+
+
 
         NavigationMsg msg ->
             case msg of
