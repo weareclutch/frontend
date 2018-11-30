@@ -64,7 +64,54 @@ app.ports.scrollOverlayDown.subscribe(function() {
 
 
 
-app.ports.playAnimation.subscribe(function() {
+var animations = []
+var animationData = null
+
+fetch('/animation/animations.json')
+  .then(function(res) {
+    if (res.ok) return res.json()
+  })
+  .then(function(json) {
+    animationData = json
+  })
+
+app.ports.playAnimation.subscribe(function(data) {
+  if (!animationData) return false
+
+  var name = data[1]
+  var id = data[0]
+
+  window.requestAnimationFrame(function() {
+    if (animations[id]) {
+      animations[id].play()
+      return
+    }
+
+    animations[id] = bodymovin.loadAnimation({
+      container: document.getElementById(id),
+      animationData: animationData[name] || animationData['vd'],
+      renderer: 'svg',
+      loop: false,
+      autoplay: true,
+    })
+
+    animations[id].onComplete = function() {
+      animations[id].goToAndPlay(
+        animationData.loopOffset[name] || 0
+      )
+    }
+  })
+})
+
+
+app.ports.stopAnimation.subscribe(function(id) {
+  if (animations[id]) {
+    animations[id].pause()
+  }
+})
+
+
+app.ports.playIntroAnimation.subscribe(function() {
   return;
   window.requestAnimationFrame(function() {
 

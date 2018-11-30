@@ -63,7 +63,7 @@ init location =
         commands =
             case location.pathname of
                 "/" ->
-                    Ports.playAnimation () :: defaultCommands
+                    Ports.playIntroAnimation () :: defaultCommands
 
                 _ ->
                     defaultCommands
@@ -210,6 +210,49 @@ update msg model =
 
                 Wagtail.UpdateExpertisesState index ->
                     case (model.route, model.navigationTree) of
+                        (WagtailRoute identifier (Wagtail.ServicesPage content), Just originalNavigationTree) ->
+                            let
+                                expertises =
+                                    content.expertises
+                                      |> List.indexedMap
+                                          (\i expertise ->
+                                              if index == i then
+                                                  { expertise | active = not expertise.active }
+                                              else
+                                                  expertise
+                                          )
+
+                                id =
+                                    "expertise-animation-" ++ (toString index)
+
+                                command =
+                                    expertises
+                                        |> List.drop index
+                                        |> List.head
+                                        |> Maybe.map
+                                            (\expertise ->
+                                                if expertise.active then
+                                                    Ports.playAnimation ( id , expertise.animationName )
+                                                else
+                                                    Ports.stopAnimation id
+                                            )
+                                        |> Maybe.withDefault (Cmd.none)
+
+                                page =
+                                    Wagtail.ServicesPage { content | expertises = expertises }
+
+                                navigationTree =
+                                    originalNavigationTree
+                                        |> UI.State.addPageToNavigationTree page
+
+
+                            in
+                                ( { model
+                                  | route = WagtailRoute identifier page
+                                  , navigationTree = Just navigationTree
+                                  }
+                                , command )
+
                         (WagtailRoute identifier originalPage, Just originalNavigationTree) ->
                             let
                                 page =
@@ -235,12 +278,15 @@ update msg model =
                                     originalNavigationTree
                                         |> UI.State.addPageToNavigationTree page
 
+                                command =
+                                    Ports.playAnimation ("expertise-animation-" ++ (toString index), "")
+
                             in
                                 ( { model
                                   | route = WagtailRoute identifier page
                                   , navigationTree = Just navigationTree
                                   }
-                                , Cmd.none )
+                                , command )
 
                         _ ->
                             ( model, Cmd.none )

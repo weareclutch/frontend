@@ -210,6 +210,7 @@ type alias Expertise =
     { body : String
     , keywords : List String
     , title : String
+    , animationName : String
     , active : Bool
     }
 
@@ -241,10 +242,11 @@ servicesPageDecoder =
             )
             (D.field "services"
                 <| D.list
-                <| D.map4 Expertise
+                <| D.map5 Expertise
                     (D.field "description" D.string)
                     (D.field "keywords" <| D.list D.string)
                     (D.field "title" D.string)
+                    (D.field "animation_name" D.string)
                     (D.succeed False)
             )
 

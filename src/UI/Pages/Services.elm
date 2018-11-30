@@ -3,7 +3,7 @@ module UI.Pages.Services exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (onClick)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, id)
 import Types exposing (..)
 import Style exposing (..)
 import Wagtail
@@ -218,6 +218,9 @@ expertisesBlock expertises =
             styled div
                 [ backgroundColor (hex "fff")
                 , position relative
+                , property "display" "flex"
+                , flexDirection row
+                , alignItems stretch
                 ]
 
         intro =
@@ -252,8 +255,8 @@ expertisesBlock expertises =
                 ]
 
     in
-        wrapper []
-            [ siteMargins []
+        siteMargins []
+            [ wrapper []
                 [ intro []
                     [ title [] [ text "Hoe we het doen" ]
                     , paragraph [ class "intro" ] [ text "Donec facilisis prototyping ut augue lacinia, at viverra est semper. Sed sapien metus, scelerisque nec pharetra id, wireframing a tortor." ]
@@ -281,9 +284,19 @@ renderExpertise index expertise =
 
         header =
             styled div
-                [ padding2 (px 60) zero
+                [ padding4 (px 60) zero (px 60) (px 180)
                 , cursor pointer
                 , position relative
+                ]
+
+        animationWrapper =
+            styled div
+                [ width (px 180)
+                , height (px 180)
+                , position absolute
+                , left (px -40)
+                , top (pct 50)
+                , transform <| translateY (pct -50)
                 ]
 
         title =
@@ -298,18 +311,22 @@ renderExpertise index expertise =
                 styled p
                     [ margin zero
                     , opacity <| if active then (int 0) else (int 1)
+                    , height (px 32)
                     ]
 
         body =
             \active ->
                 styled div
                     [ if active then (display block) else (display none)
+                    , marginTop (px -80)
+                    , paddingLeft (px 180)
                     ]
 
     in
         wrapper []
             [ header [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
-                [ title expertise.active [] [ text expertise.title ]
+                [ animationWrapper [ id <| "expertise-animation-" ++ (toString index) ] []
+                , title expertise.active [] [ text expertise.title ]
                 , keywords expertise.active []
                     [ strong []
                         <| List.map
