@@ -7,7 +7,7 @@ import Html.Styled.Attributes exposing (class, id)
 import Types exposing (..)
 import Style exposing (..)
 import Wagtail
-import UI.Common exposing (slideshow, backgroundImg, loremIpsum, siteMargins)
+import UI.Common exposing (container, slideshow, backgroundImg, loremIpsum, siteMargins)
 import UI.Components.Blocks exposing (richText)
 
 
@@ -37,11 +37,12 @@ view content =
 
     in
     wrapper []
-        [ siteMargins []
-            [ title [] [ text content.title ]
-            , p [ class "intro" ] [ text content.introduction ]
+        [ container []
+            [ siteMargins []
+                [ title [] [ text content.title ]
+                , p [ class "intro" ] [ text content.introduction ]
+                ]
             ]
-
         , slideshowWrapper []
             [ slideshow
                 "services-slideshow"
@@ -167,34 +168,36 @@ servicesBlock (activeIndex, services) =
 
     in
         wrapper []
-            [ siteMargins []
-                [ navigation []
-                    [ title [] [ text "Wat we doen" ]
-                    , navigationItems []
-                        <| List.indexedMap
-                            (\index service ->
-                                navigationItem
-                                    (index == activeIndex)
-                                    [ onClick
-                                        <| WagtailMsg
-                                        <| Wagtail.UpdateServicesState index
-                                    ]
-                                    [ text service.title ]
-                            )
-                            services
-                    ]
-                , content []
-                    [ services
-                        |> List.drop activeIndex
-                        |> List.head
-                        |> Maybe.map
-                            (\service ->
-                                richText service.body
-                            )
-                        |> Maybe.withDefault (text "")
+            [ container []
+                [ siteMargins []
+                    [ navigation []
+                        [ title [] [ text "Wat we doen" ]
+                        , navigationItems []
+                            <| List.indexedMap
+                                (\index service ->
+                                    navigationItem
+                                        (index == activeIndex)
+                                        [ onClick
+                                            <| WagtailMsg
+                                            <| Wagtail.UpdateServicesState index
+                                        ]
+                                        [ text service.title ]
+                                )
+                                services
+                        ]
+                    , content []
+                        [ services
+                            |> List.drop activeIndex
+                            |> List.head
+                            |> Maybe.map
+                                (\service ->
+                                    richText service.body
+                                )
+                            |> Maybe.withDefault (text "")
+                        ]
                     ]
                 ]
-            ]
+             ]
 
 
 expertisesBlock : List Wagtail.Expertise -> Html Msg
@@ -255,18 +258,20 @@ expertisesBlock expertises =
                 ]
 
     in
-        siteMargins []
-            [ wrapper []
-                [ intro []
-                    [ title [] [ text "Hoe we het doen" ]
-                    , paragraph [ class "intro" ] [ text "Donec facilisis prototyping ut augue lacinia, at viverra est semper. Sed sapien metus, scelerisque nec pharetra id, wireframing a tortor." ]
+        container []
+            [ siteMargins []
+                [ wrapper []
+                    [ intro []
+                        [ title [] [ text "Hoe we het doen" ]
+                        , paragraph [ class "intro" ] [ text "Donec facilisis prototyping ut augue lacinia, at viverra est semper. Sed sapien metus, scelerisque nec pharetra id, wireframing a tortor." ]
+                        ]
+                    , content []
+                        <| List.indexedMap
+                            renderExpertise
+                            expertises
                     ]
-                , content []
-                    <| List.indexedMap
-                        renderExpertise
-                        expertises
-                ]
 
+                ]
             ]
 
 

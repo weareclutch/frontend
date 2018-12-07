@@ -7,6 +7,7 @@ module UI.Common exposing
     , loremIpsum
     , siteMargins
     , slideshow
+    , container
     )
 
 import Css exposing (..)
@@ -96,12 +97,19 @@ siteMargins =
         , bpMedium
             [ margin2 zero (px 80)
             ]
-        , bpLarge
+        , bpLargeUp
             [ margin2 zero (px 140)
             ]
-        , bpXLargeUp
-            [ margin2 zero (px 280)
-            ]
+        ]
+
+
+container : List (Attribute msg) -> List (Html msg) -> Html msg
+container =
+    styled div
+        [ position relative
+        , maxWidth (px 1800)
+        , margin auto
+        -- , border3 (px 1) solid (hex "f0f")
         ]
 
 
@@ -203,7 +211,7 @@ slideshow id (fXLarge, fLarge, fMedium) render slides =
                     [ width
                         <| pct
                         <| totalScreensXLarge * 100
-                    , paddingLeft (px 280)
+                    , property "padding-left" "calc((100vw - 1520px) / 2)"
                     ]
                 ]
 

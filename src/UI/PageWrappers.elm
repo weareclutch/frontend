@@ -11,6 +11,7 @@ import UI.Pages.Blog
 import UI.Pages.Case
 import UI.Pages.Home
 import UI.Pages.Services
+import UI.Pages.AboutUs
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState)
 import Wagtail exposing (Page, getPageId)
 
@@ -35,6 +36,9 @@ renderPage page =
 
         Wagtail.ServicesPage content ->
             UI.Pages.Services.view content
+
+        Wagtail.AboutUsPage content ->
+            UI.Pages.AboutUs.view content
 
 
 mobileView : Html a -> Html a

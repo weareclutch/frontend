@@ -30,6 +30,7 @@ type Page
     | BlogCollectionPage BlogCollectionContent
     | BlogPostPage BlogPostContent
     | ServicesPage ServicesContent
+    | AboutUsPage AboutUsContent
 
 
 getPageId : Page -> Int
@@ -51,6 +52,9 @@ getPageId page =
             meta.id
 
         ServicesPage { meta } ->
+            meta.id
+
+        AboutUsPage { meta } ->
             meta.id
 
 
@@ -138,6 +142,9 @@ getPageDecoder pageType =
         "service.ServicesPage" ->
             servicesPageDecoder
 
+        "about_us.AboutUsPage" ->
+            aboutUsPageDecoder
+
         -- Default handler forn unknown types (aka "we can't handle")  --
         _ ->
             D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
@@ -197,6 +204,94 @@ homePageDecoder =
             (D.field "value" decodeCasePreview
                 |> D.list
                 |> D.field "cases"
+            )
+
+
+
+type alias Topic =
+    { title : String
+    , description : String
+    , color : String
+    }
+
+
+type alias Person =
+    { firstName : String
+    , lastName : String
+    , jobTitle : String
+    , image : Image
+    }
+
+
+type alias AboutUsContent =
+    { meta : WagtailMetaContent
+    , title : String
+    , introduction : String
+    , images : List Image
+    , bodyText :
+        { left : String
+        , right : String
+        }
+    , topics : List Topic
+    , team :
+        { title : String
+        , text : String
+        , people : List Person
+        }
+    , clients :
+        { title : String
+        , text : String
+        , clients : List Image
+        }
+    }
+
+
+aboutUsPageDecoder : D.Decoder Page
+aboutUsPageDecoder =
+    D.map AboutUsPage
+        <| D.map8 AboutUsContent
+            metaDecoder
+            (D.field "title" D.string)
+            (D.field "introduction" D.string)
+            (D.field "images" <| D.list <| D.field "image" decodeImage)
+            (D.map2
+                (\left right -> { left = left, right = right })
+                (D.field "left_body_text" D.string)
+                (D.field "right_body_text" D.string)
+            )
+            (D.field "topics"
+                <| D.list
+                <| D.map3 Topic
+                    (D.field "title" D.string)
+                    (D.field "description" D.string)
+                    (D.field "color" D.string)
+            )
+            (D.map3
+                (\title text people -> { title = title, text = text, people = people })
+                (D.field "team_title" D.string)
+                (D.field "team_intro" D.string)
+                (D.field "people"
+                    <| D.list
+                    <| D.field "person"
+                    <| D.map4 Person
+                        (D.field "first_name" D.string)
+                        (D.field "last_name" D.string)
+                        (D.field "job_title" D.string)
+                        (D.field "photo" decodeImage)
+                )
+            )
+            (D.map3
+                (\title text clients -> { title = title, text = text, clients = clients })
+                (D.field "client_title" D.string)
+                (D.field "client_intro" D.string)
+                (D.field "clients"
+                    <| D.list
+                    <| D.field "value"
+                    <| D.map2
+                        Image
+                        (D.at ["image", "url"] D.string)
+                        (D.maybe <| D.field "alt" D.string)
+                )
             )
 
 

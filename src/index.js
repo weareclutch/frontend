@@ -63,6 +63,65 @@ app.ports.scrollOverlayDown.subscribe(function() {
 })
 
 
+app.ports.unbindAll.subscribe(function() {
+  var aboutUsPage = document.getElementById('about-us-page')
+  if (aboutUsPage) {
+    aboutUsPage
+      .parentElement
+      .removeEventListener('scroll', aboutUsHandleScroll)
+  }
+})
+
+
+app.ports.bindAboutUs.subscribe(function() {
+  window.requestAnimationFrame(function() {
+    var page = document.getElementById('about-us-page')
+    if (!page) return false
+
+    var animations = [].slice.call(page.querySelectorAll('.animation'))
+    var animationNames = [ 'boost', 'think', 'rethink' ]
+
+    if (animations) {
+      animations.map(function(animation, index) {
+        playAnimation([animation.id, animationNames[index]])
+      })
+    }
+
+    page.parentElement.addEventListener('scroll', aboutUsHandleScroll)
+  })
+})
+
+
+
+function aboutUsHandleScroll(e) {
+  window.requestAnimationFrame(function() {
+    var page = document.getElementById('about-us-page')
+    if (!page) return false
+
+    var wrapper = page.querySelector('.topics')
+    var topics = [].slice.call(page.querySelectorAll('.topic'))
+    var animationWrapper = page.querySelector('.animation-wrapper')
+    var animations = [].slice.call(page.querySelectorAll('.animation'))
+
+    // current scroll position from center of page to element
+    var current = page.parentElement.scrollTop - wrapper.offsetTop + window.innerHeight / 2
+
+
+    var activeElement = topics.reduce(function(acc, topic, index) {
+      return topic.offsetTop + topic.clientHeight / 4 < current ? index : acc
+    }, 0)
+
+    var activeColor = !topics[0] ? 'fff' : topics[activeElement].dataset.color
+
+    animations.forEach(function(animation, index) {
+      animation.style.opacity = index === activeElement ? 1 : 0;
+    })
+
+    animationWrapper.style.backgroundColor = activeColor
+  })
+}
+
+
 
 var animations = []
 var animationData = null
@@ -75,8 +134,11 @@ fetch('/animation/animations.json')
     animationData = json
   })
 
-app.ports.playAnimation.subscribe(function(data) {
+
+function playAnimation(data) {
   if (!animationData) return false
+
+  console.log('playing animation: ', data)
 
   var name = data[1]
   var id = data[0]
@@ -91,18 +153,13 @@ app.ports.playAnimation.subscribe(function(data) {
       container: document.getElementById(id),
       animationData: animationData[name] || animationData['vd'],
       renderer: 'svg',
-      loop: false,
+      loop: true,
       autoplay: true,
     })
-
-    animations[id].onComplete = function() {
-      animations[id].goToAndPlay(
-        animationData.loopOffset[name] || 0
-      )
-    }
   })
-})
+}
 
+app.ports.playAnimation.subscribe(playAnimation)
 
 app.ports.stopAnimation.subscribe(function(id) {
   if (animations[id]) {

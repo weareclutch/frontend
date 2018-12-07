@@ -11,6 +11,22 @@ import UI.Wrapper
 import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 
 
+getPageCommands : Wagtail.Page -> List (Cmd Msg)
+getPageCommands page =
+    case page of
+        Wagtail.HomePage _ ->
+            [ Ports.scrollOverlayDown ()
+            ]
+
+        Wagtail.AboutUsPage _ ->
+            [ Ports.bindAboutUs ()
+            ]
+
+        _ ->
+            [ Ports.unbindAll ()
+            ]
+
+
 getAndDecodePage : Location -> Cmd Msg
 getAndDecodePage location =
     getWagtailPage location
@@ -129,18 +145,11 @@ update msg model =
                         siteIdentifier =
                             Dict.get "x-current-site" response.headers
 
-                        defaultCommands =
+                        commands =
                             [ fetchSiteDependentResources model.route siteIdentifier
                             , Ports.resetScrollPosition ()
                             ]
-
-                        commands =
-                            case page of
-                                Wagtail.HomePage _ ->
-                                    Ports.scrollOverlayDown () :: defaultCommands
-
-                                _ ->
-                                    defaultCommands
+                            ++ getPageCommands page
 
                     in
                     ( { model
@@ -253,40 +262,6 @@ update msg model =
                                   }
                                 , command )
 
-                        (WagtailRoute identifier originalPage, Just originalNavigationTree) ->
-                            let
-                                page =
-                                    case originalPage of
-                                        Wagtail.ServicesPage content ->
-                                            Wagtail.ServicesPage
-                                              { content
-                                              | expertises =
-                                                  content.expertises
-                                                    |> List.indexedMap
-                                                        (\i expertise ->
-                                                            if index == i then
-                                                                { expertise | active = not expertise.active }
-                                                            else
-                                                                expertise
-                                                        )
-                                              }
-
-                                        _ ->
-                                            originalPage
-
-                                navigationTree =
-                                    originalNavigationTree
-                                        |> UI.State.addPageToNavigationTree page
-
-                                command =
-                                    Ports.playAnimation ("expertise-animation-" ++ (toString index), "")
-
-                            in
-                                ( { model
-                                  | route = WagtailRoute identifier page
-                                  , navigationTree = Just navigationTree
-                                  }
-                                , command )
 
                         _ ->
                             ( model, Cmd.none )
@@ -297,7 +272,7 @@ update msg model =
             case msg of
                 UI.State.FetchNavigation (Ok navigationTree) ->
                     let
-                        ( navTree, overlayState ) =
+                        ( navTree, overlayState, commands ) =
                             case model.route of
                                 WagtailRoute _ page ->
                                     let
@@ -314,17 +289,17 @@ update msg model =
                                                 |> UI.State.setNavigationPageActive page
 
                                     in
-                                    ( navTree, overlayState )
+                                    ( navTree, overlayState, getPageCommands page )
 
                                 _ ->
-                                    ( navigationTree, model.overlayState )
+                                    ( navigationTree, model.overlayState, [ Cmd.none ] )
                     in
                     ( { model
                         | overlayState = overlayState
                         , navigationTree = Just navTree
                         , navigationState = UI.State.Closed
                       }
-                    , Cmd.none
+                    , Cmd.batch commands
                     )
 
                 UI.State.FetchNavigation (Err error) ->

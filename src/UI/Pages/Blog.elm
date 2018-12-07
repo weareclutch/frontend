@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (image, addLink, backgroundImg, siteMargins, slideshow)
+import UI.Common exposing (container, image, addLink, backgroundImg, siteMargins, slideshow)
 import UI.Components.Blocks exposing (richText)
 import Wagtail
 
@@ -141,13 +141,17 @@ overview content =
 
     in
     wrapper []
-        [ siteMargins []
-            [ title [] [ text content.title ]
-            , p [ class "intro" ] [ text content.introduction ]
+        [ container []
+            [ siteMargins []
+                [ title [] [ text content.title ]
+                , p [ class "intro" ] [ text content.introduction ]
+                ]
             ]
         , series
-        , siteMargins []
-            [ div [] posts
+        , container []
+            [ siteMargins []
+                [ div [] posts
+                ]
             ]
         ]
 
@@ -158,20 +162,19 @@ collection content =
         wrapper =
             styled div
                 [ backgroundColor (hex "fff")
-                , minHeight (pct 100)
-                , minWidth (pct 100)
+                ]
+
+        innerWrapper  =
+            styled div
+                [ minHeight (pct 100)
                 , padding2 (px 270) zero
+                , maxWidth (px 1130)
+                , margin auto
                 ]
 
         title =
             styled h2
                 [ color (hex "001AE0")
-                ]
-
-        intro =
-            styled div
-                [ maxWidth (px 1130)
-                , margin auto
                 ]
 
         posts =
@@ -180,12 +183,14 @@ collection content =
                 content.blogPosts
     in
     wrapper []
-        [ siteMargins []
-            [ intro []
-                [ title [] [ text content.title ]
-                , div [ class "intro" ] [ richText content.intro ]
+        [ container []
+            [ siteMargins []
+                [ innerWrapper []
+                    [ title [] [ text content.title ]
+                    , div [ class "intro" ] [ richText content.intro ]
+                    , div [] posts
+                    ]
                 ]
-            , div [] posts
             ]
         ]
 
@@ -196,20 +201,19 @@ post content =
         wrapper =
             styled div
                 [ backgroundColor (hex "fff")
-                , minHeight (pct 100)
-                , minWidth (pct 100)
+                ]
+
+        innerWrapper  =
+            styled div
+                [ minHeight (pct 100)
                 , padding2 (px 270) zero
+                , maxWidth (px 1360)
+                , margin auto
                 ]
 
         title =
             styled h2
                 [ color (hex "001AE0")
-                ]
-
-        intro =
-            styled div
-                [ maxWidth (px 1130)
-                , margin auto
                 ]
 
         footer =
@@ -218,29 +222,31 @@ post content =
                 ]
 
     in
-    wrapper []
-        [ siteMargins []
-            [ intro []
-                [ title [] [ text content.title ]
-                , p []
-                    [ strong []
-                        [ text
-                            <| (toString content.readingTime)
-                            ++ " minuten leestijd"
+        wrapper []
+            [ container []
+                [ innerWrapper []
+                    [ siteMargins []
+                        [ title [] [ text content.title ]
+                        , p []
+                            [ strong []
+                                [ text
+                                    <| (toString content.readingTime)
+                                    ++ " minuten leestijd"
+                                ]
+                            ]
+                        , div [ class "intro" ] [ richText content.intro ]
                         ]
+                    , content.body
+                        |> Maybe.map renderPostBlocks
+                        |> Maybe.withDefault (text "")
                     ]
-                , div [ class "intro" ] [ richText content.intro ]
+                ]
+            , footer []
+                [ siteMargins []
+                    [
+                    ]
                 ]
             ]
-        , content.body
-            |> Maybe.map renderPostBlocks
-            |> Maybe.withDefault (text "")
-        , footer []
-            [ siteMargins []
-                [
-                ]
-            ]
-        ]
 
 
 renderPostBlocks : List Wagtail.Block -> Html msg
@@ -279,7 +285,6 @@ renderQuote data =
         wrapper =
             styled div
                 [ maxWidth (px 850)
-                , padding2 zero (px 25)
                 , margin auto
                 ]
     in
@@ -329,7 +334,6 @@ renderContent text =
             styled div
                 [ maxWidth (px 850)
                 , margin auto
-                , padding2 zero (px 25)
                 ]
 
     in
