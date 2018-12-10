@@ -92,6 +92,17 @@ app.ports.bindAboutUs.subscribe(function() {
 })
 
 
+app.ports.bindServicesPage.subscribe(function(data) {
+  window.requestAnimationFrame(function() {
+    data.forEach(function(animation, index) {
+      playAnimation(['expertise-animation-' + index, animation], true)
+      window.requestAnimationFrame(function() {
+        stopAnimation('expertise-animation-' + index)
+      })
+    })
+  })
+})
+
 
 function aboutUsHandleScroll(e) {
   window.requestAnimationFrame(function() {
@@ -135,18 +146,17 @@ fetch('/animation/animations.json')
   })
 
 
-function playAnimation(data) {
+function playAnimation(data, shouldRestart) {
   if (!animationData) return false
-
-  console.log('playing animation: ', data)
 
   var name = data[1]
   var id = data[0]
 
   window.requestAnimationFrame(function() {
     if (animations[id]) {
-      animations[id].play()
-      return
+      return shouldRestart ?
+        animations[id].goToAndPlay(0) :
+        animations[id].play()
     }
 
     animations[id] = bodymovin.loadAnimation({
@@ -158,14 +168,15 @@ function playAnimation(data) {
     })
   })
 }
-
 app.ports.playAnimation.subscribe(playAnimation)
 
-app.ports.stopAnimation.subscribe(function(id) {
+
+function stopAnimation(id) {
   if (animations[id]) {
     animations[id].pause()
   }
-})
+}
+app.ports.stopAnimation.subscribe(stopAnimation)
 
 
 app.ports.playIntroAnimation.subscribe(function() {

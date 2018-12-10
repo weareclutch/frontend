@@ -3,6 +3,9 @@ port module Ports exposing (..)
 port bindAboutUs : () -> Cmd msg
 
 
+port bindServicesPage : List String -> Cmd msg
+
+
 port unbindAll : () -> Cmd msg
 
 

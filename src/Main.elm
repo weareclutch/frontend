@@ -22,6 +22,11 @@ getPageCommands page =
             [ Ports.bindAboutUs ()
             ]
 
+        Wagtail.ServicesPage content ->
+            [ Ports.bindServicesPage
+                <| List.map .animationName content.expertises
+            ]
+
         _ ->
             [ Ports.unbindAll ()
             ]

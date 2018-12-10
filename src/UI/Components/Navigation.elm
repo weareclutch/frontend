@@ -34,6 +34,17 @@ view navigationTree navigationState route =
                 _ ->
                     CloseMenu
 
+        svgColor =
+            (case route of
+                WagtailRoute _ page ->
+                    Just <| getPageTheme page
+
+                _ ->
+                    Nothing
+            )
+                |> Maybe.map (\theme -> theme.textColor)
+                |> Maybe.withDefault "fff"
+
         wrapper =
             styled div
                 [ position absolute
@@ -47,7 +58,10 @@ view navigationTree navigationState route =
         toggleWrapper =
             styled div
                 [ position absolute
-                , zIndex <| if toggleState == Overlay then (int 0) else (int 110)
+                , zIndex (int 110)
+                , if toggleState == Overlay then visibility hidden else visibility visible
+                , opacity <| if toggleState == Overlay then (int 0) else (int 1)
+                , transition "all" 0.26 0 "ease-in-out"
                 , cursor pointer
                 , padding (px 8)
                 , left (px 20)
@@ -127,23 +141,11 @@ view navigationTree navigationState route =
 
         menuWrapper =
             \navigationState ->
-                let
-                    extraStyle =
-                        case navigationState of
-                            Closed ->
-                                [ opacity zero
-                                , visibility hidden
-                                ]
-
-                            _ ->
-                                [ opacity (int 1)
-                                , visibility visible
-                                ]
-                in
-                styled ul <|
+                styled ul
                     [ listStyle none
                     , textAlign left
                     , position absolute
+                    , zIndex (int 110)
                     , width (pct 100)
                     , margin4 (px 20) (px 25) (px 20) (px 25)
                     , transition "all" 0.2 0 "ease-in-out"
@@ -157,19 +159,33 @@ view navigationTree navigationState route =
                         [ margin4 (px 82) (px 40) (px 82) (px 150)
                         ]
                     ]
-                        ++ extraStyle
 
         menuItem =
-            \active hoverActive ->
+            \visible active hoverActive ->
                 styled li
                     [ display inlineBlock
+                    , maxWidth <| if visible then (px 200) else (px 0)
+                    , marginRight <| if visible then (px 30) else (px 0)
+                    , opacity <| if visible then (int 1) else (int 0)
+                    , width auto
+                    , height (px 30)
+                    , top (px 3)
+                    , transition "all" 0.26 0 "ease-in-out"
+                    , overflow hidden
                     , color <|
-                        if active then
-                            hex "00FFB0"
+                        case (active, toggleState) of
+                            (True, _) ->
+                                hex "00FFB0"
 
-                        else
-                            hex "fff"
-                    , margin4 zero (px 30) zero zero
+                            (_, OpenMenu) ->
+                                hex svgColor
+
+                            (_, Overlay) ->
+                                hex svgColor
+
+                            _ ->
+                                hex "fff"
+                    , verticalAlign top
                     , cursor pointer
                     , position relative
                     , after
@@ -215,17 +231,6 @@ view navigationTree navigationState route =
 
                 _ ->
                     0
-
-        svgColor =
-            (case route of
-                WagtailRoute _ page ->
-                    Just <| getPageTheme page
-
-                _ ->
-                    Nothing
-            )
-                |> Maybe.map (\theme -> theme.textColor)
-                |> Maybe.withDefault "fff"
     in
     wrapper []
         [ toggleWrapper []
@@ -253,6 +258,7 @@ view navigationTree navigationState route =
                 |> List.indexedMap
                     (\index item ->
                         menuItem
+                            (toggleState == CloseMenu)
                             (activeIndex == index)
                             (case navigationState of
                                 Open i ->
@@ -270,12 +276,18 @@ view navigationTree navigationState route =
                     )
             )
                 ++ [ menuItem
+                        True
                         False
                         (navigationState == OpenContact)
-                        [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
-                        , onClick (NavigationMsg <| ChangeNavigation OpenContact)
-                        , class "nav"
-                        ]
+                        ( 
+                          [ onClick (NavigationMsg <| ChangeNavigation OpenContact) , class "nav"
+                          ]
+                            ++ if toggleState == CloseMenu then
+                                [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
+                                ]
+                            else
+                                []
+                        )
                         [ text "Contact" ]
                    ]
         , logoWrapper (addLink "/")
@@ -288,3 +300,4 @@ view navigationTree navigationState route =
                         "00ffb0"
             ]
         ]
+

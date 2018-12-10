@@ -138,7 +138,7 @@ topics items =
                 [ position sticky
                 , width (pct 100)
                 , height (px 620)
-                , top <| calc (pct 50) minus (px 220)
+                , top <| calc (pct 50) minus (px 320)
                 , borderRadius (pct 50)
                 , margin2 (px 40) auto
                 , zIndex (int 10)
