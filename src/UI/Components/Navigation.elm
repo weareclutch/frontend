@@ -140,67 +140,59 @@ view navigationTree navigationState route =
                 ]
 
         menuWrapper =
-            \navigationState ->
-                styled ul
-                    [ listStyle none
-                    , textAlign left
-                    , position absolute
-                    , zIndex (int 110)
-                    , width (pct 100)
-                    , margin4 (px 20) (px 25) (px 20) (px 25)
-                    , transition "all" 0.2 0 "ease-in-out"
-                    , bpMedium
-                        [ margin4 (px 25) (px 40) (px 25) (px 150)
-                        ]
-                    , bpLarge
-                        [ margin4 (px 40) (px 40) (px 40) (px 150)
-                        ]
-                    , bpXLargeUp
-                        [ margin4 (px 82) (px 40) (px 82) (px 150)
-                        ]
+            styled ul
+                [ listStyle none
+                , textAlign center
+                , opacity <| if toggleState == CloseMenu then (int 1) else (int 0)
+                , if toggleState == CloseMenu then visibility visible else visibility hidden
+                , zIndex (int 100)
+                , position absolute
+                , width (pct 100)
+                , padding2 (px 20) (px 25)
+                , transition "all" 0.2 0 "ease-in-out"
+                , bpMedium
+                    [ padding2 (px 25) (px 150)
                     ]
+                , bpLarge
+                    [ padding2 (px 40) (px 150)
+                    ]
+                , bpXLargeUp
+                    [ padding2 (px 82) (px 150)
+                    ]
+                ]
 
         menuItem =
-            \visible active hoverActive ->
+            \active hoverActive ->
                 styled li
                     [ display inlineBlock
-                    , maxWidth <| if visible then (px 200) else (px 0)
-                    , marginRight <| if visible then (px 30) else (px 0)
-                    , opacity <| if visible then (int 1) else (int 0)
                     , width auto
                     , height (px 30)
-                    , top (px 3)
+                    , top zero
                     , transition "all" 0.26 0 "ease-in-out"
                     , overflow hidden
                     , color <|
-                        case (active, toggleState) of
-                            (True, _) ->
-                                hex "00FFB0"
-
-                            (_, OpenMenu) ->
-                                hex svgColor
-
-                            (_, Overlay) ->
-                                hex svgColor
-
-                            _ ->
-                                hex "fff"
+                        if active then
+                            hex "00FFB0"
+                        else
+                            hex "fff"
                     , verticalAlign top
                     , cursor pointer
                     , position relative
+                    , marginRight (px 30)
+                    , lastChild
+                        [ marginRight zero
+                        ]
                     , after
                         [ property "content" "''"
                         , backgroundColor <|
                             if active then
                                 hex "00FFB0"
-
                             else
                                 hex "fff"
                         , transition "width" 0.1 0 "ease-in-out"
                         , opacity <|
                             if hoverActive then
                                 int 1
-
                             else
                                 int 0
                         , borderRadius (pct 100)
@@ -211,6 +203,38 @@ view navigationTree navigationState route =
                         , position relative
                         , bottom (px -4)
                         , margin auto
+                        ]
+                    ]
+
+        contactButton =
+            \visible ->
+                styled li
+                    [ display inlineBlock
+                    , maxWidth <| if visible then (px 200) else (px 0)
+                    , marginRight <| if visible then (px 30) else (px 0)
+                    , opacity <| if visible then (int 1) else (int 0)
+                    , width auto
+                    , height (px 30)
+                    , transition "all" 0.26 0 "ease-in-out"
+                    , overflow hidden
+                    , zIndex (int 130)
+                    , color (hex svgColor)
+                    , verticalAlign top
+                    , cursor pointer
+                    , position absolute
+                    , top (px 24)
+                    , left (px 70)
+                    , bpMedium
+                        [ left (px 90)
+                        , top (px 37)
+                        ]
+                    , bpLarge
+                        [ left (px 100)
+                        , top (px 40)
+                        ]
+                    , bpXLargeUp
+                        [ left (px 160)
+                        , top (px 84)
                         ]
                     ]
 
@@ -253,12 +277,11 @@ view navigationTree navigationState route =
                     )
                 ]
             ]
-        , menuWrapper navigationState [] <|
+        , menuWrapper [] <|
             (navigationTree.items
                 |> List.indexedMap
                     (\index item ->
                         menuItem
-                            (toggleState == CloseMenu)
                             (activeIndex == index)
                             (case navigationState of
                                 Open i ->
@@ -276,20 +299,21 @@ view navigationTree navigationState route =
                     )
             )
                 ++ [ menuItem
-                        True
                         False
                         (navigationState == OpenContact)
-                        ( 
-                          [ onClick (NavigationMsg <| ChangeNavigation OpenContact) , class "nav"
-                          ]
-                            ++ if toggleState == CloseMenu then
-                                [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
-                                ]
-                            else
-                                []
-                        )
+                        [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
+                        , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
+                        , class "nav"
+                        ]
                         [ text "Contact" ]
                    ]
+        , contactButton
+            (toggleState == OpenMenu)
+            [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
+            , class "nav"
+            ]
+            [ text "Contact" ]
+
         , logoWrapper (addLink "/")
             [ logo <|
                 case navigationState of
