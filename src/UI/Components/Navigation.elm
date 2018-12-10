@@ -3,6 +3,7 @@ module UI.Components.Navigation exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
+import Html.Styled.Attributes exposing (class)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import Style exposing (..)
@@ -169,10 +170,6 @@ view navigationTree navigationState route =
                         else
                             hex "fff"
                     , margin4 zero (px 30) zero zero
-                    , fontFamilies [ "Qanelas ExtraBold" ]
-                    , fontWeight (int 400)
-                    , letterSpacing (px 3.5)
-                    , fontSize (px 20)
                     , cursor pointer
                     , position relative
                     , after
@@ -265,6 +262,7 @@ view navigationTree navigationState route =
                                     False
                             )
                             ([ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
+                             , class "nav"
                              ]
                                 ++ addLink item.path
                             )
@@ -276,6 +274,7 @@ view navigationTree navigationState route =
                         (navigationState == OpenContact)
                         [ onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
                         , onClick (NavigationMsg <| ChangeNavigation OpenContact)
+                        , class "nav"
                         ]
                         [ text "Contact" ]
                    ]

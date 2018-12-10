@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class, href)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (addLink, backgroundImg, button, loremIpsum)
+import UI.Common exposing (addLink, backgroundImg, button)
 import UI.Components.Blocks
 import UI.Components.CasePoster
 import Wagtail

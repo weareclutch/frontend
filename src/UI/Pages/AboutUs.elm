@@ -142,7 +142,7 @@ topics items =
                 , borderRadius (pct 50)
                 , margin2 (px 40) auto
                 , zIndex (int 10)
-                , bpXLargeUp
+                , bpXXLargeUp
                     [ property "width" "calc(((-100vw - -1520px) / 2) + 140%)"
                     ]
                 ]
@@ -153,7 +153,7 @@ topics items =
                 , top zero
                 , transition "all" 0.26 0.0 "ease-in-out"
                 , left (px -140)
-                , bpXLargeUp
+                , bpXXLargeUp
                     [ property "left" "calc((-100vw - -1520px) / 2)"
                     ]
                 ]
@@ -205,7 +205,8 @@ topics items =
                                         "data-color"
                                         t.color
                                     ]
-                                    [ richText t.description
+                                    [ h4 [] [ text t.title ]
+                                    , richText t.description
                                     ]
                             )
                             items

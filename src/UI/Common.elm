@@ -4,7 +4,6 @@ module UI.Common exposing
     , button
     , image
     , link
-    , loremIpsum
     , siteMargins
     , slideshow
     , container
@@ -69,23 +68,6 @@ backgroundImg data =
     css
         [ backgroundImage (url imageUrl)
         , backgroundRepeat noRepeat
-        ]
-
-
-loremIpsum : Html msg
-loremIpsum =
-    styled p
-        [ maxWidth (px 600)
-        ]
-        []
-        [ text
-            """
-               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer porta mi nec sagittis rutrum. Mauris sodales, dui vel finibus eleifend, lacus ex porta mi, a egestas nisl lectus at purus. Quisque eu nunc ut lectus luctus sagittis. Vivamus rhoncus, elit non placerat sagittis, arcu risus aliquet enim, eget mollis justo dui vitae felis. Sed accumsan eu quam et facilisis. Etiam tempus finibus magna in consectetur. Phasellus in magna vel dolor viverra laoreet ac eget enim. Vivamus ut neque non odio cursus pulvinar. Phasellus semper quis quam sit amet imperdiet. Curabitur dictum orci risus, at cursus lorem pharetra ac. Ut sit amet augue feugiat, elementum sem non, dignissim lectus. Curabitur vitae aliquet enim, a elementum ipsum. Aliquam eu massa est. Donec mollis dui bibendum accumsan sollicitudin.
-
-               Nulla vitae tincidunt massa. Cras sagittis magna a turpis consequat, sit amet interdum odio porta. Morbi mattis mollis turpis vitae consequat. Phasellus justo enim, consectetur a neque mollis, congue viverra est. Praesent molestie mattis libero, ut auctor sem tristique ac. Donec vitae libero eu sem mollis eleifend id vel nisi. Curabitur justo elit, iaculis sit amet libero quis, dignissim vulputate libero.
-
-           Phasellus et sapien quis tellus ultrices mattis. Sed viverra dolor at augue efficitur iaculis. Nam ultricies luctus dui sed tempus. Nam mattis tempus pretium. Sed sed quam fringilla ante euismod rhoncus. Nam magna mauris, interdum in aliquet non, imperdiet sed nibh. Nulla ut faucibus lacus, at euismod tortor. Suspendisse ac bibendum eros.
-          """
         ]
 
 
@@ -207,7 +189,13 @@ slideshow id (fXLarge, fLarge, fMedium) render slides =
                         <| totalScreensLarge * 100
                     , paddingLeft (px 140)
                     ]
-                , bpXLargeUp
+                , bpXLarge
+                    [ width
+                        <| pct
+                        <| totalScreensLarge * 100
+                    , paddingLeft (px 140)
+                    ]
+                , bpXXLargeUp
                     [ width
                         <| pct
                         <| totalScreensXLarge * 100

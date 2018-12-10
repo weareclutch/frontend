@@ -7,7 +7,7 @@ import Html.Styled.Attributes exposing (class, id)
 import Types exposing (..)
 import Style exposing (..)
 import Wagtail
-import UI.Common exposing (container, slideshow, backgroundImg, loremIpsum, siteMargins)
+import UI.Common exposing (container, slideshow, backgroundImg, siteMargins)
 import UI.Components.Blocks exposing (richText)
 
 

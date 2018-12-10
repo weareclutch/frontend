@@ -36,68 +36,150 @@ globalStyle =
             [ transition "all" 0.16 0 "linear"
             ]
         , selector "h1"
-            [ fontSize (px 160)
-            , lineHeight (px 160)
+            [ margin4 zero zero (px 32) zero
+            , padding zero
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , letterSpacing (px 8)
-            , margin4 zero zero (px 32) zero
-            , padding zero
+            , lineHeight (int 1)
+            , fontSize (px 70)
+            , letterSpacing (px 3.5)
+            , bpLarge
+                [ fontSize (px 140)
+                , letterSpacing (px 5)
+                ]
+            , bpXLarge
+                [ fontSize (px 140)
+                , letterSpacing (px 5)
+                ]
+            , bpXXLargeUp
+                [ fontSize (px 160)
+                , letterSpacing (px 8)
+                ]
             ]
         , selector "h2"
-            [ fontSize (px 100)
-            , lineHeight (px 100)
-            , letterSpacing (px 5)
+            [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 32) zero
             , padding zero
+            , fontSize (px 32)
+            , letterSpacing (px 1.5)
+            , bpLarge
+                [ fontSize (px 80)
+                , letterSpacing (px 3)
+                ]
+            , bpXLarge
+                [ fontSize (px 80)
+                , letterSpacing (px 3)
+                ]
+            , bpXXLargeUp
+                [ fontSize (px 100)
+                , letterSpacing (px 5)
+                ]
             ]
         , selector "h3"
-            [ fontSize (px 60)
-            , lineHeight (px 60)
-            , letterSpacing (px 4)
+            [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 32) zero
             , padding zero
+            , fontSize (px 26)
+            , letterSpacing (px 1.5)
+            , bpLarge
+                [ fontSize (px 40)
+                , letterSpacing (px 2.5)
+                ]
+            , bpXLarge
+                [ fontSize (px 56)
+                , letterSpacing (px 3.75)
+                ]
+            , bpXXLargeUp
+                [ fontSize (px 60)
+                , letterSpacing (px 4)
+                ]
             ]
         , selector "h4"
-            [ fontSize (px 40)
-            , lineHeight (px 40)
-            , letterSpacing (px 2.5)
+            [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 32) zero
             , padding zero
+            , fontSize (px 26)
+            , letterSpacing (px 1.5)
+            , bpLargeUp
+                [ fontSize (px 40)
+                , letterSpacing (px 2.5)
+                ]
             ]
         , selector "h5"
-            [ fontSize (px 28)
-            , lineHeight (px 28)
+            [ lineHeight (int 1)
             , letterSpacing (px 2)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 32) zero
             , padding zero
+            , fontSize (px 26)
+            , letterSpacing (px 1.5)
+            , bpLarge
+                [ fontSize (px 24)
+                , letterSpacing (px 1.5)
+                ]
+            , bpXLarge
+                [ fontSize (px 24)
+                , letterSpacing (px 1.5)
+                ]
+            , bpXXLargeUp
+                [ fontSize (px 28)
+                , letterSpacing (px 2)
+                ]
             ]
         , selector "p"
-            [ fontSize (px 22)
-            , lineHeight (px 32)
-            , fontFamilies [ "Roboto", "sans-serif" ]
+            [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin4 zero zero (px 32) zero
             , padding zero
-            , letterSpacing (px 1.5)
+            , fontSize (px 18)
+            , lineHeight (px 26)
+            , bpLargeUp
+                [ fontSize (px 22)
+                , letterSpacing (px 1.5)
+                , lineHeight (px 32)
+                ]
             ]
         , selector ".intro p, p.intro"
-            [ fontSize (px 28)
-            , lineHeight (px 44)
-            , fontFamilies [ "Roboto", "sans-serif" ]
-            , fontWeight (int 500)
+            [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin4 zero zero (px 44) zero
             , padding zero
-            , letterSpacing (px 2)
+            , fontWeight (int 800)
+            , fontSize (px 18)
+            , lineHeight (px 26)
+            , bpLarge
+                [ fontSize (px 24)
+                , letterSpacing (px 1.5)
+                , lineHeight (px 40)
+                ]
+            , bpXLarge
+                [ fontSize (px 24)
+                , letterSpacing (px 1.5)
+                , lineHeight (px 40)
+                ]
+            , bpXXLargeUp
+                [ fontSize (px 28)
+                , letterSpacing (px 2)
+                , lineHeight (px 44)
+                ]
             ]
-        , selector "ul"
+        , selector ".nav, .nav p, p.nav"
+            [ fontFamilies [ "Qanelas ExtraBold" ]
+            , lineHeight (int 1)
+            , fontWeight (int 400)
+            , fontSize (px 18)
+            , letterSpacing (px 1.5)
+            , bpLargeUp
+                [ fontSize (px 22)
+                , letterSpacing (px 2)
+                ]
+            ]
+        , selector "ul, ol"
             [ paddingLeft (px 20)
             , margin4 zero zero (px 35) zero
             ]

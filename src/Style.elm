@@ -1,4 +1,4 @@
-module Style exposing (bpLarge, bpLargeUp, bpMedium, bpMediumUp, bpSmallOnly, bpXLargeUp, large, medium, small, transition, transitionString, transitions)
+module Style exposing (..)
 
 import Css exposing (..)
 import Css.Media exposing (..)
@@ -16,6 +16,11 @@ medium =
 
 large : Int
 large =
+    1440
+
+
+xLarge : Int
+xLarge =
     1800
 
 
@@ -59,10 +64,26 @@ bpLargeUp styles =
         styles
 
 
+bpXLarge : List Style -> Style
+bpXLarge styles =
+    withMediaQuery
+        [ "only screen and (min-width: " ++ toString large ++ "px) and (max-width: " ++ (toString <| xLarge - 1) ++ "px)"
+        ]
+        styles
+
+
 bpXLargeUp : List Style -> Style
 bpXLargeUp styles =
     withMediaQuery
         [ "only screen and (min-width: " ++ toString large ++ "px)"
+        ]
+        styles
+
+
+bpXXLargeUp : List Style -> Style
+bpXXLargeUp styles =
+    withMediaQuery
+        [ "only screen and (min-width: " ++ toString xLarge ++ "px)"
         ]
         styles
 
