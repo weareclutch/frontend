@@ -22,6 +22,7 @@ globalStyle =
             , width (vw 100)
             , fontSize (px 22)
             , lineHeight (px 32)
+            , overflowX hidden
             , bpMediumUp
                 [ overflow hidden
                 ]
@@ -172,7 +173,7 @@ globalStyle =
             [ fontFamilies [ "Qanelas ExtraBold" ]
             , lineHeight (int 1)
             , fontWeight (int 400)
-            , fontSize (px 18)
+            , fontSize (px 26)
             , letterSpacing (px 1.5)
             , bpLargeUp
                 [ fontSize (px 22)
@@ -284,7 +285,11 @@ view model =
                                 text "It's not a bug - it's an undocumented feature."
                 in
                 wrapper (model.route /= UndefinedRoute)
-                    [ UI.Components.Navigation.view navigationTree model.navigationState model.route
+                    [ UI.Components.Navigation.view
+                        navigationTree
+                        model.navigationState
+                        model.route
+                        model.contactInformation
                     , desktopView <|
                         overlays model.overlayState
                     , desktopView <|

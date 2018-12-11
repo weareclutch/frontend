@@ -4,7 +4,7 @@ import Css exposing (..)
 import Css.Foreign exposing (global, selector)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes exposing (class, id)
+import Html.Styled.Attributes exposing (class, id, href)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import Style exposing (..)
@@ -20,8 +20,8 @@ type ToggleState
     | CloseMenu
 
 
-view : NavigationTree -> NavigationState -> Route -> Html Types.Msg
-view navigationTree navigationState route =
+view : NavigationTree -> NavigationState -> Route -> Maybe ContactInformation -> Html Types.Msg
+view navigationTree navigationState route contactInformation =
     let
         toggleState =
             case ( navigationState, route ) of
@@ -57,14 +57,38 @@ view navigationTree navigationState route =
                 |> Maybe.map (\theme -> theme.textColor)
                 |> Maybe.withDefault "fff"
 
+        outerWrapper =
+            styled div
+                [ position fixed
+                , zIndex (int 100)
+                , height (px 0)
+                , bpMediumUp
+                    [ position absolute
+                    , top zero
+                    , left zero
+                    , width (pct 100)
+                    , height auto
+                    ]
+                ]
+
         wrapper =
             styled div
-                [ position absolute
-                , zIndex (int 100)
-                , top zero
-                , left zero
-                , width (pct 100)
-                , backgroundColor (hex "0ff")
+                [ position relative
+                , width (vw 100)
+                , height (vh 100)
+                , backgroundColor (hex "001AE0")
+                , opacity <| if toggleState == CloseMenu then (int 1) else (int 0)
+                , if toggleState == CloseMenu then visibility visible else visibility hidden
+                , transition "all" 0.2 0 "ease-in-out"
+                , overflowY scroll
+                , property "-webkit-overflow-scrolling" "touch"
+                , overflowX hidden
+                , bpMediumUp
+                    [ height auto
+                    , width auto
+                    , backgroundColor transparent
+                    , overflow visible
+                    ]
                 ]
 
         toggleWrapper =
@@ -76,18 +100,18 @@ view navigationTree navigationState route =
                 , height (px 50)
                 , cursor pointer
                 , left (px 20)
-                , top (px 12)
+                , top (px 50)
                 , bpMedium
                     [ left (px 40)
-                    , top (px 25)
+                    , top (px 27)
                     ]
                 , bpLarge
                     [ left (px 40)
-                    , top (px 30)
+                    , top (px 27)
                     ]
                 , bpXLargeUp
                     [ left (px 100)
-                    , top (px 75)
+                    , top (px 68)
                     ]
                 ]
 
@@ -114,10 +138,10 @@ view navigationTree navigationState route =
                 , zIndex (int 110)
                 , cursor pointer
                 , right (px 20)
-                , top (px 20)
+                , top (px 60)
                 , bpMedium
                     [ right (px 40)
-                    , top (px 25)
+                    , top (px 40)
                     ]
                 , bpLarge
                     [ right (px 40)
@@ -132,16 +156,19 @@ view navigationTree navigationState route =
         menuWrapper =
             styled ul
                 [ listStyle none
-                , textAlign center
-                , opacity <| if toggleState == CloseMenu then (int 1) else (int 0)
-                , if toggleState == CloseMenu then visibility visible else visibility hidden
                 , zIndex (int 100)
-                , position absolute
-                , width (pct 100)
-                , padding2 (px 20) (px 25)
-                , transition "all" 0.2 0 "ease-in-out"
+                , padding4 (px 100) (px 25) (px 20) (px 25)
+                , textAlign center
+                , width (vw 100)
+                , position relative
+                , bpMediumUp
+                    [ height auto
+                    , width (pct 100)
+                    , position absolute
+                    ]
                 , bpMedium
                     [ padding2 (px 25) (px 150)
+                    , width (pct 100)
                     ]
                 , bpLarge
                     [ padding2 (px 40) (px 150)
@@ -154,8 +181,9 @@ view navigationTree navigationState route =
         menuItem =
             \active hoverActive ->
                 styled li
-                    [ display inlineBlock
-                    , width auto
+                    [ width (pct 100)
+                    , textAlign center
+                    , display block
                     , height (px 30)
                     , top zero
                     , transition "all" 0.26 0 "ease-in-out"
@@ -168,7 +196,13 @@ view navigationTree navigationState route =
                     , verticalAlign top
                     , cursor pointer
                     , position relative
-                    , marginRight (px 30)
+                    , marginBottom (px 24)
+                    , bpMediumUp
+                        [ display inlineBlock
+                        , width auto
+                        , textAlign left
+                        , marginRight (px 30)
+                        ]
                     , lastChild
                         [ marginRight zero
                         ]
@@ -189,17 +223,20 @@ view navigationTree navigationState route =
                         , width (pct 100)
                         , height (px 3)
                         , maxWidth (px 3)
-                        , display block
                         , position relative
                         , bottom (px -4)
                         , margin auto
+                        , display none
+                        , bpMediumUp
+                            [ display block
+                            ]
                         ]
                     ]
 
         menuButtonText =
             \visible ->
-                styled li
-                    [ display inlineBlock
+                styled span
+                    [ display none
                     , maxWidth <| if visible then (px 200) else (px 0)
                     , marginRight <| if visible then (px 30) else (px 0)
                     , opacity <| if visible then (int 1) else (int 0)
@@ -214,19 +251,38 @@ view navigationTree navigationState route =
                     , position absolute
                     , top (px 24)
                     , left (px 70)
+                    , bpMediumUp
+                        [ display inlineBlock
+                        ]
                     , bpMedium
-                        [ left (px 90)
-                        , top (px 37)
+                        [ left (px 100)
+                        , top (px 38)
                         ]
                     , bpLarge
                         [ left (px 100)
-                        , top (px 40)
+                        , top (px 38)
                         ]
                     , bpXLargeUp
                         [ left (px 160)
-                        , top (px 84)
+                        , top (px 80)
                         ]
                     ]
+
+        contactInfo =
+            styled div
+                [ textAlign center
+                , display block
+                , color (hex "fff")
+                , bpMediumUp
+                    [ display none
+                    ]
+                ]
+
+        link =
+            styled a
+                [ color (hex "00FFB0")
+                , textDecoration none
+                ]
 
         activeIndex =
             case route of
@@ -246,43 +302,64 @@ view navigationTree navigationState route =
                 _ ->
                     0
     in
-    wrapper []
+    outerWrapper []
         [ toggleWrapper [ toggleAction ]
             [ burgerAnimation
                 [ id "burger-animation" ]
                 []
             , burgerAnimationStyle
             ]
-        , menuWrapper [] <|
-            (navigationTree.items
-                |> List.indexedMap
-                    (\index item ->
-                        menuItem
-                            (activeIndex == index)
-                            (case navigationState of
-                                Open i ->
-                                    i == index
+        , wrapper []
+            [ menuWrapper [] <|
+                (navigationTree.items
+                    |> List.indexedMap
+                        (\index item ->
+                            menuItem
+                                (activeIndex == index)
+                                (case navigationState of
+                                    Open i ->
+                                        i == index
 
-                                _ ->
-                                    False
-                            )
-                            ([ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
-                             , class "nav"
-                             ]
-                                ++ addLink item.path
-                            )
-                            [ text item.title ]
+                                    _ ->
+                                        False
+                                )
+                                ([ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
+                                 , class "nav"
+                                 ]
+                                    ++ addLink item.path
+                                )
+                                [ text item.title ]
+                        )
+                )
+                    ++ [ menuItem
+                            False
+                            (navigationState == OpenContact)
+                            [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
+                            , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
+                            , class "nav"
+                            ]
+                            [ text "Contact" ]
+                       ]
+            , contactInformation
+                |> Maybe.map
+                    (\info ->
+                        contactInfo []
+                            [ p []
+                                [ link [ href <| "mailto:" ++ info.email ] [ text info.email ]
+                                , br [] []
+                                , link [ href <| "phone:" ++ info.phone ] [ text info.phone ]
+                                ]
+                            , p []
+                                [ span [] [  text "barentszplein 4f" ]
+                                , br [] []
+                                , span [] [  text "1013NJ" ]
+                                , br [] []
+                                , span [] [  text "Amsterdam" ]
+                                ]
+                            ]
                     )
-            )
-                ++ [ menuItem
-                        False
-                        (navigationState == OpenContact)
-                        [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
-                        , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
-                        , class "nav"
-                        ]
-                        [ text "Contact" ]
-                   ]
+                |> Maybe.withDefault (text "")
+            ]
         , menuButtonText
             (toggleState == OpenMenu)
             [ onClick (NavigationMsg <| ChangeNavigation OpenContact)

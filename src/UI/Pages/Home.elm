@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, class, href, id)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (backgroundImg, button, siteMargins)
+import UI.Common exposing (backgroundImg, button, siteMargins, container)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
@@ -22,9 +22,11 @@ view content =
 
         caseWrapper =
             styled div
-                [ marginBottom (px 20)
+                [ marginBottom (px 25)
+                , position relative
+                , zIndex (int 80)
                 , bpMedium
-                    [ marginBottom (px 20)
+                    [ marginBottom (px 25)
                     ]
                 , bpLarge
                     [ marginBottom (px 50)
@@ -53,59 +55,39 @@ view content =
                         ]
                     ]
                 ]
+
+        casesOuterWrapper =
+            styled div
+                [ backgroundColor (hex "292A32")
+                , marginBottom (px -50)
+                , bpMediumUp
+                    [ padding2 (px 240) zero
+                    , margin zero
+                    ]
+                ]
     in
     div [] <|
-        [ pageWrapper
-            [ siteMargins []
-                [ evenCases
-                    |> List.map Tuple.second
-                    |> List.map
-                        (\x ->
-                            caseWrapper [] [ UI.Components.CasePoster.view x ]
-                        )
-                    |> casesWrapper []
-                , oddCases
-                    |> List.map Tuple.second
-                    |> List.map
-                        (\x ->
-                            caseWrapper [] [ UI.Components.CasePoster.view x ]
-                        )
-                    |> casesWrapper []
+        [ casesOuterWrapper []
+            [ container []
+                [ siteMargins []
+                    [ evenCases
+                        |> List.map Tuple.second
+                        |> List.map
+                            (\x ->
+                                caseWrapper [] [ UI.Components.CasePoster.view x ]
+                            )
+                        |> casesWrapper []
+                    , oddCases
+                        |> List.map Tuple.second
+                        |> List.map
+                            (\x ->
+                                caseWrapper [] [ UI.Components.CasePoster.view x ]
+                            )
+                        |> casesWrapper []
+                    ]
                 ]
             ]
         , introCover content
-        ]
-
-
-pageWrapper : List (Html msg) -> Html msg
-pageWrapper children =
-    let
-        wrapper =
-            styled div
-                [ width (pct 100)
-                , position relative
-                , zIndex (int 10)
-                , backgroundColor (hex "292A32")
-                , padding4 (px 140) zero (px 80) zero
-                , bpMedium
-                    [ padding4 (px 280) zero (px 140) zero
-                    ]
-                , bpLarge
-                    [ padding4 (px 280) zero (px 140) zero
-                    ]
-                , bpXLargeUp
-                    [ padding4 (px 280) zero (px 140) zero
-                    ]
-                ]
-
-        innerWrapper =
-            styled div
-                [ margin auto
-                , padding4 zero zero (px 280) zero
-                ]
-    in
-    wrapper []
-        [ innerWrapper [] children
         ]
 
 
@@ -119,7 +101,20 @@ introCover content =
                 , backgroundColor (hex content.theme.backgroundColor)
                 , position relative
                 , zIndex (int 5)
-                , overflow hidden
+                , before
+                    [ property "content" "''"
+                    , display block
+                    , position absolute
+                    , top (px -230)
+                    , left zero
+                    , height (px 230)
+                    , width (pct 100)
+                    , backgroundImage
+                        <| linearGradient
+                            (stop (hex "292A32"))
+                            (stop (hex content.theme.backgroundColor))
+                            []
+                    ]
                 ]
 
         title =

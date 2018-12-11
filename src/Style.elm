@@ -6,12 +6,12 @@ import Css.Media exposing (..)
 
 small : Int
 small =
-    670
+    780
 
 
 medium : Int
 medium =
-    1040
+    1180
 
 
 large : Int

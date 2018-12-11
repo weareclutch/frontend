@@ -163,6 +163,7 @@ slideshow id (fXLarge, fLarge, fMedium) render slides =
             styled div
                 [ position relative
                 , overflowX scroll
+                , property "-webkit-overflow-scrolling" "touch"
                 , width (pct 100)
                 , marginBottom (px 40)
                 , bpMediumUp
