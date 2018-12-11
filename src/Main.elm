@@ -147,12 +147,28 @@ update msg model =
                                     in
                                     ( Just navTree, overlayState )
 
+                        menuAction =
+                            case ((Debug.log "navstate" model.navigationState), overlayState.active) of
+                                (UI.State.Open _, _) ->
+                                    Ports.changeMenuState "CROSSBURGER"
+
+                                (UI.State.Closed, True) ->
+                                    Ports.changeMenuState "BURGERARROW"
+
+                                (UI.State.Closed, False) ->
+                                    Ports.changeMenuState "ARROWBURGER"
+
+                                _ ->
+                                    Cmd.none
+
+
                         siteIdentifier =
                             Dict.get "x-current-site" response.headers
 
                         commands =
                             [ fetchSiteDependentResources model.route siteIdentifier
                             , Ports.resetScrollPosition ()
+                            , menuAction
                             ]
                             ++ getPageCommands page
 
@@ -297,14 +313,14 @@ update msg model =
                                     ( navTree, overlayState, getPageCommands page )
 
                                 _ ->
-                                    ( navigationTree, model.overlayState, [ Cmd.none ] )
+                                    ( navigationTree, model.overlayState, [] )
                     in
                     ( { model
                         | overlayState = overlayState
                         , navigationTree = Just navTree
                         , navigationState = UI.State.Closed
                       }
-                    , Cmd.batch commands
+                    , Cmd.batch (Ports.setupNavigation () :: commands)
                     )
 
                 UI.State.FetchNavigation (Err error) ->
@@ -312,10 +328,11 @@ update msg model =
                         ( { model | navigationTree = Nothing }, Cmd.none )
 
                 UI.State.ChangeNavigation newState ->
-                    case newState of
-                        UI.State.Open index ->
-                            let
-                                command =
+
+                    let
+                        pageCommand =
+                            case newState of
+                                UI.State.Open index ->
                                     model.navigationTree
                                         |> Maybe.andThen
                                             (\navigationTree ->
@@ -323,18 +340,40 @@ update msg model =
                                                     |> List.drop index
                                                     |> List.head
                                             )
-                                        |> Maybe.map
+                                        |> Maybe.andThen
                                             (\activeNavItem ->
-                                                preloadWagtailPage activeNavItem.path
-                                                    |> Cmd.map (\cmd -> WagtailMsg cmd)
+                                                case activeNavItem.page of
+                                                    Just _ ->
+                                                        Nothing
+                                                    Nothing ->
+                                                        Just
+                                                            <| Cmd.map
+                                                                (\cmd -> WagtailMsg cmd)
+                                                                (preloadWagtailPage activeNavItem.path)
                                             )
-                            in
-                            ( { model | navigationState = newState }
-                            , Maybe.withDefault Cmd.none command
-                            )
+                                        |> Maybe.withDefault Cmd.none
 
-                        _ ->
-                            ( { model | navigationState = newState }, Cmd.none )
+                                _ ->
+                                    Cmd.none
+
+                        menuCommand =
+                            case (model.navigationState, newState) of
+                                (UI.State.Open _, UI.State.Closed) ->
+                                    Ports.changeMenuState "CROSSBURGER"
+
+                                (UI.State.Closed, UI.State.Open _) ->
+                                    Ports.changeMenuState "BURGERCROSS"
+
+                                (UI.State.Closed, UI.State.OpenContact) ->
+                                    Ports.changeMenuState "BURGERCROSS"
+
+                                _ ->
+                                    Cmd.none
+
+                    in
+                        ( { model | navigationState = newState }
+                        , Cmd.batch [menuCommand, pageCommand]
+                        )
 
                 UI.State.FetchContactInformation (Ok contactInfo) ->
                     ( { model | contactInformation = Just contactInfo }, Cmd.none )

@@ -1,5 +1,12 @@
 port module Ports exposing (..)
 
+
+port setupNavigation : () -> Cmd msg
+
+
+port changeMenuState : String -> Cmd msg
+
+
 port bindAboutUs : () -> Cmd msg
 
 
@@ -16,6 +23,9 @@ port resetScrollPosition : () -> Cmd msg
 
 
 port playAnimation : (String, String) -> Cmd msg
+
+
+port setupAnimation : (String, String) -> Cmd msg
 
 
 port stopAnimation : String -> Cmd msg

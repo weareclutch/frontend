@@ -1,9 +1,10 @@
 module UI.Components.Navigation exposing (view)
 
 import Css exposing (..)
+import Css.Foreign exposing (global, selector)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, id)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import Style exposing (..)
@@ -34,6 +35,17 @@ view navigationTree navigationState route =
                 _ ->
                     CloseMenu
 
+        toggleAction =
+            case toggleState of
+                OpenMenu ->
+                    onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
+
+                CloseMenu ->
+                    onClick (NavigationMsg <| ChangeNavigation Closed)
+
+                _ ->
+                    onClick (NavigationMsg <| ChangeNavigation Closed)
+
         svgColor =
             (case route of
                 WagtailRoute _ page ->
@@ -59,11 +71,10 @@ view navigationTree navigationState route =
             styled div
                 [ position absolute
                 , zIndex (int 110)
-                , if toggleState == Overlay then visibility hidden else visibility visible
-                , opacity <| if toggleState == Overlay then (int 0) else (int 1)
                 , transition "all" 0.26 0 "ease-in-out"
+                , width (px 50)
+                , height (px 50)
                 , cursor pointer
-                , padding (px 8)
                 , left (px 20)
                 , top (px 12)
                 , bpMedium
@@ -80,43 +91,22 @@ view navigationTree navigationState route =
                     ]
                 ]
 
-        burgerWrapper =
-            styled div <|
-                [ position absolute
-                , transition "opacity" 0.2 0 "linear"
-                , padding (px 20)
-                , top (px -8)
-                , left (px -14)
+        burgerAnimation =
+            styled div
+                [ width (pct 100)
+                , height (pct 100)
                 ]
-                    ++ (if toggleState == OpenMenu then
-                            [ opacity (int 1)
-                            , zIndex (int 10)
-                            ]
 
+        burgerAnimationStyle =
+            global
+                [ selector "#burger-animation path"
+                    [ fill
+                        <| if toggleState == CloseMenu then
+                            (hex "fff")
                         else
-                            [ opacity zero
-                            , zIndex (int 1)
-                            ]
-                       )
-
-        crossWrapper =
-            styled div <|
-                [ transition "opacity" 0.2 0 "linear"
-                , position relative
-                , padding (px 20)
-                , top (px -20)
-                , left (px -20)
+                            (hex svgColor)
+                    ]
                 ]
-                    ++ (if toggleState == CloseMenu then
-                            [ opacity (int 1)
-                            , zIndex (int 10)
-                            ]
-
-                        else
-                            [ opacity zero
-                            , zIndex (int 1)
-                            ]
-                       )
 
         logoWrapper =
             styled div
@@ -206,7 +196,7 @@ view navigationTree navigationState route =
                         ]
                     ]
 
-        contactButton =
+        menuButtonText =
             \visible ->
                 styled li
                     [ display inlineBlock
@@ -257,25 +247,11 @@ view navigationTree navigationState route =
                     0
     in
     wrapper []
-        [ toggleWrapper []
-            [ burgerWrapper
-                [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
-                ]
-                [ burger svgColor
-                ]
-            , crossWrapper
-                [ onClick
-                    (NavigationMsg <| ChangeNavigation Closed)
-                ]
-                [ cross
-                    (case navigationState of
-                        Closed ->
-                            svgColor
-
-                        _ ->
-                            "fff"
-                    )
-                ]
+        [ toggleWrapper [ toggleAction ]
+            [ burgerAnimation
+                [ id "burger-animation" ]
+                []
+            , burgerAnimationStyle
             ]
         , menuWrapper [] <|
             (navigationTree.items
@@ -307,12 +283,19 @@ view navigationTree navigationState route =
                         ]
                         [ text "Contact" ]
                    ]
-        , contactButton
+        , menuButtonText
             (toggleState == OpenMenu)
             [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
             , class "nav"
             ]
             [ text "Contact" ]
+
+        , menuButtonText
+            (toggleState == Overlay)
+            [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
+            , class "nav"
+            ]
+            [ text "Back" ]
 
         , logoWrapper (addLink "/")
             [ logo <|

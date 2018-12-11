@@ -95,10 +95,7 @@ app.ports.bindAboutUs.subscribe(function() {
 app.ports.bindServicesPage.subscribe(function(data) {
   window.requestAnimationFrame(function() {
     data.forEach(function(animation, index) {
-      playAnimation(['expertise-animation-' + index, animation], true)
-      window.requestAnimationFrame(function() {
-        stopAnimation('expertise-animation-' + index)
-      })
+      setupAnimation(['expertise-animation-' + index, animation])
     })
   })
 })
@@ -143,38 +140,77 @@ fetch('/animation/animations.json')
   })
   .then(function(json) {
     animationData = json
+
+    // set burger animation
+    setupAnimation(['burger-animation', 'burger'])
   })
 
 
-function playAnimation(data, shouldRestart) {
+app.ports.setupNavigation.subscribe(function() {
+  window.requestAnimationFrame(function() {
+    setupAnimation(['burger-animation', 'burger'])
+  })
+})
+
+
+app.ports.changeMenuState.subscribe(function(state) {
+  if (state === 'BURGERCROSS') {
+    animations['burger-animation'].playSegments([[0, 220]]) // burger -> cross
+    window.setTimeout(function() { stopAnimation('burger-animation', 220) }, 700)
+  } else if (state === 'CROSSBURGER') {
+    animations['burger-animation'].playSegments([[240, 320]]) // cross -> burger
+    window.setTimeout(function() { stopAnimation('burger-animation', 220) }, 700)
+  }
+})
+
+
+
+function setupAnimation(data, autoplay) {
+  if (!animationData) return false
+
+  window.requestAnimationFrame(function() {
+    var name = data[1]
+    var id = data[0]
+
+    var element = document.getElementById(id)
+    if (!element) return false
+
+    animations[id] = bodymovin.loadAnimation({
+      container: element,
+      animationData: animationData[name] || animationData['vd'],
+      renderer: 'svg',
+      loop: true,
+      autoplay: !!autoplay,
+    })
+  })
+}
+
+
+function playAnimation(data, position) {
   if (!animationData) return false
 
   var name = data[1]
   var id = data[0]
 
   window.requestAnimationFrame(function() {
-    if (animations[id]) {
-      return shouldRestart ?
-        animations[id].goToAndPlay(0) :
-        animations[id].play()
+    if (!animations[id]) {
+      return setupAnimation(data)
     }
 
-    animations[id] = bodymovin.loadAnimation({
-      container: document.getElementById(id),
-      animationData: animationData[name] || animationData['vd'],
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-    })
+    return position !== undefined ?
+      animations[id].goToAndPlay(position, true) :
+      animations[id].play()
   })
 }
 app.ports.playAnimation.subscribe(playAnimation)
 
 
-function stopAnimation(id) {
-  if (animations[id]) {
+function stopAnimation(id, position) {
+  if (!animations[id]) return false
+
+  return position !== undefined ?
+    animations[id].goToAndStop(position, true) :
     animations[id].pause()
-  }
 }
 app.ports.stopAnimation.subscribe(stopAnimation)
 
