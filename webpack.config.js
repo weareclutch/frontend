@@ -1,5 +1,7 @@
 const path = require('path')
 const Dotenv = require('dotenv-webpack')
+const env = new Dotenv()
+const apiUrl = JSON.parse(env.definitions['process.env.API_URL'])
 
 module.exports = {
   entry: {
@@ -30,6 +32,11 @@ module.exports = {
     inline: true,
     stats: { colors: true },
     contentBase: path.join(__dirname, 'public'),
-    historyApiFallback: true
+    historyApiFallback: true,
+    proxy: [{
+      context: ['/media/images'],
+      target: apiUrl,
+      changeOrigin: true
+    }]
   }
 };
