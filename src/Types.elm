@@ -1,4 +1,4 @@
-module Types exposing (Model, Direction(..), Msg(..), Route(..), SiteIdentifier, initModel)
+module Types exposing (Direction(..), Flags, Model, Msg(..), Route(..), SiteIdentifier, initModel)
 
 import Navigation exposing (Location)
 import UI.State
@@ -19,7 +19,8 @@ type Direction
 
 
 type alias Model =
-    { route : Route
+    { flags : Flags
+    , route : Route
     , overlayState : UI.State.OverlayState
     , navigationState : UI.State.NavigationState
     , navigationTree : Maybe UI.State.NavigationTree
@@ -27,9 +28,10 @@ type alias Model =
     }
 
 
-initModel : Model
-initModel =
-    { route = UndefinedRoute
+initModel : Flags -> Model
+initModel flags =
+    { flags = flags
+    , route = UndefinedRoute
     , overlayState =
         { active = False
         , parts = ( Nothing, Nothing )
@@ -49,3 +51,7 @@ type Route
     | WagtailRoute SiteIdentifier Wagtail.Page
     | NotFoundRoute SiteIdentifier
     | ErrorRoute
+
+
+type alias Flags =
+    { apiUrl : String }

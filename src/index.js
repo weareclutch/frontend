@@ -3,7 +3,10 @@
 var Elm = require('./Main.elm');
 var mountNode = document.getElementById('elm-app');
 
-var app = Elm.Main.embed(mountNode);
+var app = Elm.Main.embed(mountNode, {
+  apiUrl: process.env.API_URL
+})
+
 window.app = app
 
 function debounce(func, wait, immediate) {

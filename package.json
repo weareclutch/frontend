@@ -2,6 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "dependencies": {
+    "dotenv-webpack": "^1.5.7",
     "elm-webpack-loader": "^4.4.0",
     "webpack": "^3.10.0",
     "webpack-dev-server": "^2.9.5"

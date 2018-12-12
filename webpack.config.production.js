@@ -1,3 +1,5 @@
+const Dotenv = require('dotenv-webpack')
+
 module.exports = {
   entry: {
     app: [
@@ -19,5 +21,8 @@ module.exports = {
     ],
 
     noParse: /\.elm$/,
-  }
+  },
+  plugins: [
+    new Dotenv()
+  ]
 };

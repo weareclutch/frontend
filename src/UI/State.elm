@@ -2,7 +2,7 @@ module UI.State exposing (ContactInformation, Msg(..), NavigationItem, Navigatio
 
 import Http
 import Json.Decode as D
-import Wagtail exposing (Page, Theme, decodeTheme, getPageId, siteUrl)
+import Wagtail exposing (Page, Theme, decodeTheme, getPageId)
 
 
 type NavigationState
@@ -117,7 +117,6 @@ addPageToNavigationTree page { items } =
     }
 
 
-
 setNavigationPageActive : Page -> NavigationTree -> NavigationTree
 setNavigationPageActive page nav =
     if isNavigationPage nav page then
@@ -146,16 +145,16 @@ isNavigationPage nav page =
             )
 
 
-fetchNavigation : String -> Cmd Msg
-fetchNavigation siteIdentifier =
+fetchNavigation : String -> String -> Cmd Msg
+fetchNavigation apiUrl siteIdentifier =
     Http.send FetchNavigation <|
-        Http.get (siteUrl ++ "/api/navigation/" ++ siteIdentifier ++ "/") decodeNavigation
+        Http.get (apiUrl ++ "/api/navigation/" ++ siteIdentifier ++ "/") decodeNavigation
 
 
-fetchContactInformation : String -> Cmd Msg
-fetchContactInformation siteIdentifier =
+fetchContactInformation : String -> String -> Cmd Msg
+fetchContactInformation apiUrl siteIdentifier =
     Http.send FetchContactInformation <|
-        Http.get (siteUrl ++ "/api/contact/" ++ siteIdentifier ++ "/") decodeContactInformation
+        Http.get (apiUrl ++ "/api/contact/" ++ siteIdentifier ++ "/") decodeContactInformation
 
 
 decodeNavigation : D.Decoder NavigationTree

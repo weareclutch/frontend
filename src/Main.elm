@@ -23,8 +23,8 @@ getPageCommands page =
             ]
 
         Wagtail.ServicesPage content ->
-            [ Ports.bindServicesPage
-                <| List.map .animationName content.expertises
+            [ Ports.bindServicesPage <|
+                List.map .animationName content.expertises
             ]
 
         _ ->
@@ -32,14 +32,14 @@ getPageCommands page =
             ]
 
 
-getAndDecodePage : Location -> Cmd Msg
-getAndDecodePage location =
-    getWagtailPage location
+getAndDecodePage : String -> Location -> Cmd Msg
+getAndDecodePage apiUrl location =
+    getWagtailPage apiUrl location
         |> Cmd.map (\cmd -> WagtailMsg cmd)
 
 
-fetchSiteDependentResources : Route -> Maybe String -> Cmd Msg
-fetchSiteDependentResources previousRoute currentIdentifier =
+fetchSiteDependentResources : String -> Route -> Maybe String -> Cmd Msg
+fetchSiteDependentResources apiUrl previousRoute currentIdentifier =
     let
         previousIdentifier =
             case previousRoute of
@@ -54,8 +54,8 @@ fetchSiteDependentResources previousRoute currentIdentifier =
 
         fetchResourcesForSite id =
             Cmd.batch
-                [ fetchNavigation id
-                , fetchContactInformation id
+                [ fetchNavigation apiUrl id
+                , fetchContactInformation apiUrl id
                 ]
                 |> Cmd.map NavigationMsg
     in
@@ -74,11 +74,11 @@ fetchSiteDependentResources previousRoute currentIdentifier =
                 fetchResourcesForSite id
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : Flags -> Location -> ( Model, Cmd Msg )
+init flags location =
     let
         defaultCommands =
-            [ getAndDecodePage location
+            [ getAndDecodePage flags.apiUrl location
             ]
 
         commands =
@@ -89,7 +89,7 @@ init location =
                 _ ->
                     defaultCommands
     in
-    ( initModel, Cmd.batch commands )
+    ( initModel flags, Cmd.batch commands )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -97,17 +97,16 @@ update msg model =
     let
         debugger =
             Debug.log "msg" msg
-
     in
     case msg of
         OnLocationChange location ->
-            ( model, getAndDecodePage location )
+            ( model, getAndDecodePage model.flags.apiUrl location )
 
         ChangeLocation path ->
             ( model, Navigation.newUrl path )
 
         UpdateSlideshow id direction ->
-            ( model, Ports.updateSlideshow (id, toString direction) )
+            ( model, Ports.updateSlideshow ( id, toString direction ) )
 
         WagtailMsg msg ->
             case msg of
@@ -148,30 +147,28 @@ update msg model =
                                     ( Just navTree, overlayState )
 
                         menuAction =
-                            case ((Debug.log "navstate" model.navigationState), overlayState.active) of
-                                (UI.State.Open _, _) ->
+                            case ( Debug.log "navstate" model.navigationState, overlayState.active ) of
+                                ( UI.State.Open _, _ ) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
-                                (UI.State.Closed, True) ->
+                                ( UI.State.Closed, True ) ->
                                     Ports.changeMenuState "BURGERARROW"
 
-                                (UI.State.Closed, False) ->
+                                ( UI.State.Closed, False ) ->
                                     Ports.changeMenuState "ARROWBURGER"
 
                                 _ ->
                                     Cmd.none
 
-
                         siteIdentifier =
                             Dict.get "x-current-site" response.headers
 
                         commands =
-                            [ fetchSiteDependentResources model.route siteIdentifier
+                            [ fetchSiteDependentResources model.flags.apiUrl model.route siteIdentifier
                             , Ports.resetScrollPosition ()
                             , menuAction
                             ]
-                            ++ getPageCommands page
-
+                                ++ getPageCommands page
                     in
                     ( { model
                         | route = WagtailRoute siteIdentifier page
@@ -199,7 +196,7 @@ update msg model =
                         cmd =
                             case route of
                                 NotFoundRoute siteIdentifier ->
-                                    fetchSiteDependentResources model.route siteIdentifier
+                                    fetchSiteDependentResources model.flags.apiUrl model.route siteIdentifier
 
                                 _ ->
                                     Cmd.none
@@ -210,16 +207,16 @@ update msg model =
                     ( { model | route = route }, cmd )
 
                 Wagtail.UpdateServicesState index ->
-                    case (model.route, model.navigationTree) of
-                        (WagtailRoute identifier originalPage, Just originalNavigationTree) ->
+                    case ( model.route, model.navigationTree ) of
+                        ( WagtailRoute identifier originalPage, Just originalNavigationTree ) ->
                             let
                                 page =
                                     case originalPage of
                                         Wagtail.ServicesPage content ->
                                             Wagtail.ServicesPage
-                                              { content
-                                              | services = (index, Tuple.second content.services)
-                                              }
+                                                { content
+                                                    | services = ( index, Tuple.second content.services )
+                                                }
 
                                         _ ->
                                             originalPage
@@ -227,33 +224,34 @@ update msg model =
                                 navigationTree =
                                     originalNavigationTree
                                         |> UI.State.addPageToNavigationTree page
-
                             in
-                                ( { model
-                                  | route = WagtailRoute identifier page
-                                  , navigationTree = Just navigationTree
-                                  }
-                                , Cmd.none )
+                            ( { model
+                                | route = WagtailRoute identifier page
+                                , navigationTree = Just navigationTree
+                              }
+                            , Cmd.none
+                            )
 
                         _ ->
                             ( model, Cmd.none )
 
                 Wagtail.UpdateExpertisesState index ->
-                    case (model.route, model.navigationTree) of
-                        (WagtailRoute identifier (Wagtail.ServicesPage content), Just originalNavigationTree) ->
+                    case ( model.route, model.navigationTree ) of
+                        ( WagtailRoute identifier (Wagtail.ServicesPage content), Just originalNavigationTree ) ->
                             let
                                 expertises =
                                     content.expertises
-                                      |> List.indexedMap
-                                          (\i expertise ->
-                                              if index == i then
-                                                  { expertise | active = not expertise.active }
-                                              else
-                                                  expertise
-                                          )
+                                        |> List.indexedMap
+                                            (\i expertise ->
+                                                if index == i then
+                                                    { expertise | active = not expertise.active }
+
+                                                else
+                                                    expertise
+                                            )
 
                                 id =
-                                    "expertise-animation-" ++ (toString index)
+                                    "expertise-animation-" ++ toString index
 
                                 command =
                                     expertises
@@ -262,11 +260,12 @@ update msg model =
                                         |> Maybe.map
                                             (\expertise ->
                                                 if expertise.active then
-                                                    Ports.playAnimation ( id , expertise.animationName )
+                                                    Ports.playAnimation ( id, expertise.animationName )
+
                                                 else
                                                     Ports.stopAnimation id
                                             )
-                                        |> Maybe.withDefault (Cmd.none)
+                                        |> Maybe.withDefault Cmd.none
 
                                 page =
                                     Wagtail.ServicesPage { content | expertises = expertises }
@@ -274,20 +273,16 @@ update msg model =
                                 navigationTree =
                                     originalNavigationTree
                                         |> UI.State.addPageToNavigationTree page
-
-
                             in
-                                ( { model
-                                  | route = WagtailRoute identifier page
-                                  , navigationTree = Just navigationTree
-                                  }
-                                , command )
-
+                            ( { model
+                                | route = WagtailRoute identifier page
+                                , navigationTree = Just navigationTree
+                              }
+                            , command
+                            )
 
                         _ ->
                             ( model, Cmd.none )
-
-
 
         NavigationMsg msg ->
             case msg of
@@ -308,7 +303,6 @@ update msg model =
                                             navigationTree
                                                 |> UI.State.addPageToNavigationTree page
                                                 |> UI.State.setNavigationPageActive page
-
                                     in
                                     ( navTree, overlayState, getPageCommands page )
 
@@ -328,7 +322,6 @@ update msg model =
                         ( { model | navigationTree = Nothing }, Cmd.none )
 
                 UI.State.ChangeNavigation newState ->
-
                     let
                         pageCommand =
                             case newState of
@@ -345,11 +338,12 @@ update msg model =
                                                 case activeNavItem.page of
                                                     Just _ ->
                                                         Nothing
+
                                                     Nothing ->
-                                                        Just
-                                                            <| Cmd.map
+                                                        Just <|
+                                                            Cmd.map
                                                                 (\cmd -> WagtailMsg cmd)
-                                                                (preloadWagtailPage activeNavItem.path)
+                                                                (preloadWagtailPage model.flags.apiUrl activeNavItem.path)
                                             )
                                         |> Maybe.withDefault Cmd.none
 
@@ -357,8 +351,8 @@ update msg model =
                                     Cmd.none
 
                         menuCommand =
-                            case (model.navigationState, newState) of
-                                (UI.State.Open _, UI.State.Closed) ->
+                            case ( model.navigationState, newState ) of
+                                ( UI.State.Open _, UI.State.Closed ) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
                                 (UI.State.OpenContact, UI.State.Closed) ->
@@ -367,16 +361,15 @@ update msg model =
                                 (UI.State.Closed, UI.State.Open _) ->
                                     Ports.changeMenuState "BURGERCROSS"
 
-                                (UI.State.Closed, UI.State.OpenContact) ->
+                                ( UI.State.Closed, UI.State.OpenContact ) ->
                                     Ports.changeMenuState "BURGERCROSS"
 
                                 _ ->
                                     Cmd.none
-
                     in
-                        ( { model | navigationState = newState }
-                        , Cmd.batch [menuCommand, pageCommand]
-                        )
+                    ( { model | navigationState = newState }
+                    , Cmd.batch [ menuCommand, pageCommand ]
+                    )
 
                 UI.State.FetchContactInformation (Ok contactInfo) ->
                     ( { model | contactInformation = Just contactInfo }, Cmd.none )
@@ -392,9 +385,10 @@ subscriptions model =
 
 
 
-main : Program Never Model Msg
+
+main : Program Flags Model Msg
 main =
-    Navigation.program OnLocationChange
+    Navigation.programWithFlags OnLocationChange
         { init = init
         , view = UI.Wrapper.view >> toUnstyled
         , update = update

@@ -1,4 +1,4 @@
-module Wagtail exposing (..)
+module Wagtail exposing (AboutUsContent, Block(..), BlogCollectionContent, BlogOverviewContent, BlogPostContent, BlogPostPreview, BlogPostSeries, BlogSeriesPreview, CasePageContent, CasePreview, Column, Expertise, HomePageContent, Image, Msg(..), Page(..), Person, Quote, Service, ServicesContent, Theme, Topic, WagtailMetaContent, aboutUsPageDecoder, blogCollectionPageDecoder, blogOverviewPageDecoder, blogPostPageDecoder, blogPostPreviewDecoder, blogSeriesPreviewDecoder, casePageDecoder, dateDecoder, decodeBackgroundBlock, decodeBlocks, decodeCasePreview, decodeColumn, decodeColumns, decodeContentBlock, decodeImage, decodeImageBlock, decodePageType, decodeQuote, decodeTheme, getPageDecoder, getPageId, getPageTheme, getWagtailPage, homePageDecoder, metaDecoder, preloadWagtailPage, servicesPageDecoder)
 
 import Date exposing (Date)
 import Http exposing (..)
@@ -6,14 +6,9 @@ import Json.Decode as D
 import Navigation
 
 
-siteUrl : String
-siteUrl =
-    "http://staging.weareclutch.nl"
-
-
-apiUrl : String
-apiUrl =
-    siteUrl ++ "/api/v2"
+findPageUrl : String -> String -> String
+findPageUrl apiUrl pathname =
+    apiUrl ++ "/api/v2/pages/find/?html_path=" ++ pathname
 
 
 type Msg
@@ -74,12 +69,12 @@ getPageTheme page =
             }
 
 
-getWagtailPage : Navigation.Location -> Cmd Msg
-getWagtailPage location =
+getWagtailPage : String -> Navigation.Location -> Cmd Msg
+getWagtailPage apiUrl location =
     Http.request
         { method = "GET"
         , headers = [ header "Accept" "application/json" ]
-        , url = apiUrl ++ "/pages/find/?html_path=" ++ location.pathname
+        , url = findPageUrl apiUrl location.pathname
         , body = Http.emptyBody
         , expect =
             expectStringResponse
@@ -97,12 +92,12 @@ getWagtailPage location =
         |> Http.send LoadPage
 
 
-preloadWagtailPage : String -> Cmd Msg
-preloadWagtailPage path =
+preloadWagtailPage : String -> String -> Cmd Msg
+preloadWagtailPage apiUrl path =
     Http.request
         { method = "GET"
         , headers = [ header "Accept" "application/json" ]
-        , url = apiUrl ++ "/pages/find/?html_path=" ++ path
+        , url = findPageUrl apiUrl path
         , body = Http.emptyBody
         , expect =
             expectJson
@@ -207,7 +202,6 @@ homePageDecoder =
             )
 
 
-
 type alias Topic =
     { title : String
     , description : String
@@ -248,8 +242,8 @@ type alias AboutUsContent =
 
 aboutUsPageDecoder : D.Decoder Page
 aboutUsPageDecoder =
-    D.map AboutUsPage
-        <| D.map8 AboutUsContent
+    D.map AboutUsPage <|
+        D.map8 AboutUsContent
             metaDecoder
             (D.field "title" D.string)
             (D.field "introduction" D.string)
@@ -259,38 +253,38 @@ aboutUsPageDecoder =
                 (D.field "left_body_text" D.string)
                 (D.field "right_body_text" D.string)
             )
-            (D.field "topics"
-                <| D.list
-                <| D.map3 Topic
-                    (D.field "title" D.string)
-                    (D.field "description" D.string)
-                    (D.field "color" D.string)
+            (D.field "topics" <|
+                D.list <|
+                    D.map3 Topic
+                        (D.field "title" D.string)
+                        (D.field "description" D.string)
+                        (D.field "color" D.string)
             )
             (D.map3
                 (\title text people -> { title = title, text = text, people = people })
                 (D.field "team_title" D.string)
                 (D.field "team_intro" D.string)
-                (D.field "people"
-                    <| D.list
-                    <| D.field "person"
-                    <| D.map4 Person
-                        (D.field "first_name" D.string)
-                        (D.field "last_name" D.string)
-                        (D.field "job_title" D.string)
-                        (D.field "photo" decodeImage)
+                (D.field "people" <|
+                    D.list <|
+                        D.field "person" <|
+                            D.map4 Person
+                                (D.field "first_name" D.string)
+                                (D.field "last_name" D.string)
+                                (D.field "job_title" D.string)
+                                (D.field "photo" decodeImage)
                 )
             )
             (D.map3
                 (\title text clients -> { title = title, text = text, clients = clients })
                 (D.field "client_title" D.string)
                 (D.field "client_intro" D.string)
-                (D.field "clients"
-                    <| D.list
-                    <| D.field "value"
-                    <| D.map2
-                        Image
-                        (D.at ["image", "url"] D.string)
-                        (D.maybe <| D.field "alt" D.string)
+                (D.field "clients" <|
+                    D.list <|
+                        D.field "value" <|
+                            D.map2
+                                Image
+                                (D.at [ "image", "url" ] D.string)
+                                (D.maybe <| D.field "alt" D.string)
                 )
             )
 
@@ -315,34 +309,34 @@ type alias ServicesContent =
     , title : String
     , introduction : String
     , images : List Image
-    , services : (Int, List Service)
+    , services : ( Int, List Service )
     , expertises : List Expertise
     }
 
 
 servicesPageDecoder : D.Decoder Page
 servicesPageDecoder =
-    D.map ServicesPage
-        <| D.map6 ServicesContent
+    D.map ServicesPage <|
+        D.map6 ServicesContent
             metaDecoder
             (D.field "title" D.string)
             (D.field "introduction" D.string)
             (D.field "images" <| D.list <| D.field "image" decodeImage)
-            (D.field "what_we_do"
-                <| D.map (\list -> (0, list))
-                <| D.list
-                <| D.map2 Service
-                    (D.field "body_text" D.string)
-                    (D.field "title" D.string)
+            (D.field "what_we_do" <|
+                D.map (\list -> ( 0, list )) <|
+                    D.list <|
+                        D.map2 Service
+                            (D.field "body_text" D.string)
+                            (D.field "title" D.string)
             )
-            (D.field "services"
-                <| D.list
-                <| D.map5 Expertise
-                    (D.field "description" D.string)
-                    (D.field "keywords" <| D.list D.string)
-                    (D.field "title" D.string)
-                    (D.field "animation_name" D.string)
-                    (D.succeed False)
+            (D.field "services" <|
+                D.list <|
+                    D.map5 Expertise
+                        (D.field "description" D.string)
+                        (D.field "keywords" <| D.list D.string)
+                        (D.field "title" D.string)
+                        (D.field "animation_name" D.string)
+                        (D.succeed False)
             )
 
 
@@ -683,6 +677,3 @@ decodeContentBlock =
         ContentBlock
         decodeTheme
         (D.field "rich_text" D.string)
-
-
-

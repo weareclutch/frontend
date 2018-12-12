@@ -1,4 +1,5 @@
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 
 module.exports = {
   entry: {
@@ -22,7 +23,9 @@ module.exports = {
 
     noParse: /\.elm$/,
   },
-
+  plugins: [
+    new Dotenv()
+  ],
   devServer: {
     inline: true,
     stats: { colors: true },
