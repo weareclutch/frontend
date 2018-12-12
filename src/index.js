@@ -83,7 +83,7 @@ app.ports.bindAboutUs.subscribe(function() {
 
     if (animations) {
       animations.map(function(animation, index) {
-        playAnimation([animation.id, animationNames[index]])
+        playAnimation([animation.id, animationNames[index]], 0, true)
       })
     }
 
@@ -153,16 +153,29 @@ app.ports.setupNavigation.subscribe(function() {
 })
 
 
+var lastBurgerAnimation = null
 app.ports.changeMenuState.subscribe(function(state) {
+  if (!animations['burger-animation']
+      || lastBurgerAnimation === state) {
+    return false
+  }
+
+  lastBurgerAnimation = state
+
   if (state === 'BURGERCROSS') {
-    animations['burger-animation'].playSegments([[0, 220]]) // burger -> cross
-    window.setTimeout(function() { stopAnimation('burger-animation', 220) }, 700)
+    animations['burger-animation'].playSegments([[0, 120]]) // burger -> cross
+    window.setTimeout(function() { stopAnimation('burger-animation', 120) }, 700)
   } else if (state === 'CROSSBURGER') {
-    animations['burger-animation'].playSegments([[240, 320]]) // cross -> burger
-    window.setTimeout(function() { stopAnimation('burger-animation', 220) }, 700)
+    animations['burger-animation'].playSegments([[120, 240]]) // cross -> burger
+    window.setTimeout(function() { stopAnimation('burger-animation', 120) }, 700)
+  } else if (state === 'BURGERARROW') {
+    animations['burger-animation'].playSegments([[240, 340]]) // cross -> burger
+    window.setTimeout(function() { stopAnimation('burger-animation', 100) }, 1200)
+  } else if (state === 'ARROWBURGER') {
+    animations['burger-animation'].playSegments([[410, 490]]) // cross -> burger
+    window.setTimeout(function() { stopAnimation('burger-animation', 140) }, 600)
   }
 })
-
 
 
 function setupAnimation(data, autoplay) {
@@ -186,7 +199,7 @@ function setupAnimation(data, autoplay) {
 }
 
 
-function playAnimation(data, position) {
+function playAnimation(data, position, autoplay) {
   if (!animationData) return false
 
   var name = data[1]
@@ -194,7 +207,7 @@ function playAnimation(data, position) {
 
   window.requestAnimationFrame(function() {
     if (!animations[id]) {
-      return setupAnimation(data)
+      return setupAnimation(data, autoplay)
     }
 
     return position !== undefined ?

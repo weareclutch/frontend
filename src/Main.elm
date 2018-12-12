@@ -15,7 +15,7 @@ getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
     case page of
         Wagtail.HomePage _ ->
-            [ Ports.scrollOverlayDown ()
+            [
             ]
 
         Wagtail.AboutUsPage _ ->
@@ -361,6 +361,9 @@ update msg model =
                                 (UI.State.Open _, UI.State.Closed) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
+                                (UI.State.OpenContact, UI.State.Closed) ->
+                                    Ports.changeMenuState "CROSSBURGER"
+
                                 (UI.State.Closed, UI.State.Open _) ->
                                     Ports.changeMenuState "BURGERCROSS"
 
@@ -389,14 +392,6 @@ subscriptions model =
 
 
 
--- [ Ports.newCasePosition (Ports.decodePosition SetCasePosition)
--- , Ports.repositionCase (Ports.decodePosition RepositionCase)
--- , Ports.changeMenu Ports.decodeDirection
--- , Ports.getParallaxPositions Ports.decodeParallaxPositions
--- , Ports.setWindowDimensions SetWindowDimensions
--- ]
-
-
 main : Program Never Model Msg
 main =
     Navigation.program OnLocationChange
@@ -405,3 +400,4 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+

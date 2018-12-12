@@ -511,19 +511,38 @@ type alias BlogPostContent =
     , readingTime : Int
     , image : Image
     , body : Maybe (List Block)
+    , series : Maybe
+        { nextUrl : Maybe String
+        , amount : Int
+        , index : Int
+        , slug : String
+        , title : String
+        }
     }
 
 
 blogPostPageDecoder : D.Decoder Page
 blogPostPageDecoder =
     D.map BlogPostPage <|
-        D.map6 BlogPostContent
+        D.map7 BlogPostContent
             metaDecoder
             (D.field "title" D.string)
             (D.field "intro" D.string)
             (D.field "reading_time" D.int)
             (D.field "main_image" decodeImage)
             (D.maybe <| D.field "body" decodeBlocks)
+            (D.maybe
+                <| D.field "series"
+                <| D.map5
+                    (\a b c d e ->
+                        { nextUrl = a, amount = b, index = c, slug = d, title = e }
+                    )
+                    (D.maybe <| D.field "next_in_series" D.string)
+                    (D.field "series_amount" D.int)
+                    (D.field "series_index" D.int)
+                    (D.field "slug" D.string)
+                    (D.field "title" D.string)
+            )
 
 
 type alias Image =

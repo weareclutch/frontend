@@ -225,17 +225,18 @@ post content =
         wrapper []
             [ container []
                 [ innerWrapper []
-                    [ siteMargins []
-                        [ title [] [ text content.title ]
-                        , p []
-                            [ strong []
-                                [ text
-                                    <| (toString content.readingTime)
-                                    ++ " minuten leestijd"
-                                ]
-                            ]
-                        , div [ class "intro" ] [ richText content.intro ]
-                        ]
+                    [ siteMargins [] 
+                        []
+                        --[ title [] [ text content.title ]
+                        --, p []
+                        --    [ strong []
+                        --        [ text
+                        --            <| (toString content.readingTime)
+                        --            ++ " minuten leestijd"
+                        --        ]
+                        --    ]
+                        --, div [ class "intro" ] [ richText content.intro ]
+                        --]
                     , content.body
                         |> Maybe.map renderPostBlocks
                         |> Maybe.withDefault (text "")

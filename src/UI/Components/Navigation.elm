@@ -35,16 +35,35 @@ view navigationTree navigationState route contactInformation =
                 _ ->
                     CloseMenu
 
-        toggleAction =
+        toggleActions =
             case toggleState of
                 OpenMenu ->
-                    onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
+                    [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
+                    ]
 
                 CloseMenu ->
-                    onClick (NavigationMsg <| ChangeNavigation Closed)
+                    [ onClick (NavigationMsg <| ChangeNavigation Closed)
+                    ]
 
                 _ ->
-                    onClick (NavigationMsg <| ChangeNavigation Closed)
+                    case route of
+                        WagtailRoute _ (Wagtail.CasePage _) ->
+                            addLink "/"
+
+                        WagtailRoute _ (Wagtail.BlogPostPage content) ->
+                            case content.series of
+                                Just _ ->
+                                    addLink "../../"
+
+                                Nothing ->
+                                    addLink "../"
+
+                        WagtailRoute _ (Wagtail.BlogCollectionPage _) ->
+                            addLink "../"
+
+                        _ ->
+                            []
+
 
         svgColor =
             (case route of
@@ -303,7 +322,7 @@ view navigationTree navigationState route contactInformation =
                     0
     in
     outerWrapper []
-        [ toggleWrapper [ toggleAction ]
+        [ toggleWrapper toggleActions
             [ burgerAnimation
                 [ id "burger-animation" ]
                 []
@@ -350,11 +369,11 @@ view navigationTree navigationState route contactInformation =
                                 , link [ href <| "phone:" ++ info.phone ] [ text info.phone ]
                                 ]
                             , p []
-                                [ span [] [  text "barentszplein 4f" ]
+                                [ span [] [ text "barentszplein 4f" ]
                                 , br [] []
-                                , span [] [  text "1013NJ" ]
+                                , span [] [ text "1013NJ" ]
                                 , br [] []
-                                , span [] [  text "Amsterdam" ]
+                                , span [] [ text "Amsterdam" ]
                                 ]
                             ]
                     )
@@ -369,10 +388,14 @@ view navigationTree navigationState route contactInformation =
 
         , menuButtonText
             (toggleState == Overlay)
-            [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
-            , class "nav"
+            ([ class "nav" ] ++ toggleActions)
+            [ case route of
+                WagtailRoute _ (Wagtail.CasePage _) ->
+                    text "cases"
+
+                _ ->
+                    text "blog"
             ]
-            [ text "Back" ]
 
         , logoWrapper (addLink "/")
             [ logo <|

@@ -203,13 +203,15 @@ wrapper active children =
             styled div <|
                 [ backgroundColor (hex "001AE0")
                 , transition "all" 0.4 0 "ease-in-out"
-                , width (pct 100)
-                , height (pct 100)
                 , if active then
                     opacity (int 1)
 
                   else
                     opacity zero
+                , bpMediumUp
+                    [ width (pct 100)
+                    , height (pct 100)
+                    ]
                 ]
 
         animationWrapper =
