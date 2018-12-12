@@ -4,6 +4,7 @@ const env = new Dotenv()
 const apiUrl = JSON.parse(env.definitions['process.env.API_URL'])
 
 module.exports = {
+  mode: 'development',
   entry: {
     app: [
       './src/index.js'
@@ -15,11 +16,15 @@ module.exports = {
   },
 
   module: {
-    loaders: [
+    rules: [
       {
         test:    /\.elm$/,
         exclude: [/elm-stuff/, /node_modules/],
-        loader:  'elm-webpack-loader?verbose=true&warn=true',
+        loader:  'elm-webpack-loader',
+        options: {
+          verbose: true,
+          warn: true
+        }
       },
     ],
 
