@@ -1,5 +1,5 @@
 # config valid for current version and patch releases of Capistrano
-lock "~> 3.10.0"
+lock "~> 3.11.0"
 
 set :application, "weareclutch"
 set :repo_url, "git@github.com:weareclutch/frontend.git"
@@ -8,8 +8,7 @@ set :repo_url, "git@github.com:weareclutch/frontend.git"
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
-set :deploy_to, "/home/elm/weareclutch"
-set :temp_dir, "/home/elm/tmp"
+set :deploy_to, "/var/www/frontend"
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -23,6 +22,7 @@ set :temp_dir, "/home/elm/tmp"
 
 # Default value for :linked_files is []
 # append :linked_files, "config/database.yml", "config/secrets.yml"
+append :linked_files, ".env"
 
 # Default value for linked_dirs is []
 # append :linked_dirs, "log", "tmp/pids", "tmp/cache", "tmp/sockets", "public/system"
@@ -44,19 +44,13 @@ namespace :deploy do
   desc 'Deploy latest code'
 
   task :build do
-    desc "Build code locally"
-    run_locally do
-      execute 'yarn build'
+    desc "Build code"
+    on roles(:all) do
+      within release_path do
+        execute :npm, "run build"
+      end
     end
   end
 
-  task :upload do
-    desc "Upload static files"
-    on roles(:all) do |host|
-      upload! '../public/.', "#{current_path}/public/", recursive: true
-    end
-  end
-
-  after :publishing, :build
-  after :publishing, :upload
+  after :updated, :build
 end
