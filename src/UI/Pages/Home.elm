@@ -168,10 +168,15 @@ introCover content =
                                     [ videoEl
                                         [ src url
                                         , autoplay True
-                                        , attribute "muted" ""
                                         , loop True
+                                        , attribute "muted" ""
+                                        , attribute "playsinline" ""
                                         ]
-                                        []
+                                        [ source
+                                            [ src url
+                                            ]
+                                            []
+                                        ]
                                     ]
 
                             _ ->
