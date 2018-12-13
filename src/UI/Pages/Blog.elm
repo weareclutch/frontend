@@ -26,7 +26,6 @@ seriesPreview preview =
                 , display inlineBlock
                 , position relative
                 , verticalAlign top
-                , width (pct 100)
                 , paddingTop (pct 150)
                 ]
 
@@ -67,20 +66,29 @@ postPreview preview =
                 [ width (pct 100)
                 , maxWidth (px 1360)
                 , position relative
-                , minHeight (px 300)
                 , height auto
-                , marginBottom (px 68)
                 , cursor pointer
+                , marginBottom (px 25)
+                , property "display" "flex"
+                , minHeight (px 85)
+                , bpMediumUp
+                    [ minHeight (px 300)
+                    , marginBottom (px 68)
+                    ]
                 ]
 
         img =
             styled div
-                [ height (px 300)
-                , width (pct 33)
+                [ height zero
                 , display inlineBlock
                 , verticalAlign top
                 , backgroundSize cover
                 , backgroundPosition center
+                , height auto
+                , width (pct 30)
+                , bpMediumUp
+                    [ width (pct 33)
+                    ]
                 ]
 
         content =
@@ -88,8 +96,25 @@ postPreview preview =
                 [ width (pct 67)
                 , display inlineBlock
                 , verticalAlign top
-                , padding (px 40)
+                , padding2 zero (px 10)
+                , bpMediumUp
+                    [ padding (px 40)
+                    ]
                 ]
+
+        intro =
+            styled div
+                [ display none
+                , bpMediumUp
+                    [ display block
+                    ]
+                ]
+
+        time =
+            styled strong
+              [ color (hex "001AE0")
+              ]
+
 
     in
     wrapper
@@ -97,12 +122,12 @@ postPreview preview =
         [ img [ backgroundImg preview.image ] []
         , content []
             [ h3 [] [ text preview.title ]
-            , strong []
+            , time [ class "tags" ]
                 [ text
                     <| toString preview.readingTime
                     ++ " minuten"
                 ]
-            , richText preview.intro
+            , intro [] [ richText preview.intro ]
             ]
         ]
 
@@ -226,17 +251,16 @@ post content =
             [ container []
                 [ innerWrapper []
                     [ siteMargins [] 
-                        []
-                        --[ title [] [ text content.title ]
-                        --, p []
-                        --    [ strong []
-                        --        [ text
-                        --            <| (toString content.readingTime)
-                        --            ++ " minuten leestijd"
-                        --        ]
-                        --    ]
-                        --, div [ class "intro" ] [ richText content.intro ]
-                        --]
+                        [ title [] [ text content.title ]
+                        , p []
+                            [ strong []
+                                [ text
+                                    <| (toString content.readingTime)
+                                    ++ " minuten leestijd"
+                                ]
+                            ]
+                        , p [ class "intro" ] [ text content.intro ]
+                        ]
                     , content.body
                         |> Maybe.map renderPostBlocks
                         |> Maybe.withDefault (text "")
@@ -287,6 +311,7 @@ renderQuote data =
             styled div
                 [ maxWidth (px 850)
                 , margin auto
+                , padding2 zero (px 25)
                 ]
     in
         wrapper []
@@ -309,12 +334,24 @@ renderImage img =
                 , padding2 zero (px 25)
                 , margin auto
                 ]
+
+        caption =
+            styled p
+                [ color (hex "BBBBBB")
+                , marginTop (px 10)
+                ]
     in
         wrapper []
             [ image
                 [ width (pct 100)
                 ]
                 img
+            , img.caption 
+                |> Maybe.map
+                    (\c -> 
+                        caption [ class "tags" ] [ text c ]
+                    )
+                |> Maybe.withDefault (text "")
             ]
 
 
@@ -335,6 +372,7 @@ renderContent text =
             styled div
                 [ maxWidth (px 850)
                 , margin auto
+                , padding2 zero (px 25)
                 ]
 
     in

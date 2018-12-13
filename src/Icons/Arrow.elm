@@ -7,18 +7,5 @@ import Svg.Styled.Attributes exposing (..)
 
 arrow : String -> Html msg
 arrow color =
-    svg [ height "17", version "1.1", viewBox "0 0 10 16", width "10" ]
-        [ g [ id "Canvas", transform "translate(2042 -8934)" ]
-            [ g [ id "arrow" ]
-                [ node "use"
-                    [ transform "matrix(6.12323e-17 1 -1 6.12323e-17 -2032.43 8934)", xlinkHref ("#path_arrow_" ++ color) ]
-                    []
-                , text ""
-                ]
-            ]
-        , defs []
-            [ Svg.Styled.path [ fill ("#" ++ color), d "M 7.95215 0L 0 7.95203L 1.62207 9.57373L 8 3.19592L 14.3779 9.57373L 16 7.95203L 8.04785 0L 8 0.0478516L 7.95215 0Z", fillRule "evenodd", id ("path_arrow_" ++ color) ]
-                []
-            , text ""
-            ]
-        ]
+    svg [ width "11", height "17" ] [ Svg.Styled.path [ d "M.36 2.12L2.5 0l8.48 8.49-8.48 8.48-2.13-2.12 6.37-6.36L.36 2.12z", fill <| "#" ++ color, fillRule "nonzero" ] [] ]
+

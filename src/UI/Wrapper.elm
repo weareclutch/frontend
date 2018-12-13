@@ -61,13 +61,14 @@ globalStyle =
             [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 32) zero
+            , margin4 zero zero (px 25) zero
             , padding zero
             , fontSize (px 32)
             , letterSpacing (px 1.5)
             , bpLarge
                 [ fontSize (px 80)
                 , letterSpacing (px 3)
+                , margin4 zero zero (px 32) zero
                 ]
             , bpXLarge
                 [ fontSize (px 80)
@@ -82,12 +83,13 @@ globalStyle =
             [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 32) zero
+            , margin4 zero zero (px 15) zero
             , padding zero
             , fontSize (px 26)
             , letterSpacing (px 1.5)
             , bpLarge
                 [ fontSize (px 40)
+                , margin4 zero zero (px 32) zero
                 , letterSpacing (px 2.5)
                 ]
             , bpXLarge
@@ -103,10 +105,13 @@ globalStyle =
             [ lineHeight (int 1)
             , fontFamilies [ "Qanelas ExtraBold" ]
             , fontWeight (int 400)
-            , margin4 zero zero (px 32) zero
+            , margin4 zero zero (px 10) zero
             , padding zero
             , fontSize (px 26)
             , letterSpacing (px 1.5)
+            , bpMediumUp
+                [ margin4 zero zero (px 32) zero
+                ]
             , bpLargeUp
                 [ fontSize (px 40)
                 , letterSpacing (px 2.5)
@@ -180,18 +185,33 @@ globalStyle =
                 , letterSpacing (px 2)
                 ]
             ]
+        , selector ".tags, .tags p, p.tags"
+            [ fontFamilies [ "Roboto", "sans-serif" ]
+            , fontWeight (int 800)
+            , fontSize (px 14)
+            , letterSpacing (px 1)
+            , lineHeight (px 16)
+            , bpLargeUp
+                [ fontSize (px 22)
+                , letterSpacing (px 1.5)
+                , lineHeight (px 32)
+                ]
+            ]
         , selector "ul, ol"
             [ paddingLeft (px 20)
             , margin4 zero zero (px 35) zero
             ]
         , selector "li"
-            [ fontSize (px 18)
-            , lineHeight (px 28)
-            , fontFamilies [ "Roboto", "sans-serif" ]
-            , fontWeight (int 400)
-            , margin4 zero zero (px 6) zero
+            [ fontFamilies [ "Roboto", "sans-serif" ]
+            , margin4 zero zero (px 32) zero
             , padding zero
-            , letterSpacing (px 2)
+            , fontSize (px 18)
+            , lineHeight (px 26)
+            , bpLargeUp
+                [ fontSize (px 22)
+                , letterSpacing (px 1.5)
+                , lineHeight (px 32)
+                ]
             ]
         ]
 

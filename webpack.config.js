@@ -39,7 +39,7 @@ module.exports = {
     contentBase: path.join(__dirname, 'public'),
     historyApiFallback: true,
     proxy: [{
-      context: ['/media/images'],
+      context: ['/media/images', '/media/documents'],
       target: apiUrl,
       changeOrigin: true
     }]

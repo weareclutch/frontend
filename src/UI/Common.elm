@@ -178,7 +178,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 , width <|
                     pct <|
                         numSlides
-                            * 100
+                            * 70
                 , paddingLeft (px 25)
                 , bpMedium
                     [ width <|

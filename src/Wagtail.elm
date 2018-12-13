@@ -1,4 +1,4 @@
-module Wagtail exposing (AboutUsContent, Block(..), BlogCollectionContent, BlogOverviewContent, BlogPostContent, BlogPostPreview, BlogPostSeries, BlogSeriesPreview, CasePageContent, CasePreview, Column, Expertise, HomePageContent, Image, Msg(..), Page(..), Person, Quote, Service, ServicesContent, Theme, Topic, WagtailMetaContent, aboutUsPageDecoder, blogCollectionPageDecoder, blogOverviewPageDecoder, blogPostPageDecoder, blogPostPreviewDecoder, blogSeriesPreviewDecoder, casePageDecoder, dateDecoder, decodeBackgroundBlock, decodeBlocks, decodeCasePreview, decodeColumn, decodeColumns, decodeContentBlock, decodeImage, decodeImageBlock, decodePageType, decodeQuote, decodeTheme, getPageDecoder, getPageId, getPageTheme, getWagtailPage, homePageDecoder, metaDecoder, preloadWagtailPage, servicesPageDecoder)
+module Wagtail exposing (..)
 
 import Date exposing (Date)
 import Http exposing (..)
@@ -178,7 +178,7 @@ type alias HomePageContent =
     , cover :
         { text : String
         , link : String
-        , image : Maybe Image
+        , media : Maybe Media
         }
     , cases : List CasePreview
     }
@@ -191,10 +191,10 @@ homePageDecoder =
             metaDecoder
             decodeTheme
             (D.map3
-                (\text link image -> { text = text, link = link, image = image })
+                (\text link media -> { text = text, link = link, media = media })
                 (D.field "text" D.string)
-                (D.field "link" D.string)
-                (D.field "image_src" <| D.maybe decodeImage)
+                (D.at ["link", "slug"] D.string)
+                (D.maybe <| D.field "image" <| D.index 0 <| decodeMedia)
             )
             (D.field "value" decodeCasePreview
                 |> D.list
@@ -552,6 +552,31 @@ decodeImage =
         (D.maybe <| D.field "caption" D.string)
 
 
+type Media
+    = ImageMedia Image
+    | VideoMedia String
+    | UnknownMedia String
+
+
+decodeMedia : D.Decoder Media
+decodeMedia =
+
+    D.field "type" D.string
+        |> D.andThen
+            (\mediaType ->
+                case mediaType of
+                    "video" ->
+                        D.map VideoMedia (D.at ["value", "url"] D.string)
+
+                    "image" ->
+                        D.map ImageMedia (D.field "value" decodeImage)
+
+                    _ ->
+                        D.succeed <| UnknownMedia mediaType
+                        
+            )
+
+
 type alias Quote =
     { text : String
     , name : Maybe String
@@ -662,7 +687,10 @@ decodeImageBlock =
     D.map2
         ImageBlock
         decodeTheme
-        (D.field "image" decodeImage)
+        ( D.map2 Image
+            (D.at ["image", "url"] D.string)
+            (D.maybe <| D.field "caption" D.string)
+        )
 
 
 decodeBackgroundBlock : D.Decoder Block

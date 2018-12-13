@@ -2,7 +2,7 @@ module UI.Pages.Home exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (attribute, class, href, id)
+import Html.Styled.Attributes exposing (attribute, class, href, id, src, autoplay, loop)
 import Style exposing (..)
 import Types exposing (Msg)
 import UI.Common exposing (backgroundImg, button, siteMargins, container)
@@ -147,16 +147,42 @@ introCover content =
                 , backgroundPosition center
                 ]
 
-        image =
-            case content.cover.image of
-                Just img ->
-                    imageDiv [ backgroundImg img ] []
+        videoEl =
+            styled video
+                [ width (pct 100)
+                , height (pct 100)
+                ]
 
-                Nothing ->
-                    text ""
+
+        media =
+            content.cover.media
+                |> Debug.log "media"
+                |> Maybe.andThen
+                    (\media ->
+                        case media of
+                            Wagtail.ImageMedia img ->
+                                Just <| imageDiv [ backgroundImg img ] []
+
+                            Wagtail.VideoMedia url ->
+                                Just <| imageDiv []
+                                    [ videoEl
+                                        [ src url
+                                        , autoplay True
+                                        , attribute "muted" ""
+                                        , loop True
+                                        ]
+                                        []
+                                    ]
+
+                            _ ->
+                                Nothing
+
+                    )
+                |> Maybe.withDefault (text "")
+
     in
     wrapper []
-        [ image
+        [ media
         , textWrapper []
             [ title [] [ text "Uitgelicht" ]
             , richText content.cover.text
