@@ -136,21 +136,19 @@ introCover content =
         mediaWrapper =
             styled div
                 [ overflow hidden
-                , width (vw 100)
                 , height (vh 100)
+                , width (vw 100)
                 , position relative
                 ]
 
-        imageDiv =
+        videoDiv =
             styled div
-                [ position absolute
-                , height (vh 110)
-                , width (vw 110)
+                [ height (pct 110)
+                , width (pct 110)
                 , top (pct 50)
                 , left (pct 50)
                 , transform <| translate2 (pct -50) (pct -50)
-                , backgroundSize cover
-                , backgroundPosition center
+                , position absolute
                 ]
 
         videoEl =
@@ -159,6 +157,19 @@ introCover content =
                 , height (pct 100)
                 ]
 
+        imageDiv =
+            styled div
+                [ position absolute
+                , maxHeight (px 700)
+                , maxWidth (px 700)
+                , height (vw 40)
+                , width (vw 40)
+                , top (pct 50)
+                , left <| calc (pct 50) minus (vw 20)
+                , transform <| translate2 (pct -50) (pct -50)
+                , backgroundSize cover
+                , backgroundPosition center
+                ]
 
         media =
             content.cover.media
@@ -170,7 +181,7 @@ introCover content =
                                 Just <| imageDiv [ backgroundImg img ] []
 
                             Wagtail.VideoMedia url ->
-                                Just <| imageDiv []
+                                Just <| videoDiv []
                                     [ videoEl
                                         [ src url
                                         , autoplay True
@@ -189,11 +200,12 @@ introCover content =
                                 Nothing
 
                     )
+                |> Maybe.map (\el -> mediaWrapper [] [ el ])
                 |> Maybe.withDefault (text "")
 
     in
     wrapper []
-        [ mediaWrapper [] [ media ]
+        [ media
         , textWrapper []
             [ title [] [ text "Uitgelicht" ]
             , richText content.cover.text

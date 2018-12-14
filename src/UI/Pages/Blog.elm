@@ -38,7 +38,6 @@ seriesPreview preview =
                 ]
 
     in
-
         outerWrapper
             (
                 backgroundImg preview.image
@@ -143,7 +142,10 @@ overview content =
                 [ backgroundColor (hex "fff")
                 , minHeight (pct 100)
                 , minWidth (pct 100)
-                , padding2 (pct 20) zero
+                , padding4 (px 130) zero zero zero
+                , bpMediumUp
+                    [ padding4 (pct 20) zero zero zero
+                    ]
                 ]
 
 
@@ -164,12 +166,19 @@ overview content =
                 postPreview
                 content.blogPosts
 
+        contentWrapper =
+            styled div
+                [ maxWidth (px 820)
+                ]
+
     in
     wrapper []
         [ container []
             [ siteMargins []
-                [ title [] [ text content.title ]
-                , p [ class "intro" ] [ text content.introduction ]
+                [ contentWrapper []
+                    [ title [] [ text content.title ]
+                    , p [ class "intro" ] [ text content.introduction ]
+                    ]
                 ]
             ]
         , series

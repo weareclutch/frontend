@@ -78,15 +78,17 @@ app.ports.unbindAll.subscribe(function() {
 
 app.ports.bindAboutUs.subscribe(function() {
   window.requestAnimationFrame(function() {
-    var page = document.getElementById('about-us-page')
+    var page = window.innerWidth >= 780 ?
+      document.getElementById('about-us-page') :
+      document.getElementById('about-us-page-mobile')
+    
     if (!page) return false
 
     var animations = [].slice.call(page.querySelectorAll('.animation'))
-    var animationNames = [ 'boost', 'think', 'rethink' ]
 
     if (animations) {
       animations.map(function(animation, index) {
-        playAnimation([animation.id, animationNames[index]], 0, true)
+        playAnimation([animation.id, animation.dataset.name], 0, true)
       })
     }
 
@@ -97,6 +99,8 @@ app.ports.bindAboutUs.subscribe(function() {
 
 app.ports.bindServicesPage.subscribe(function(data) {
   window.requestAnimationFrame(function() {
+    if (window.innerWidth < 780) return false
+
     data.forEach(function(animation, index) {
       setupAnimation(['expertise-animation-' + index, animation])
     })
@@ -199,6 +203,8 @@ function setupAnimation(data, autoplay) {
       autoplay: !!autoplay,
     })
   })
+
+  window.animations = animations
 }
 
 
@@ -219,6 +225,8 @@ function playAnimation(data, position, autoplay) {
   })
 }
 app.ports.playAnimation.subscribe(playAnimation)
+
+window.playAnimation = playAnimation
 
 
 function stopAnimation(id, position) {

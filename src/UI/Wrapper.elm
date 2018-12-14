@@ -298,7 +298,7 @@ view model =
                                 text "page: undefined route"
 
                             WagtailRoute _ page ->
-                                renderPage page
+                                renderPage True page
 
                             NotFoundRoute _ ->
                                 text "page: not found"

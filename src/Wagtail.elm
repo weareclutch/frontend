@@ -206,6 +206,7 @@ type alias Topic =
     { title : String
     , description : String
     , color : String
+    , animationName : String
     }
 
 
@@ -225,6 +226,7 @@ type alias AboutUsContent =
     , bodyText :
         { left : String
         , right : String
+        , title : String
         }
     , topics : List Topic
     , team :
@@ -248,17 +250,19 @@ aboutUsPageDecoder =
             (D.field "title" D.string)
             (D.field "introduction" D.string)
             (D.field "images" <| D.list <| D.field "image" decodeImage)
-            (D.map2
-                (\left right -> { left = left, right = right })
+            (D.map3
+                (\left right title -> { left = left, right = right, title = title })
                 (D.field "left_body_text" D.string)
                 (D.field "right_body_text" D.string)
+                (D.field "body_text_title" D.string)
             )
             (D.field "topics" <|
                 D.list <|
-                    D.map3 Topic
+                    D.map4 Topic
                         (D.field "title" D.string)
                         (D.field "description" D.string)
                         (D.field "color" D.string)
+                        (D.field "animation_name" D.string)
             )
             (D.map3
                 (\title text people -> { title = title, text = text, people = people })

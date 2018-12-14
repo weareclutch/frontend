@@ -16,8 +16,8 @@ import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, O
 import Wagtail exposing (Page, getPageId)
 
 
-renderPage : Page -> Html Msg
-renderPage page =
+renderPage : Bool -> Page -> Html Msg
+renderPage isMobile page =
     case page of
         Wagtail.HomePage content ->
             UI.Pages.Home.view content
@@ -38,7 +38,7 @@ renderPage page =
             UI.Pages.Services.view content
 
         Wagtail.AboutUsPage content ->
-            UI.Pages.AboutUs.view content
+            UI.Pages.AboutUs.view isMobile content
 
 
 mobileView : Html a -> Html a
@@ -108,7 +108,7 @@ overlayPart part =
     part
         |> Maybe.map
             (\{ page, active } ->
-                overlayWrapper (renderPage page) active
+                overlayWrapper (renderPage False page) active
             )
         |> Maybe.withDefault (overlayWrapper (text "") False)
 
@@ -277,13 +277,13 @@ navigationPage navState index navItem active =
                 , top zero
                 , left zero
                 , zIndex (int <| 10 - index)
-                , property "transition" "all 0.5s cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                , property "transition" "transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1.05)"
                 , property "-webkit-overflow-scrolling" "touch"
+                , overflowX hidden
                 , pseudoElement "-webkit-scrollbar"
                     [ display none
                     ]
                 , property "-ms-overflow-style" "none"
-                , overflowX hidden
                 ]
                     ++ (if navState == Closed then
                             [ cursor default
@@ -329,7 +329,7 @@ navigationPage navState index navItem active =
     in
     wrapper attributes
         [ navItem.page
-            |> Maybe.map renderPage
+            |> Maybe.map (renderPage False)
             |> Maybe.withDefault
                 (styled div
                     [ height (pct 100)

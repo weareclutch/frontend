@@ -11,15 +11,18 @@ import UI.Components.Blocks exposing (richText)
 import Wagtail
 
 
-view : Wagtail.AboutUsContent -> Html Msg
-view content =
+view : Bool -> Wagtail.AboutUsContent -> Html Msg
+view isMobile content =
     let
         wrapper =
             styled div
                 [ backgroundColor (hex "fff")
                 , minHeight (pct 100)
                 , minWidth (pct 100)
-                , padding4 (pct 20) zero zero zero
+                , padding4 (px 130) zero zero zero
+                , bpMediumUp
+                    [ padding4 (pct 20) zero zero zero
+                    ]
                 ]
 
         slideshowWrapper =
@@ -28,6 +31,10 @@ view content =
                 , zIndex (int 1)
                 ]
 
+        contentWrapper =
+            styled div
+                [ maxWidth (px 820)
+                ]
 
         title =
             styled h1
@@ -35,11 +42,13 @@ view content =
                 ]
 
     in
-        wrapper [ id "about-us-page" ]
+        wrapper [ if isMobile then id "about-us-page-mobile" else id "about-us-page" ]
             [ container []
                 [ siteMargins []
-                    [ title [] [ text content.title ]
-                    , p [ class "intro" ] [ text content.introduction ]
+                    [ contentWrapper []
+                        [ title [] [ text content.title ]
+                        , p [ class "intro" ] [ text content.introduction ]
+                        ]
                     ]
                 ]
             , slideshowWrapper []
@@ -52,7 +61,7 @@ view content =
             , container []
                 [ bodyText content.bodyText
                 ]
-            , topics content.topics
+            , topics isMobile content.topics
             , team content.team
             , clients content.clients
             ]
@@ -78,37 +87,48 @@ slideImage image =
 
 
 
-bodyText : { left : String, right : String } -> Html msg
+bodyText : { left : String, right : String, title : String } -> Html msg
 bodyText content =
     let
         left =
             styled div
-                [ display inlineBlock
-                , width (pct 66)
+                [ display block
                 , verticalAlign top
-                , padding4 (px 240) (px 180) (px 240) zero
+                , paddingTop (px 50)
+                , bpMediumUp
+                    [ padding4 (px 240) (px 180) (px 240) zero
+                    , width (pct 66)
+                    , display inlineBlock
+                    ]
                 ]
 
         right =
             styled h3
-                [ display inlineBlock
-                , width (pct 34)
+                [ display block
                 , verticalAlign top
+                , paddingBottom (px 50)
                 , color (hex "001AE0")
-                , paddingTop (px 240)
+                , bpMediumUp
+                    [ padding4 (px 240) zero zero zero
+                    , display inlineBlock
+                    , width (pct 34)
+                    ]
                 ]
 
     in
         siteMargins []
-            [ left [] [ richText content.left ]
+            [ left []
+                [ h2 [] [ text content.title ]
+                , richText content.left
+                ]
             , right [] [ text content.right ]
             ]
 
 
 
 
-topics : List Wagtail.Topic -> Html msg
-topics items =
+topics : Bool -> List Wagtail.Topic -> Html msg
+topics isMobile items =
     let
         wrapper =
             styled div
@@ -118,12 +138,24 @@ topics items =
                 , position relative
                 ]
 
+        title =
+            styled h4
+                [ display none
+                , bpMediumUp
+                    [ display block
+                    ]
+                ]
+
         animationWrapper =
             styled div
                 [ position relative
                 , display inlineBlock
                 , width (pct 34)
                 , transition "all" 0.26 0.0 "ease-in-out"
+                , display none
+                , bpMediumUp
+                    [ display block
+                    ]
                 , after
                     [ property "content" "''"
                     , display block
@@ -162,22 +194,59 @@ topics items =
                     ]
                 ]
 
+        mobileAnimationWrapper =
+            \c ->
+                styled div
+                    [ backgroundColor (hex c)
+                    , height (px 250)
+                    , width (vw 100)
+                    , left (px -25)
+                    , position relative
+                    , marginBottom (px 25)
+                    , bpMediumUp
+                        [ display none
+                        ]
+                    ]
+
+        mobileTitle =
+            styled h2
+                [ position absolute
+                , top (pct 50)
+                , transform <| translateY (pct -50)
+                , width (pct 100)
+                , padding2 zero (px 25)
+                , color (hex "fff")
+                , textAlign center
+                ]
+
+        mobileAnimation =
+            styled div
+                [ width (pct 100)
+                , height (pct 100)
+                ]
 
         content =
             styled div
                 [ position relative
                 , display inlineBlock
-                , width (pct 66)
+                , width (pct 100)
+                , bpMediumUp
+                    [ width (pct 66)
+                    ]
                 ]
 
         contentBlock =
             styled div
-                [ padding (px 140)
-                , firstChild
-                    [ paddingTop (px 280)
-                    ]
-                , lastChild
-                    [ paddingBottom (px 280)
+                [ position relative
+                , paddingBottom (px 25)
+                , bpMediumUp
+                    [ padding (px 140)
+                    , firstChild
+                        [ paddingTop (px 280)
+                        ]
+                    , lastChild
+                        [ paddingBottom (px 280)
+                        ]
                     ]
                 ]
 
@@ -185,31 +254,49 @@ topics items =
         container [ class "topics" ]
             [ siteMargins []
                 [ wrapper []
-                    [ animationWrapper [ class "animation-wrapper" ]
-                        [ animations []
-                            <| List.indexedMap
-                                (\index t ->
-                                    animation
-                                        [ id <| "about-us-animation-" ++ (toString index)
-                                        , class "animation"
-                                        , Html.Styled.Attributes.attribute
-                                            "data-name"
-                                            "foo"
-                                        ]
-                                        []
-                                )
-                                items
-                        ]
+                    [ case isMobile of
+                        False -> animationWrapper [ class "animation-wrapper" ]
+                                    [ animations []
+                                        <| List.indexedMap
+                                            (\index t ->
+                                                animation
+                                                    [ id <| "about-us-animation-" ++ t.animationName
+                                                    , class "animation"
+                                                    , Html.Styled.Attributes.attribute
+                                                        "data-name"
+                                                        t.animationName
+                                                    ]
+                                                    []
+                                            )
+                                            items
+                                    ]
+                        True ->
+                            text ""
                     , content []
-                        <| List.map
-                            (\t ->
+                        <| List.indexedMap
+                            (\index t ->
                                 contentBlock
                                     [ class "topic"
                                     , Html.Styled.Attributes.attribute
                                         "data-color"
                                         t.color
                                     ]
-                                    [ h4 [] [ text t.title ]
+                                    [ case isMobile of
+                                        True ->
+                                            mobileAnimationWrapper t.color []
+                                                [ mobileAnimation
+                                                    [ id <| "about-us-mobile-animation-" ++ t.animationName
+                                                    , class "animation"
+                                                    , Html.Styled.Attributes.attribute
+                                                        "data-name"
+                                                        t.animationName
+                                                    ]
+                                                    []
+                                                , mobileTitle [] [ text t.title ]
+                                                ]
+                                        False ->
+                                            text ""
+                                    , title [] [ text t.title ]
                                     , richText t.description
                                     ]
                             )
@@ -225,24 +312,33 @@ team data =
     let
         wrapper =
             styled div
-                [ height (vh 100)
-                , backgroundColor (hex "000")
+                [ backgroundColor (hex "000")
                 , color (hex "fff")
-                , paddingTop (px 240)
+                , position relative
+                , paddingTop (px 50)
+                , bpMediumUp
+                    [ paddingTop (px 240)
+                    ]
                 ]
 
+        content =
+            styled div
+                [ maxWidth (px 820)
+                ]
 
     in
         wrapper []
             [ container []
                 [ siteMargins []
-                    [ h2 [] [ text data.title ]
-                    , p [] [ text data.text ]
+                    [ content []
+                        [ h2 [] [ text data.title ]
+                        , p [] [ text data.text ]
+                        ]
                     ]
                 ]
             , slideshow
                 "services-slideshow-team"
-                (3, 2, 1)
+                (4, 3, 2)
                 person
                 data.people
             ]
@@ -260,26 +356,69 @@ person data =
         content =
             styled p
                 [ position absolute
-                , bottom (px 40)
+                , bottom (px 20)
                 , textAlign center
                 , width (pct 100)
+                , bpMediumUp
+                    [ bottom (px 40)
+                    ]
                 ]
 
         image =
             styled div
-                [ height (px 660)
-                , width (pct 100)
+                [ width (pct 100)
                 , backgroundSize contain
-                , backgroundPosition center
+                , property "background-position" "center bottom"
+                , position relative
+                , height (px 340)
+                , bpMediumUp
+                    [ height (px 660)
+                    ]
+                , after
+                    [ property "content" "''"
+                    , position absolute
+                    , bottom zero
+                    , left zero
+                    , width (pct 100)
+                    , height (px 200)
+                    , backgroundImage
+                        <| linearGradient
+                            (stop (rgba 0 0 0 0))
+                            (stop (rgba 0 0 0 0.5))
+                            []
+                    ]
+                ]
+
+        name =
+            styled p
+                [ margin zero
+                , fontFamilies [ "Qanelas ExtraBold" ]
+                , fontSize (px 18)
+                , letterSpacing (px 1.5)
+                , bpMediumUp
+                    [ fontSize (px 28)
+                    , letterSpacing (px 2)
+                    ]
+                ]
+
+        title =
+            styled p
+                [ margin zero
+                , fontSize (px 14)
+                , fontWeight (int 800)
+                , bpMediumUp
+                    [ fontSize (px 22)
+                    , letterSpacing (px 1.5)
+                    ]
                 ]
 
     in
         wrapper []
             [ image [ backgroundImg data.image ] []
             , content []
-                [ span [] [ text <| data.firstName ++ " " ++ data.lastName ]
-                , br [] []
-                , span [] [ text data.jobTitle ]
+                [ name []
+                    [ text <| data.firstName ++ " " ++ data.lastName ]
+                , title [ ] [ text data.jobTitle ]
                 ]
             ]
 
@@ -292,41 +431,69 @@ clients data =
         wrapper =
             styled div
                 [ backgroundColor (hex "292A32")
-                , padding2 (px 240) zero
                 , color (hex "fff")
+                , padding2 (px 50) zero
+                , bpMediumUp
+                    [ padding2 (px 240) zero
+                    ]
+                ]
+
+        content =
+            styled div
+                [ maxWidth (px 820)
                 ]
 
         clients =
             styled div
                 [ property "display" "flex"
                 , flexWrap wrap
+                , marginTop (px 25)
+                , bpMediumUp
+                    [ marginTop (px 50)
+                    ]
                 ]
 
         client =
             styled div
                 [ display inlineBlock
-                , width (pct 100)
+                , width (pct 50)
+                , height (px 140)
                 , marginBottom (px 40)
-                , bpMedium
-                    [ width (pct 50)
-                    ]
+                , textAlign center
+                , position relative
                 , bpLargeUp
-                    [ width (pct 33.333)
+                    [ width (pct 33.3333)
                     ]
                 ]
+
+        imageStyle =
+            [ maxWidth (pct 80)
+            , position absolute
+            , left zero
+            , top (pct 50)
+            , transform
+                <| translateY (pct -50)
+            , bpMediumUp
+                [ transform
+                    <| translate2 (pct -50) (pct -50)
+                , left (pct 50)
+                , maxWidth (pct 90)
+                ]
+            ]
+
 
     in
         wrapper []
             [ container []
                 [ siteMargins []
-                    [ h2 [] [ text data.title ]
-                    , p [] [ text data.text ]
+                    [ content []
+                        [ h2 [] [ text data.title ]
+                        , p [] [ text data.text ]
+                        ]
                     , clients []
                         <| List.map
                             (\c ->
-                                client []
-                                    [ image [ width (pct 100) ] c
-                                    ]
+                                client [] [ image imageStyle c ]
                             )
                             data.clients
                     ]

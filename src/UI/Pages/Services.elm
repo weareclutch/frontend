@@ -19,7 +19,10 @@ view content =
                 [ backgroundColor (hex "fff")
                 , minHeight (pct 100)
                 , minWidth (pct 100)
-                , padding4 (pct 20) zero zero zero
+                , padding4 (px 130) zero zero zero
+                , bpMediumUp
+                    [ padding4 (pct 20) zero zero zero
+                    ]
                 ]
 
         slideshowWrapper =
@@ -34,13 +37,19 @@ view content =
                 [ color (hex "001AE0")
                 ]
 
+        contentWrapper =
+            styled div
+                [ maxWidth (px 820)
+                ]
 
     in
     wrapper []
         [ container []
             [ siteMargins []
-                [ title [] [ text content.title ]
-                , p [ class "intro" ] [ text content.introduction ]
+                [ contentWrapper []
+                    [ title [] [ text content.title ]
+                    , p [ class "intro" ] [ text content.introduction ]
+                    ]
                 ]
             ]
         , slideshowWrapper []
