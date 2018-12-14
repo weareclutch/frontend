@@ -133,15 +133,21 @@ introCover content =
                 , position absolute
                 ]
 
+        mediaWrapper =
+            styled div
+                [ overflow hidden
+                , width (vw 100)
+                , height (vh 100)
+                , position relative
+                ]
+
         imageDiv =
             styled div
                 [ position absolute
-                , maxHeight (px 700)
-                , maxWidth (px 700)
-                , height (vw 40)
-                , width (vw 40)
+                , height (vh 110)
+                , width (vw 110)
                 , top (pct 50)
-                , left <| calc (pct 50) minus (vw 20)
+                , left (pct 50)
                 , transform <| translate2 (pct -50) (pct -50)
                 , backgroundSize cover
                 , backgroundPosition center
@@ -187,7 +193,7 @@ introCover content =
 
     in
     wrapper []
-        [ media
+        [ mediaWrapper [] [ media ]
         , textWrapper []
             [ title [] [ text "Uitgelicht" ]
             , richText content.cover.text
