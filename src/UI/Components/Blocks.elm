@@ -2,7 +2,7 @@ module UI.Components.Blocks exposing (backgroundBlock, column, columns, contentB
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (property)
+import Html.Styled.Attributes exposing (attribute, autoplay, loop, property, src)
 import Json.Encode
 import Style exposing (..)
 import UI.Common exposing (backgroundImg, image)
@@ -188,11 +188,11 @@ column col =
                     ]
                 ]
 
-        attributes =
-            col.backgroundImage
-                |> Maybe.map
-                    (\imageData -> [ backgroundImg imageData ])
-                |> Maybe.withDefault []
+        videoWrapper =
+            styled video
+                [ width (pct 100)
+                , height (pct 100)
+                ]
 
         imageWrapper =
             styled div
@@ -224,6 +224,48 @@ column col =
                     |> Maybe.withDefault center
                     |> backgroundPosition
                 ]
+
+        backgroundElement background =
+            case background of
+                Wagtail.ImageBackground image ->
+                    Just <| imageWrapper [ backgroundImg image.image ] []
+
+                Wagtail.VideoBackground url ->
+                    Just <|
+                        imageWrapper
+                            []
+                            [ videoWrapper
+                                [ src url
+                                , autoplay True
+                                , loop True
+                                , attribute "muted" ""
+                                , attribute "playsinline" ""
+                                ]
+                                [ source
+                                    [ src url
+                                    ]
+                                    []
+                                ]
+                            ]
+
+                _ ->
+                    Nothing
+
+        attributes background =
+            case background of
+                Wagtail.CoverBackground url ->
+                    Just [ backgroundImg url ]
+
+                Wagtail.ImageBackground image ->
+                    case image.backgroundImage of
+                        Just url ->
+                            Just [ backgroundImg url ]
+
+                        _ ->
+                            Just []
+
+                _ ->
+                    Just []
 
         textWrapper =
             styled div
@@ -259,9 +301,13 @@ column col =
                            )
                 ]
     in
-    wrapper attributes
-        [ col.image
-            |> Maybe.map (\imageData -> imageWrapper [ backgroundImg imageData ] [])
+    wrapper
+        (col.background
+            |> Maybe.andThen attributes
+            |> Maybe.withDefault []
+        )
+        [ col.background
+            |> Maybe.andThen backgroundElement
             |> Maybe.withDefault (text "")
         , col.richText
             |> Maybe.map (\html -> textWrapper [] [ richText html ])

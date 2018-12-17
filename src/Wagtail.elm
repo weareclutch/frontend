@@ -1,4 +1,60 @@
-module Wagtail exposing (..)
+module Wagtail exposing
+    ( AboutUsContent
+    , Block(..)
+    , BlogCollectionContent
+    , BlogOverviewContent
+    , BlogPostContent
+    , BlogPostPreview
+    , BlogPostSeries
+    , BlogSeriesPreview
+    , CasePageContent
+    , CasePreview
+    , Column
+    , ColumnBackground(..)
+    , Expertise
+    , HomePageContent
+    , Image
+    , Media(..)
+    , Msg(..)
+    , Page(..)
+    , Person
+    , Quote
+    , Service
+    , ServicesContent
+    , Theme
+    , Topic
+    , WagtailMetaContent
+    , aboutUsPageDecoder
+    , blogCollectionPageDecoder
+    , blogOverviewPageDecoder
+    , blogPostPageDecoder
+    , blogPostPreviewDecoder
+    , blogSeriesPreviewDecoder
+    , casePageDecoder
+    , dateDecoder
+    , decodeBackgroundBlock
+    , decodeBlocks
+    , decodeCasePreview
+    , decodeColumn
+    , decodeColumnBackground
+    , decodeColumns
+    , decodeContentBlock
+    , decodeImage
+    , decodeImageBlock
+    , decodeMedia
+    , decodePageType
+    , decodeQuote
+    , decodeTheme
+    , findPageUrl
+    , getPageDecoder
+    , getPageId
+    , getPageTheme
+    , getWagtailPage
+    , homePageDecoder
+    , metaDecoder
+    , preloadWagtailPage
+    , servicesPageDecoder
+    )
 
 import Date exposing (Date)
 import Http exposing (..)
@@ -193,8 +249,8 @@ homePageDecoder =
             (D.map3
                 (\text link media -> { text = text, link = link, media = media })
                 (D.field "text" D.string)
-                (D.at ["link", "slug"] D.string)
-                (D.maybe <| D.field "image" <| D.index 0 <| decodeMedia)
+                (D.at [ "link", "slug" ] D.string)
+                (D.maybe <| D.field "image" <| D.index 0 decodeMedia)
             )
             (D.field "value" decodeCasePreview
                 |> D.list
@@ -341,6 +397,35 @@ servicesPageDecoder =
                         (D.field "title" D.string)
                         (D.field "animation_name" D.string)
                         (D.succeed False)
+            )
+
+
+type ColumnBackground
+    = CoverBackground Image
+    | VideoBackground String
+    | ImageBackground { image : Image, backgroundImage : Maybe Image }
+
+
+decodeColumnBackground : D.Decoder ColumnBackground
+decodeColumnBackground =
+    D.field "type" D.string
+        |> D.andThen
+            (\mediaType ->
+                case mediaType of
+                    "cover" ->
+                        D.map CoverBackground (D.field "value" decodeImage)
+
+                    "video" ->
+                        D.map VideoBackground (D.at [ "value", "url" ] D.string)
+
+                    "image" ->
+                        D.map2
+                            (\img bg -> ImageBackground { image = img, backgroundImage = bg })
+                            (D.at [ "value", "image" ] decodeImage)
+                            (D.maybe <| D.at [ "value", "background_image" ] decodeImage)
+
+                    _ ->
+                        D.fail "Unknow background type"
             )
 
 
@@ -509,13 +594,14 @@ type alias BlogPostContent =
     , readingTime : Int
     , image : Image
     , body : Maybe (List Block)
-    , series : Maybe
-        { nextUrl : Maybe String
-        , amount : Int
-        , index : Int
-        , slug : String
-        , title : String
-        }
+    , series :
+        Maybe
+            { nextUrl : Maybe String
+            , amount : Int
+            , index : Int
+            , slug : String
+            , title : String
+            }
     }
 
 
@@ -529,17 +615,17 @@ blogPostPageDecoder =
             (D.field "reading_time" D.int)
             (D.field "main_image" decodeImage)
             (D.maybe <| D.field "body" decodeBlocks)
-            (D.maybe
-                <| D.field "series"
-                <| D.map5
-                    (\a b c d e ->
-                        { nextUrl = a, amount = b, index = c, slug = d, title = e }
-                    )
-                    (D.maybe <| D.field "next_in_series" D.string)
-                    (D.field "series_amount" D.int)
-                    (D.field "series_index" D.int)
-                    (D.field "slug" D.string)
-                    (D.field "title" D.string)
+            (D.maybe <|
+                D.field "series" <|
+                    D.map5
+                        (\a b c d e ->
+                            { nextUrl = a, amount = b, index = c, slug = d, title = e }
+                        )
+                        (D.maybe <| D.field "next_in_series" D.string)
+                        (D.field "series_amount" D.int)
+                        (D.field "series_index" D.int)
+                        (D.field "slug" D.string)
+                        (D.field "title" D.string)
             )
 
 
@@ -564,20 +650,18 @@ type Media
 
 decodeMedia : D.Decoder Media
 decodeMedia =
-
     D.field "type" D.string
         |> D.andThen
             (\mediaType ->
                 case mediaType of
                     "video" ->
-                        D.map VideoMedia (D.at ["value", "url"] D.string)
+                        D.map VideoMedia (D.at [ "value", "url" ] D.string)
 
                     "image" ->
                         D.map ImageMedia (D.field "value" decodeImage)
 
                     _ ->
                         D.succeed <| UnknownMedia mediaType
-                        
             )
 
 
@@ -597,8 +681,7 @@ decodeQuote =
 
 type alias Column =
     { theme : Theme
-    , image : Maybe Image
-    , backgroundImage : Maybe Image
+    , background : Maybe ColumnBackground
     , richText : Maybe String
     }
 
@@ -612,10 +695,9 @@ decodeColumns =
 
 decodeColumn : D.Decoder Column
 decodeColumn =
-    D.map4 Column
+    D.map3 Column
         decodeTheme
-        (D.maybe <| D.field "image" decodeImage)
-        (D.maybe <| D.field "background_image" decodeImage)
+        (D.maybe <| D.field "background" <| D.index 0 decodeColumnBackground)
         (D.maybe <| D.field "rich_text" D.string)
 
 
@@ -691,8 +773,8 @@ decodeImageBlock =
     D.map2
         ImageBlock
         decodeTheme
-        ( D.map2 Image
-            (D.at ["image", "url"] D.string)
+        (D.map2 Image
+            (D.at [ "image", "url" ] D.string)
             (D.maybe <| D.field "caption" D.string)
         )
 
