@@ -83,10 +83,12 @@ postPreview preview =
                 , verticalAlign top
                 , backgroundSize cover
                 , backgroundPosition center
-                , height auto
+                , height zero
                 , width (pct 30)
+                , paddingTop (pct 30)
                 , bpMediumUp
                     [ width (pct 33)
+                    , paddingTop (pct 33)
                     ]
                 ]
 
