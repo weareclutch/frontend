@@ -15,7 +15,12 @@ getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
     case page of
         Wagtail.HomePage _ ->
-            [
+            [ Ports.playVideos ()
+            , Ports.scrollOverlayDown ()
+            ]
+
+        Wagtail.CasePage _ ->
+            [ Ports.playVideos ()
             ]
 
         Wagtail.AboutUsPage _ ->

@@ -738,6 +738,7 @@ type Block
     | ImageBlock Theme Image
     | ContentBlock Theme String
     | BackgroundBlock Image
+    | VideoBlock String
     | ColumnBlock Column Column
 
 
@@ -755,6 +756,9 @@ decodeBlocks =
 
                     "background" ->
                         D.field "value" decodeBackgroundBlock
+
+                    "video" ->
+                        D.field "value" decodeVideoBlock
 
                     "content" ->
                         D.field "value" decodeContentBlock
@@ -777,6 +781,12 @@ decodeImageBlock =
             (D.at [ "image", "url" ] D.string)
             (D.maybe <| D.field "caption" D.string)
         )
+
+decodeVideoBlock : D.Decoder Block
+decodeVideoBlock =
+    D.map
+        VideoBlock
+        (D.field "url" D.string)
 
 
 decodeBackgroundBlock : D.Decoder Block

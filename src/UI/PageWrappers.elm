@@ -274,6 +274,13 @@ navigationPage navState index navItem active =
                 , height (vh 100)
                 , width (vw 100)
                 , position absolute
+                , case (active, navState) of
+                    (False, Closed) ->
+                        visibility hidden
+
+                    _ ->
+                        visibility visible
+
                 , top zero
                 , left zero
                 , zIndex (int <| 10 - index)

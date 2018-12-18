@@ -269,68 +269,28 @@ app.ports.playIntroAnimation.subscribe(function() {
   })
 })
 
-/* HAKKZZZ */
 
-// setTimeout(function(){
+function playVideosOnPage() {
+  window.requestAnimationFrame(function(){
+    var videos = Array.prototype.slice.call(
+      document.querySelectorAll('video[autoplay]')
+    )
 
-//   console.log('autoplay video hakkzzzz')
+    videos.forEach(function(video) {
+      var videoEl = document.createElement('video')
 
-//   var videos = Array.prototype.slice.call(
-//     document.querySelectorAll('video[autoplay]')
-//   )
+      videoEl.className =  video.className
+      videoEl.muted = true
+      videoEl.autoplay = true
+      videoEl.src = video.src
+      videoEl.loop = true
+      video.setAttribute("playsinline", "true")
 
-//   if(!videos.length) {
-//     console.log('autoplay videos not found', videos)
-//     return
-//   }
-
-//   console.log('autoplay videos found', videos)
-
-
-//   var raf = window.requestAnimationFrame || window.setTimeout
-
-//   function playAllVideos() {
-//     window.removeEventListener('wheel', playAllVideos)
-//     window.removeEventListener('click', playAllVideos)
-
-//     raf(function() {
-//       videos.forEach(function(video) {
-//         try {
-//           video.play()
-//           console.log("playing", video)
-//         } catch (e) {
-//           console.error('Error calling play on a video element')
-//         }
-//       })
-//     })
-//   }
-
-//   window.addEventListener('wheel', playAllVideos)
-//   window.addEventListener('click', playAllVideos)
-// }, 1000)
-
-setTimeout(function(){
-  var videos = Array.prototype.slice.call(
-    document.querySelectorAll('video[autoplay]')
-  )
-
-
-  videos.forEach(function(video) {
-    console.log("replacing", video)
-    var videoEl = document.createElement('video')
-
-
-    videoEl.className =  video.className
-    videoEl.muted = true
-    videoEl.autoplay = true
-    videoEl.src = video.src
-    videoEl.loop = true
-    video.setAttribute("playsinline", "true")
-
-    video.parentElement.insertBefore(videoEl, video)
-    video.parentElement.removeChild(video)
-
+      video.parentElement.insertBefore(videoEl, video)
+      video.parentElement.removeChild(video)
+    })
   })
+}
+app.ports.playVideos.subscribe(playVideosOnPage)
 
 
-}, 1000)

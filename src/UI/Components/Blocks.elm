@@ -29,6 +29,9 @@ streamfield blockData =
                             BackgroundBlock image ->
                                 backgroundBlock image
 
+                            VideoBlock url ->
+                                videoBlock url
+
                             ColumnBlock col1 col2 ->
                                 columns col1 col2
 
@@ -188,6 +191,35 @@ columns col1 col2 =
                 ]
             ]
         ]
+
+
+videoBlock : String -> Html msg
+videoBlock url =
+    let
+        wrapper =
+            styled div
+                [ width (pct 100)
+                ]
+
+        videoElement =
+            styled video
+                [ width (pct 100)
+                ]
+    in
+        wrapper []
+            [ videoElement
+                [ src url
+                , autoplay True
+                , loop True
+                , attribute "muted" ""
+                , attribute "playsinline" ""
+                ]
+                [ source
+                    [ src url
+                    ]
+                    []
+                ]
+            ]
 
 
 column : Column -> Html msg

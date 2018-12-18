@@ -4,6 +4,9 @@ port module Ports exposing (..)
 port setupNavigation : () -> Cmd msg
 
 
+port playVideos : () -> Cmd msg
+
+
 port changeMenuState : String -> Cmd msg
 
 
