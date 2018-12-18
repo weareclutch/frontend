@@ -326,18 +326,20 @@ navigationPage navState index navItem active =
 
             else
                 defaultAttributes
+
+        emptyView =
+            (styled div
+                [ height (pct 100)
+                , width (pct 100)
+                , backgroundColor (hex "fff")
+                ]
+                []
+                [ text "" ]
+            )
     in
-    wrapper attributes
-        [ navItem.page
-            |> Maybe.map (renderPage False)
-            |> Maybe.withDefault
-                (styled div
-                    [ height (pct 100)
-                    , width (pct 100)
-                    , backgroundColor (hex "fff")
-                    , padding (px 80)
-                    ]
-                    []
-                    [ text "" ]
-                )
-        ]
+        wrapper attributes
+            [ navItem.page
+                |> Maybe.map (renderPage False)
+                |> Maybe.withDefault emptyView
+            ]
+
