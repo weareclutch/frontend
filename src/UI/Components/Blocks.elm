@@ -79,12 +79,11 @@ imageBlock theme imageData =
                 , width auto
                 , height auto
                 , textAlign center
-                , padding2 (px 40) zero
                 ]
     in
     wrapper []
         [ innerWrapper []
-            [ image [] imageData
+            [ image [ maxWidth (pct 100) ] imageData
             ]
         ]
 
@@ -153,21 +152,40 @@ columns col1 col2 =
             styled div
                 [ bpLargeUp
                     [ width (pct 50)
-                    , height (vh 100)
+                    , paddingTop (pct 50)
+                    , position relative
                     ]
                 , nthChild "even"
-                    [ bpLargeUp
-                        [ position absolute
-                        , top zero
-                        , right zero
-                        ]
+                    [ position absolute
+                    , top zero
+                    , right zero
                     ]
                 ]
+
+        colInnerWrapper =
+            styled div
+                [ bpLargeUp
+                    [ position absolute
+                    , top zero
+                    , right zero
+                    , height (pct 100)
+                    , width (pct 100)
+                    ]
+                ]
+
     in
     wrapper []
         [ div []
-            [ colWrapper [] [ column col1 ]
-            , colWrapper [] [ column col2 ]
+            [ colWrapper []
+                [ colInnerWrapper []
+                    [ column col1
+                    ]
+                ]
+            , colWrapper []
+                [ colInnerWrapper []
+                    [ column col2
+                    ]
+                ]
             ]
         ]
 
@@ -184,14 +202,32 @@ column col =
                 , backgroundSize cover
                 , backgroundPosition center
                 , bpLargeUp
-                    [ height (vh 100)
+                    [ height (pct 100)
                     ]
                 ]
 
-        videoWrapper =
+        videoElement =
             styled video
                 [ width (pct 100)
                 , height (pct 100)
+                , position absolute
+                , top zero
+                , left zero
+                ]
+
+        videoWrapper =
+            styled div
+                [ position relative
+                , margin auto
+                , paddingTop (pct 100)
+                , width (pct 100)
+                , bpLargeUp
+                    [ position absolute
+                    , height (pct 100)
+                    , top zero
+                    , left zero
+                    , paddingTop zero
+                    ]
                 ]
 
         imageWrapper =
@@ -232,9 +268,9 @@ column col =
 
                 Wagtail.VideoBackground url ->
                     Just <|
-                        imageWrapper
+                        videoWrapper
                             []
-                            [ videoWrapper
+                            [ videoElement
                                 [ src url
                                 , autoplay True
                                 , loop True

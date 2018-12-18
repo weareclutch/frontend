@@ -22,20 +22,21 @@ view content =
 
         nextCaseWrapper =
             styled div
-                [ height (vh 100)
+                [ minHeight (pct 100)
                 , position relative
                 , padding (px 40)
+                , bpMediumUp
+                    [ padding (px 80)
+                    ]
+                , bpLargeUp
+                    [ padding2 (px 160) (px 80)
+                    ]
                 ]
 
         nextCase =
             styled div
                 [ maxWidth (px 660)
                 , margin auto
-                , bpMediumUp
-                    [ top (pct 50)
-                    , transform <| translateY (pct -50)
-                    , position relative
-                    ]
                 ]
     in
     wrapper []

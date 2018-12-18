@@ -36,39 +36,41 @@ view contactInfo =
 
         link =
             styled a
-                [ color (hex "00FFB0")
+                [ color (hex "fff")
                 , textDecoration none
                 ]
 
         paragraph =
             styled p
-                [ fontSize (px 48)
-                , lineHeight (px 56)
-                , letterSpacing (px 3.25)
-                , fontFamilies [ "Qanelas ExtraBold" ]
+                [ fontSize (px 24)
+                , lineHeight (px 40)
+                , letterSpacing (px 1.29)
+                , maxWidth (px 260)
+                , fontWeight (int 700)
                 , bpMediumUp
                     []
+                ]
+
+        title =
+            styled h3
+                [ fontSize (px 80)
+                , marginBottom (px 30)
                 ]
     in
     outerWrapper []
         [ wrapper []
-            [ paragraph []
-                [ text "Mail ons op "
-                , link
+            [ title [] [ text "contact" ]
+            , paragraph []
+                [ link
                     [ Html.Styled.Attributes.href ("mailto:" ++ contactInfo.email) ]
                     [ text contactInfo.email ]
                 , br [] []
-                , text "Bel ons via "
                 , link
                     [ Html.Styled.Attributes.href ("phone:" ++ contactInfo.phone) ]
                     [ text contactInfo.phone ]
                 , br [] []
-                , link
-                    [ Html.Styled.Attributes.href "https://www.instagram.com/clutch_amsterdam/"
-                    , Html.Styled.Attributes.target "_blank"
-                    ]
-                    [ text "Volg ons" ]
-                , text " op instagram "
+                , br [] []
+                , text contactInfo.address
                 ]
             ]
         ]

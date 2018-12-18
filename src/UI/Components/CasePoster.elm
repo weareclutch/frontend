@@ -2,6 +2,7 @@ module UI.Components.CasePoster exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (href)
 import Style exposing (..)
 import Types exposing (Msg)
 import UI.Common exposing (addLink, backgroundImg)
@@ -20,7 +21,7 @@ view casePreview =
                 |> Maybe.withDefault []
 
         wrapper =
-            styled div <|
+            styled a <|
                 [ backgroundColor (hex casePreview.theme.backgroundColor)
                 , backgroundPosition center
                 , backgroundSize cover
@@ -28,6 +29,7 @@ view casePreview =
                 , cursor pointer
                 , top zero
                 , left zero
+                , display block
                 , overflow hidden
                 , maxHeight (pct 100)
                 , maxWidth (pct 100)
@@ -92,8 +94,13 @@ view casePreview =
                     [ paddingRight zero
                     ]
                 ]
+
     in
-    wrapper (wrapperAttributes ++ addLink casePreview.url)
+    wrapper
+        ( [ href casePreview.url ]
+        ++ wrapperAttributes
+        ++ addLink casePreview.url
+        )
         [ titleWrapper []
             [ caption [] [ text casePreview.caption ]
             , title [] [ text casePreview.title ]
