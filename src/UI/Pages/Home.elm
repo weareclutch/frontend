@@ -109,10 +109,11 @@ introCover content =
                     , left zero
                     , height (px 230)
                     , width (pct 100)
+                    , zIndex (int 20)
                     , backgroundImage
                         <| linearGradient
                             (stop (hex "292A32"))
-                            (stop (hex content.theme.backgroundColor))
+                            (stop (rgba 0 0 0 0.0))
                             []
                     ]
                 ]
@@ -136,17 +137,18 @@ introCover content =
         mediaWrapper =
             styled div
                 [ overflow hidden
-                , height (vh 100)
+                , height <| calc (vh 100) plus (px 230)
                 , width (vw 100)
-                , position relative
+                , position absolute
+                , bottom zero
                 ]
 
         videoDiv =
             styled div
-                [ height (pct 110)
-                , width (pct 110)
-                , top (pct 50)
-                , left (pct 50)
+                [ height (pct 200)
+                , width (pct 200)
+                , top <| calc (pct 50) plus (px 120)
+                , left <| calc (pct 50) minus (px 240)
                 , transform <| translate2 (pct -50) (pct -50)
                 , position absolute
                 ]

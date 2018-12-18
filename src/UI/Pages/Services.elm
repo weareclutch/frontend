@@ -11,8 +11,8 @@ import UI.Common exposing (container, slideshow, backgroundImg, siteMargins)
 import UI.Components.Blocks exposing (richText)
 
 
-view : Wagtail.ServicesContent -> Html Msg
-view content =
+view : Bool -> Wagtail.ServicesContent -> Html Msg
+view isMobile content =
     let
         wrapper =
             styled div
@@ -59,7 +59,7 @@ view content =
                 slideImage
                 content.images
             ]
-        , servicesBlock content.services
+        , servicesBlock isMobile content.services
         , expertisesBlock content.expertises
         ]
 
@@ -81,8 +81,8 @@ slideImage image =
 
 
 
-servicesBlock : (Int, List Wagtail.Service) -> Html Msg
-servicesBlock (activeIndex, services) =
+servicesBlock : Bool -> (Int, List Wagtail.Service) -> Html Msg
+servicesBlock isMobile (activeIndex, services) =
     let
         wrapper =
             styled div
@@ -91,6 +91,7 @@ servicesBlock (activeIndex, services) =
                 , width (pct 100)
                 , backgroundColor (hex "222328")
                 , color (hex "fff")
+                , marginTop (px -60)
                 , bpLargeUp
                     [ marginTop (px -190)
                     ]
@@ -99,8 +100,15 @@ servicesBlock (activeIndex, services) =
 
         navigation =
             styled div
-                [ display block
+                [ display none
                 , backgroundColor (hex "292A32")
+                , bpLargeUp
+                    [ display inlineBlock
+                    , position relative
+                    , width (pct 34)
+                    , verticalAlign top
+                    , padding4 (px 460) zero (px 270) zero
+                    ]
                 , before
                     [ property "content" "''"
                     , display block
@@ -111,13 +119,6 @@ servicesBlock (activeIndex, services) =
                     , width (vw 100)
                     , height (pct 100)
                     , zIndex (int 0)
-                    ]
-                , bpLargeUp
-                    [ display inlineBlock
-                    , position relative
-                    , width (pct 34)
-                    , verticalAlign top
-                    , padding4 (px 460) zero (px 270) zero
                     ]
                 ]
 
@@ -130,12 +131,33 @@ servicesBlock (activeIndex, services) =
         content =
             styled div
                 [ display block
+                , padding4 (px 120) zero (px 50) zero
                 , bpLargeUp
                     [ display inlineBlock
                     , width (pct 66)
                     , verticalAlign top
                     , padding4 (px 460) zero (px 270) (px 180)
                     , maxWidth (px 980)
+                    ]
+                ]
+
+        serviceWrapper =
+            \active ->
+                styled div
+                    [ display block
+                    , bpLargeUp
+                        [ if active then
+                            display block
+                        else
+                            display none
+                        ]
+                    ]
+
+        serviceTitle =
+            styled p
+                [ display block
+                , bpLargeUp
+                    [ display none
                     ]
                 ]
 
@@ -194,16 +216,16 @@ servicesBlock (activeIndex, services) =
                                 )
                                 services
                         ]
-                    , content []
-                        [ services
-                            |> List.drop activeIndex
-                            |> List.head
-                            |> Maybe.map
-                                (\service ->
-                                    richText service.body
-                                )
-                            |> Maybe.withDefault (text "")
-                        ]
+                    , content [] <|
+                        List.indexedMap
+                            (\index service ->
+                                serviceWrapper (index == activeIndex)
+                                    []
+                                    [ serviceTitle [ class "nav" ] [ text service.title ]
+                                    , richText service.body
+                                    ]
+                            )
+                            services
                     ]
                 ]
              ]
@@ -230,23 +252,30 @@ expertisesBlock expertises =
             styled div
                 [ backgroundColor (hex "fff")
                 , position relative
-                , property "display" "flex"
-                , flexDirection row
-                , alignItems stretch
+                , padding2 (px 50) zero
+                , bpLargeUp
+                    [ property "display" "flex"
+                    , flexDirection row
+                    , alignItems stretch
+                    , padding zero
+                    ]
                 ]
 
         intro =
             styled div
-                [ padding2 (px 270) zero
-                , position relative
-                , verticalAlign top
-                , width (pct 34)
-                , paddingRight (px 60)
-                , display inlineBlock
-                , backgroundColor (hex "F4F4F4")
+                [ display block
+                , width (pct 100)
+                , bpLargeUp
+                    [ padding2 (px 270) zero
+                    , position relative
+                    , backgroundColor (hex "F4F4F4")
+                    , verticalAlign top
+                    , width (pct 34)
+                    , paddingRight (px 60)
+                    , display inlineBlock
+                    ]
                 , before
                     [ property "content" "''"
-                    , display block
                     , position absolute
                     , right zero
                     , top zero
@@ -254,16 +283,24 @@ expertisesBlock expertises =
                     , width (vw 100)
                     , height (pct 100)
                     , zIndex (int 0)
+                    , display none
+                    , bpLargeUp
+                        [ display block
+                        ]
                     ]
                 ]
 
         content =
             styled div
-                [ padding2 (px 270) zero
-                , width (pct 64)
-                , display inlineBlock
-                , verticalAlign top
-                , paddingLeft (px 180)
+                [ display block
+                , width (pct 100)
+                , bpLargeUp
+                    [ padding2 (px 270) zero
+                    , width (pct 64)
+                    , display inlineBlock
+                    , verticalAlign top
+                    , paddingLeft (px 180)
+                    ]
                 ]
 
     in
@@ -298,9 +335,12 @@ renderExpertise index expertise =
 
         header =
             styled div
-                [ padding4 (px 60) zero (px 60) (px 180)
+                [ padding2 (px 50) zero
                 , cursor pointer
                 , position relative
+                , bpLargeUp
+                    [ padding4 (px 60) zero (px 60) (px 180)
+                    ]
                 ]
 
         animationWrapper =
@@ -311,6 +351,10 @@ renderExpertise index expertise =
                 , left (px -40)
                 , top (pct 50)
                 , transform <| translateY (pct -50)
+                , display none
+                , bpLargeUp
+                    [ display block
+                    ]
                 ]
 
         title =
@@ -333,7 +377,9 @@ renderExpertise index expertise =
                 styled div
                     [ if active then (display block) else (display none)
                     , marginTop (px -80)
-                    , paddingLeft (px 180)
+                    , bpLargeUp
+                        [ paddingLeft (px 180)
+                        ]
                     ]
 
     in

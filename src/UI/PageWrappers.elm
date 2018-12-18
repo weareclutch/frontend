@@ -35,7 +35,7 @@ renderPage isMobile page =
             UI.Pages.Blog.collection content
 
         Wagtail.ServicesPage content ->
-            UI.Pages.Services.view content
+            UI.Pages.Services.view isMobile content
 
         Wagtail.AboutUsPage content ->
             UI.Pages.AboutUs.view isMobile content
