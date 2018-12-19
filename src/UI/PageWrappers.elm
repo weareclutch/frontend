@@ -2,7 +2,7 @@ module UI.PageWrappers exposing (createTransform, desktopView, mobileView, navig
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes
+import Html.Styled.Attributes exposing (class)
 import Html.Styled.Events exposing (..)
 import Style exposing (..)
 import Types exposing (Msg(..), Route(..))
@@ -51,7 +51,7 @@ mobileView child =
                     ]
                 ]
     in
-    wrapper [] [ child ]
+    wrapper [ class "mobile" ] [ child ]
 
 
 desktopView : Html a -> Html a

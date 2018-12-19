@@ -223,7 +223,7 @@ wrapper active children =
             styled div <|
                 [ backgroundColor (hex "001AE0")
                 , transition "all" 0.4 0 "ease-in-out"
-                --, backgroundImage (url "/images/big_c_shadow.svg")
+                , backgroundImage (url "/images/big_c_shadow.svg")
                 , backgroundSize cover
                 , backgroundPosition center
                 , if active then
@@ -248,21 +248,11 @@ wrapper active children =
         bg =
             styled div
                 [ position absolute
-                , width (pct 200)
-                , height (pct 200)
-                , left <| calc (pct -50) minus (vw 20)
-                , top (pct -50)
+                , width (pct 300)
+                , height (pct 300)
+                , left <| calc (pct -100) minus (px 300)
+                , top (pct -100)
                 , zIndex (int 500)
-                ]
-
-        effects =
-            styled div
-                [ position absolute
-                , width (pct 200)
-                , height (pct 200)
-                , left <| calc (pct -50) minus (vw 20)
-                , top (pct -50)
-                , zIndex (int 510)
                 ]
 
         tagLine =
@@ -282,7 +272,6 @@ wrapper active children =
         [ globalStyle
         , animationWrapper [ id "animation-wrapper" ]
             [ bg [ id "bg" ] []
-            , effects [ id "effects" ] []
             , tagLine [ id "tagline" ] []
             ]
         , wrapperDiv [ id "app" ] children

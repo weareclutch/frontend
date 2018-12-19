@@ -69,10 +69,14 @@ slideImage image =
     let
         wrapper =
             styled div
-                [ paddingTop (pct 40)
-                , width (pct 100)
-                , backgroundSize cover
+                [ backgroundSize cover
                 , backgroundPosition center
+                , height (px 300)
+                , width (pct 100)
+                , bpMediumUp
+                    [ paddingTop (pct 40)
+                    , height zero
+                    ]
                 ]
 
     in

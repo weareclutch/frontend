@@ -57,12 +57,25 @@ app.ports.resetScrollPosition.subscribe(function(id) {
 
 
 
+var hasScrolledToBottom = false
 app.ports.scrollOverlayDown.subscribe(function() {
-    window.requestAnimationFrame(function() {
-      // scroll active overlay to the bottom
-      var activePage = document.querySelector('.active-page')
-      if (activePage) activePage.scrollTop = activePage.scrollHeight
-    })
+  window.requestAnimationFrame(function() {
+    // scroll active page to the bottom
+    var page = window.innerWidth >= 780 ?
+      document.querySelector('.active-page') :
+      document.querySelector('.mobile')
+
+    if (!page) return false
+
+    if (hasScrolledToBottom) return false
+    hasScrolledToBottom = true
+
+    if (window.innerWidth >= 780) {
+      page.scrollTop = page.scrollHeight
+    } else {
+      window.scrollTo(0, page.scrollHeight)
+    }
+  })
 })
 
 
@@ -240,21 +253,20 @@ app.ports.stopAnimation.subscribe(stopAnimation)
 
 
 app.ports.playIntroAnimation.subscribe(function() {
-  return;
   window.requestAnimationFrame(function() {
 
     // show animationFrame, and then hide it when done
     var animationWrapper = document.getElementById('animation-wrapper')
     animationWrapper.style.display = 'block'
-    var totalDuration = 5800
+
+    var totalDuration = 3600
     window.setTimeout(function() {
       animationWrapper.style.display = 'none'
     }, totalDuration)
 
-    var animations = [ 'bg' , 'effects' , 'tagline' ]
+    var animations = [ 'bg' , 'tagline' ]
 
     animations.forEach(function(animationPath) {
-      var delay = animationPath === 'effects' ? 4000 : 0
 
       window.setTimeout(function() {
         var animation = bodymovin.loadAnimation({
@@ -264,7 +276,7 @@ app.ports.playIntroAnimation.subscribe(function() {
           loop: false,
           autoplay: true,
         })
-      }, delay)
+      }, 0)
     })
   })
 })

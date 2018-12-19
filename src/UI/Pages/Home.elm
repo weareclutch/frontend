@@ -148,7 +148,7 @@ introCover content =
                 [ height (pct 200)
                 , width (pct 200)
                 , top <| calc (pct 50) plus (px 120)
-                , left <| calc (pct 50) minus (px 240)
+                , left <| calc (pct 50) minus (px 300)
                 , transform <| translate2 (pct -50) (pct -50)
                 , position absolute
                 ]
