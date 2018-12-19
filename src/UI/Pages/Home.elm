@@ -60,6 +60,7 @@ view content =
             styled div
                 [ backgroundColor (hex "292A32")
                 , marginBottom (px -50)
+                , paddingTop (px 240)
                 , bpMediumUp
                     [ padding2 (px 240) zero
                     , margin zero
@@ -121,17 +122,30 @@ introCover content =
         title =
             styled div
                 [ marginBottom (px 6)
+                , display none
+                , bpMediumUp
+                    [ display block
+                    ]
                 ]
 
         textWrapper =
             styled div
                 [ color (hex content.theme.textColor)
-                , maxWidth (px 660)
                 , margin auto
-                , transform (translateY (pct -50))
-                , top (pct 50)
-                , left (pct 50)
+                , maxWidth (px 660)
+                , padding2 zero (px 25)
                 , position absolute
+                , bottom (px 140)
+                , textAlign center
+                , bpMediumUp
+                    [ position absolute
+                    , transform (translateY (pct -50))
+                    , padding zero
+                    , top (pct 50)
+                    , bottom auto
+                    , textAlign left
+                    , left (pct 50)
+                    ]
                 ]
 
         mediaWrapper =
@@ -146,11 +160,18 @@ introCover content =
         videoDiv =
             styled div
                 [ height (pct 200)
-                , width (pct 200)
-                , top <| calc (pct 50) plus (px 120)
-                , left <| calc (pct 50) minus (px 300)
+                , width (px 1280)
+                , top (pct 50)
+                , left (pct 50)
                 , transform <| translate2 (pct -50) (pct -50)
                 , position absolute
+                , bpMediumUp
+                    [ height (pct 200)
+                    , width (pct 200)
+                    , top <| calc (pct 50) plus (px 120)
+                    , left <| calc (pct 50) minus (px 300)
+                    , transform <| translate2 (pct -50) (pct -50)
+                    ]
                 ]
 
         videoEl =
@@ -186,7 +207,7 @@ introCover content =
                                 Just <| videoDiv []
                                     [ videoEl
                                         [ src url
-                                        , autoplay True
+                                        -- , autoplay True
                                         , loop True
                                         , attribute "muted" ""
                                         , attribute "playsinline" ""

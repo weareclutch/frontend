@@ -253,6 +253,8 @@ app.ports.stopAnimation.subscribe(stopAnimation)
 
 
 app.ports.playIntroAnimation.subscribe(function() {
+  if (window.innerWidth < 780) return false
+
   window.requestAnimationFrame(function() {
 
     // show animationFrame, and then hide it when done
@@ -285,7 +287,7 @@ app.ports.playIntroAnimation.subscribe(function() {
 function playVideosOnPage() {
   window.requestAnimationFrame(function(){
     var videos = Array.prototype.slice.call(
-      document.querySelectorAll('video[autoplay]')
+      document.querySelectorAll('video')
     )
 
     videos.forEach(function(video) {
@@ -293,13 +295,20 @@ function playVideosOnPage() {
 
       videoEl.className =  video.className
       videoEl.muted = true
-      videoEl.autoplay = true
+      videoEl.autoplay = false
       videoEl.src = video.src
       videoEl.loop = true
+      videoEl.style.opacity = 0
+      videoEl.style.transition = 'opacity 0.68s ease-in-out'
       video.setAttribute("playsinline", "true")
 
       video.parentElement.insertBefore(videoEl, video)
       video.parentElement.removeChild(video)
+
+      window.setTimeout(function() {
+        videoEl.play()
+        videoEl.style.opacity = 1
+      }, 2800)
     })
   })
 }
