@@ -298,20 +298,25 @@ function playVideosOnPage() {
       videoEl.autoplay = false
       videoEl.src = video.src
       videoEl.loop = true
-      videoEl.style.opacity = 0
-      videoEl.style.transition = 'opacity 0.68s ease-in-out'
       video.setAttribute("playsinline", "true")
-
       video.parentElement.insertBefore(videoEl, video)
       video.parentElement.removeChild(video)
 
-      window.setTimeout(function() {
+      if (window.innerWidth >= 780) {
+        videoEl.style.opacity = 0
+        videoEl.style.transition = 'opacity 0.68s ease-in-out'
+        window.setTimeout(function() {
+          videoEl.play()
+          videoEl.style.opacity = 1
+        }, 2800)
+      } else {
         videoEl.play()
-        videoEl.style.opacity = 1
-      }, 2800)
+      }
+
     })
   })
 }
+
 app.ports.playVideos.subscribe(playVideosOnPage)
 
 
