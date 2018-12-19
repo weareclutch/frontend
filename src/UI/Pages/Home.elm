@@ -207,7 +207,7 @@ introCover content =
                                 Just <| videoDiv []
                                     [ videoEl
                                         [ src url
-                                        -- , autoplay True
+                                        , autoplay True
                                         , loop True
                                         , attribute "muted" ""
                                         , attribute "playsinline" ""

@@ -287,7 +287,7 @@ app.ports.playIntroAnimation.subscribe(function() {
 function playVideosOnPage() {
   window.requestAnimationFrame(function(){
     var videos = Array.prototype.slice.call(
-      document.querySelectorAll('video')
+      document.querySelectorAll('video[autoplay]')
     )
 
     videos.forEach(function(video) {
@@ -295,7 +295,6 @@ function playVideosOnPage() {
 
       videoEl.className =  video.className
       videoEl.muted = true
-      videoEl.autoplay = false
       videoEl.src = video.src
       videoEl.loop = true
       video.setAttribute("playsinline", "true")
@@ -303,14 +302,17 @@ function playVideosOnPage() {
       video.parentElement.removeChild(video)
 
       if (window.innerWidth >= 780) {
+        videoEl.autoplay = false
         videoEl.style.opacity = 0
         videoEl.style.transition = 'opacity 0.68s ease-in-out'
+
         window.setTimeout(function() {
           videoEl.play()
           videoEl.style.opacity = 1
         }, 2800)
+
       } else {
-        videoEl.play()
+        videoEl.autoplay = true
       }
 
     })
