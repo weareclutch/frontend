@@ -324,7 +324,7 @@ expertisesBlock expertises =
                 [ wrapper []
                     [ intro []
                         [ title [] [ text "hoe we het doen" ]
-                        , paragraph [ class "intro" ] [ text "Donec facilisis prototyping ut augue lacinia, at viverra est semper. Sed sapien metus, scelerisque nec pharetra id, wireframing a tortor." ]
+                        , paragraph [ class "intro" ] [ text "Goed doordachte ideeën vormen de basis, maar met liefde in de executie maak je het verschil." ]
                         ]
                     , content []
                         <| List.indexedMap
@@ -351,7 +351,7 @@ renderExpertise index expertise =
         header =
             styled div
                 [ padding2 (px 50) zero
-                , cursor pointer
+                -- , cursor pointer
                 , position relative
                 , bpLargeUp
                     -- [ padding4 (px 60) zero (px 60) (px 180)
@@ -400,7 +400,8 @@ renderExpertise index expertise =
 
     in
         wrapper []
-            [ header [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
+            [ header []
+                -- [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
                 [ animationWrapper [ id <| "expertise-animation-" ++ (toString index) ] []
                 , title expertise.active [] [ text expertise.title ]
                 , keywords expertise.active []
