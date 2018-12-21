@@ -118,8 +118,8 @@ bodyText content =
     in
         siteMargins []
             [ left []
-                [ h2 [] [ text content.title ]
-                , richText content.left
+                -- [ h2 [] [ text content.title ]
+                [ richText content.left
                 ]
             , right [] [ text content.right ]
             ]
@@ -443,6 +443,11 @@ clients data =
                 [ maxWidth (px 820)
                 ]
 
+        title =
+            styled h2
+                [ maxWidth (px 620)
+                ]
+
         clients =
             styled div
                 [ property "display" "flex"
@@ -461,8 +466,12 @@ clients data =
                 , marginBottom (px 40)
                 , textAlign center
                 , position relative
+                , bpMediumUp
+                    [ margin2 (px 140) zero
+                    ]
                 , bpLargeUp
                     [ width (pct 33.3333)
+                    , margin2 (px 220) zero
                     ]
                 ]
 
@@ -487,7 +496,7 @@ clients data =
             [ container []
                 [ siteMargins []
                     [ content []
-                        [ h2 [] [ text data.title ]
+                        [ title [] [ text data.title ]
                         , p [] [ text data.text ]
                         ]
                     , clients []

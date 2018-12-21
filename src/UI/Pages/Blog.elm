@@ -144,9 +144,9 @@ overview content =
                 [ backgroundColor (hex "fff")
                 , minHeight (pct 100)
                 , minWidth (pct 100)
-                , padding4 (px 130) zero zero zero
+                , padding4 (px 130) zero (px 10) zero
                 , bpMediumUp
-                    [ padding4 (pct 20) zero zero zero
+                    [ padding4 (pct 20) zero (px 10) zero
                     ]
                 ]
 
@@ -183,7 +183,7 @@ overview content =
                     ]
                 ]
             ]
-        , series
+        --, series
         , container []
             [ siteMargins []
                 [ div [] posts

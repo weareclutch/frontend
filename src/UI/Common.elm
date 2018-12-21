@@ -258,7 +258,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 , height (px 60)
                 , backgroundColor (hex "001AE0")
                 , display inlineBlock
-                , marginLeft (px 25)
+                , marginLeft (px 10)
                 , cursor pointer
                 , borderRadius (pct 50)
                 , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.5)

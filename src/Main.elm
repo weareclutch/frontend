@@ -25,15 +25,18 @@ getPageCommands page =
 
         Wagtail.AboutUsPage _ ->
             [ Ports.bindAboutUs ()
+            , Ports.pauseAllVideos ()
             ]
 
         Wagtail.ServicesPage content ->
             [ Ports.bindServicesPage <|
                 List.map .animationName content.expertises
+            , Ports.pauseAllVideos ()
             ]
 
         _ ->
             [ Ports.unbindAll ()
+            , Ports.pauseAllVideos ()
             ]
 
 

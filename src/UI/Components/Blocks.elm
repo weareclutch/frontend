@@ -159,9 +159,11 @@ columns col1 col2 =
                     , position relative
                     ]
                 , nthChild "even"
-                    [ position absolute
-                    , top zero
-                    , right zero
+                    [ bpLargeUp
+                        [ position absolute
+                        , top zero
+                        , right zero
+                        ]
                     ]
                 ]
 

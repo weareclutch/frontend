@@ -35,7 +35,13 @@ view casePreview =
                 , maxWidth (pct 100)
                 , width (pct 100)
                 , height auto
+                , transition "all" 0.16 0 "linear"
                 , paddingTop (pct 142.424242)
+                , boxShadow4 zero (px 16) (px 41) (rgba 0 0 0 0.5)
+                , hover
+                    [ boxShadow4 zero (px 20) (px 61) (rgba 0 0 0 0.5)
+                    , transform <| translateY (px -12)
+                    ]
                 ]
 
         titleWrapper =

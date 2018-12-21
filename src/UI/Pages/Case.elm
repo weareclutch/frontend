@@ -226,7 +226,7 @@ intro content =
         wrapper =
             styled div
                 [ width (pct 100)
-                , backgroundColor (hex "f8f8f8")
+                , backgroundColor (hex "F4F4F4")
                 , color (hex "292A32")
                 , padding2 (px 80) zero
                 , bpLargeUp
@@ -267,6 +267,7 @@ intro content =
                 , bpLargeUp
                     [ width (pct 40)
                     , position absolute
+                    , backgroundColor transparent
                     , right zero
                     , top zero
                     ]
@@ -289,10 +290,10 @@ intro content =
                 [ introEl
                 ]
             , metaInfo []
+                -- [ metaSection []
+                --     [ description [] [ text "Diensten" ]
+                --     ]
                 [ metaSection []
-                    [ description [] [ text "Diensten" ]
-                    ]
-                , metaSection []
                     [ description [] [ text "Periode" ]
                     , div [] [ text "Jan 2018" ]
                     ]

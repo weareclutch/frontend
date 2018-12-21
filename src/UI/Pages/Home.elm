@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, class, href, id, src, autoplay, loop)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (backgroundImg, button, siteMargins, container)
+import UI.Common exposing (link, backgroundImg, button, siteMargins, container)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
@@ -47,11 +47,23 @@ view content =
                 , bpXLargeUp
                     [ width <| calc (pct 50) minus (px 60)
                     ]
+                , nthChild "odd"
+                    [ position relative
+                    , top (px -120)
+                    ]
                 , nthChild "even"
                     [ bpMediumUp
                         [ position absolute
-                        , top (px 350)
                         , right zero
+                        ]
+                    , bpMedium
+                        [ top (px 50)
+                        ]
+                    , bpLarge
+                        [ top (px 80)
+                        ]
+                    , bpXLargeUp
+                        [ top (px 160)
                         ]
                     ]
                 ]
@@ -62,7 +74,7 @@ view content =
                 , marginBottom (px -50)
                 , paddingTop (px 240)
                 , bpMediumUp
-                    [ padding2 (px 240) zero
+                    [ paddingTop (px 240)
                     , margin zero
                     ]
                 ]
@@ -92,7 +104,7 @@ view content =
         ]
 
 
-introCover : Wagtail.HomePageContent -> Html msg
+introCover : Wagtail.HomePageContent -> Html Msg
 introCover content =
     let
         wrapper =
@@ -132,7 +144,7 @@ introCover content =
             styled div
                 [ color (hex content.theme.textColor)
                 , margin auto
-                , maxWidth (px 660)
+                , maxWidth (px 420)
                 , padding2 zero (px 25)
                 , position absolute
                 , bottom (px 140)
@@ -144,6 +156,7 @@ introCover content =
                     , top (pct 50)
                     , bottom auto
                     , textAlign left
+                    , maxWidth (px 560)
                     , left (pct 50)
                     ]
                 ]
@@ -232,8 +245,8 @@ introCover content =
         , textWrapper []
             [ title [] [ text "Uitgelicht" ]
             , richText content.cover.text
-            , a [ href content.cover.link ]
-                [ UI.Common.button content.theme [] (Just "lees verder")
+            , UI.Common.link content.cover.link
+                [ UI.Common.button content.theme [] (Just "lees blog")
                 ]
             ]
         ]

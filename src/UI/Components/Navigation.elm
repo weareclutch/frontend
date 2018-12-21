@@ -186,7 +186,7 @@ view navigationTree navigationState route contactInformation =
                     , position absolute
                     ]
                 , bpMedium
-                    [ padding2 (px 25) (px 150)
+                    [ padding2 (px 38) (px 150)
                     , width (pct 100)
                     ]
                 , bpLarge
@@ -224,6 +224,10 @@ view navigationTree navigationState route contactInformation =
                         ]
                     , lastChild
                         [ marginRight zero
+                        , display none
+                        , bpMediumUp
+                            [ display inlineBlock
+                            ]
                         ]
                     , after
                         [ property "content" "''"
@@ -357,7 +361,7 @@ view navigationTree navigationState route contactInformation =
                             , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
                             , class "nav"
                             ]
-                            [ text "Contact" ]
+                            [ text "contact" ]
                        ]
             , contactInformation
                 |> Maybe.map
@@ -384,7 +388,7 @@ view navigationTree navigationState route contactInformation =
             [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
             , class "nav"
             ]
-            [ text "Contact" ]
+            [ text "contact" ]
 
         , menuButtonText
             (toggleState == Overlay)

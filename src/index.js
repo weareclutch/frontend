@@ -261,7 +261,7 @@ app.ports.playIntroAnimation.subscribe(function() {
     var animationWrapper = document.getElementById('animation-wrapper')
     animationWrapper.style.display = 'block'
 
-    var totalDuration = 3600
+    var totalDuration = 4020
     window.setTimeout(function() {
       animationWrapper.style.display = 'none'
     }, totalDuration)
@@ -269,25 +269,56 @@ app.ports.playIntroAnimation.subscribe(function() {
     var animations = [ 'bg' , 'tagline' ]
 
     animations.forEach(function(animationPath) {
-
+      var animation = bodymovin.loadAnimation({
+        container: document.getElementById(animationPath),
+        path: '/animation/' + animationPath + '.json',
+        renderer: 'svg',
+        loop: false,
+        autoplay: false,
+      })
       window.setTimeout(function() {
-        var animation = bodymovin.loadAnimation({
-          container: document.getElementById(animationPath),
-          path: '/animation/' + animationPath + '.json',
-          renderer: 'svg',
-          loop: false,
-          autoplay: true,
-        })
-      }, 0)
+        animation.play()
+      }, 420)
     })
   })
 })
 
 
+function pauseAllVideos() {
+  window.requestAnimationFrame(function(){
+    var allVideos = Array.prototype.slice.call(
+      document.querySelectorAll('video[autoplay]')
+    )
+
+    // pause all videos
+    allVideos.forEach(function(video) {
+      video.pause()
+    })
+  })
+}
+app.ports.pauseAllVideos.subscribe(pauseAllVideos)
+
+
 function playVideosOnPage() {
   window.requestAnimationFrame(function(){
-    var videos = Array.prototype.slice.call(
+    var allVideos = Array.prototype.slice.call(
       document.querySelectorAll('video[autoplay]')
+    )
+
+    // pause all videos
+    allVideos.forEach(function(video) {
+      video.pause()
+    })
+
+    var page = window.innerWidth < 780 ?
+      document.querySelector('.mobile') :
+      document.querySelector('.overlay[data-active="True"]') ||
+      document.querySelector('.active-page')
+
+    if (!page) return false
+
+    var videos = Array.prototype.slice.call(
+      page.querySelectorAll('video[autoplay]')
     )
 
     videos.forEach(function(video) {
@@ -309,7 +340,7 @@ function playVideosOnPage() {
         window.setTimeout(function() {
           videoEl.play()
           videoEl.style.opacity = 1
-        }, 2800)
+        }, 3720)
 
       } else {
         videoEl.autoplay = true

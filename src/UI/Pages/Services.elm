@@ -111,7 +111,10 @@ servicesBlock isMobile (activeIndex, services) =
                     , position relative
                     , width (pct 34)
                     , verticalAlign top
-                    , padding4 (px 460) zero (px 270) zero
+                    , padding4 (px 360) zero (px 170) zero
+                    ]
+                , bpXLargeUp
+                    [ padding4 (px 460) zero (px 270) zero
                     ]
                 , before
                     [ property "content" "''"
@@ -140,8 +143,11 @@ servicesBlock isMobile (activeIndex, services) =
                     [ display inlineBlock
                     , width (pct 66)
                     , verticalAlign top
-                    , padding4 (px 460) zero (px 270) (px 180)
+                    , padding4 (px 360) zero (px 170) (px 90)
                     , maxWidth (px 980)
+                    ]
+                , bpXLargeUp
+                    [ padding4 (px 460) zero (px 270) (px 180)
                     ]
                 ]
 
@@ -206,7 +212,7 @@ servicesBlock isMobile (activeIndex, services) =
             [ container []
                 [ siteMargins []
                     [ navigation []
-                        [ title [] [ text "Wat we doen" ]
+                        [ title [] [ text "wat we doen" ]
                         , navigationItems []
                             <| List.indexedMap
                                 (\index service ->
@@ -270,13 +276,16 @@ expertisesBlock expertises =
                 [ display block
                 , width (pct 100)
                 , bpLargeUp
-                    [ padding2 (px 270) zero
+                    [ padding2 (px 170) zero
                     , position relative
                     , backgroundColor (hex "F4F4F4")
                     , verticalAlign top
                     , width (pct 34)
                     , paddingRight (px 60)
                     , display inlineBlock
+                    ]
+                , bpXLargeUp
+                    [ padding2 (px 270) zero
                     ]
                 , before
                     [ property "content" "''"
@@ -299,11 +308,13 @@ expertisesBlock expertises =
                 [ display block
                 , width (pct 100)
                 , bpLargeUp
-                    [ padding2 (px 270) zero
+                    [ padding4 (px 170) zero (px 170) (px 90)
                     , width (pct 64)
                     , display inlineBlock
                     , verticalAlign top
-                    , paddingLeft (px 180)
+                    ]
+                , bpXLargeUp
+                    [ padding4 (px 270) zero (px 270) (px 180)
                     ]
                 ]
 
@@ -312,7 +323,7 @@ expertisesBlock expertises =
             [ siteMargins []
                 [ wrapper []
                     [ intro []
-                        [ title [] [ text "Hoe we het doen" ]
+                        [ title [] [ text "hoe we het doen" ]
                         , paragraph [ class "intro" ] [ text "Donec facilisis prototyping ut augue lacinia, at viverra est semper. Sed sapien metus, scelerisque nec pharetra id, wireframing a tortor." ]
                         ]
                     , content []
@@ -343,7 +354,8 @@ renderExpertise index expertise =
                 , cursor pointer
                 , position relative
                 , bpLargeUp
-                    [ padding4 (px 60) zero (px 60) (px 180)
+                    -- [ padding4 (px 60) zero (px 60) (px 180)
+                    [ padding2 (px 60) zero
                     ]
                 ]
 
@@ -356,9 +368,9 @@ renderExpertise index expertise =
                 , top (pct 50)
                 , transform <| translateY (pct -50)
                 , display none
-                , bpLargeUp
-                    [ display block
-                    ]
+                -- , bpLargeUp
+                --     [ display block
+                --     ]
                 ]
 
         title =
@@ -381,9 +393,9 @@ renderExpertise index expertise =
                 styled div
                     [ if active then (display block) else (display none)
                     , marginTop (px -80)
-                    , bpLargeUp
-                        [ paddingLeft (px 180)
-                        ]
+                    -- , bpLargeUp
+                    --     [ paddingLeft (px 180)
+                    --     ]
                     ]
 
     in
