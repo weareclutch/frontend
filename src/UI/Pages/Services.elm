@@ -324,7 +324,7 @@ expertisesBlock expertises =
                 [ wrapper []
                     [ intro []
                         [ title [] [ text "hoe we het doen" ]
-                        , paragraph [ class "intro" ] [ text "Goed doordachte ideeën vormen de basis, maar met liefde in de executie maak je het verschil." ]
+                        , paragraph [ class "intro" ] [ richText "Goed doordachte idee&euml;n vormen de basis, maar met liefde in de executie maak je het verschil." ]
                         ]
                     , content []
                         <| List.indexedMap

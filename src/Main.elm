@@ -102,10 +102,10 @@ init flags location =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    let
-        debugger =
-            Debug.log "msg" msg
-    in
+    -- let
+    --     debugger =
+    --         Debug.log "msg" msg
+    -- in
     case msg of
         OnLocationChange location ->
             ( model, getAndDecodePage model.flags.apiUrl location )

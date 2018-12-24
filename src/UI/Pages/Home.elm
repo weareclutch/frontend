@@ -145,9 +145,12 @@ introCover content =
                 [ color (hex content.theme.textColor)
                 , margin auto
                 , maxWidth (px 420)
+                , width (pct 100)
                 , padding2 zero (px 25)
                 , position absolute
-                , bottom (px 140)
+                , bottom (px 120)
+                , left (pct 50)
+                , transform (translateX (pct -50))
                 , textAlign center
                 , bpMediumUp
                     [ position absolute
@@ -168,6 +171,18 @@ introCover content =
                 , width (vw 100)
                 , position absolute
                 , bottom zero
+                , display none
+                , bpMediumUp
+                    [ display block
+                    ]
+                ]
+
+        mobileImageWrapper =
+            styled div
+                [ display block
+                , bpMediumUp
+                    [ display none
+                    ]
                 ]
 
         videoDiv =
@@ -196,20 +211,26 @@ introCover content =
         imageDiv =
             styled div
                 [ position absolute
-                , maxHeight (px 700)
-                , maxWidth (px 700)
-                , height (vw 40)
-                , width (vw 40)
-                , top (pct 50)
-                , left <| calc (pct 50) minus (vw 20)
-                , transform <| translate2 (pct -50) (pct -50)
                 , backgroundSize cover
                 , backgroundPosition center
+                , top (px 140)
+                , left (pct 50)
+                , transform <| translateX (pct -50)
+                , width (px 220)
+                , height (px 220)
+                , bpMediumUp
+                    [ transform <| translate2 (pct -50) (pct -50)
+                    , maxHeight (px 700)
+                    , maxWidth (px 700)
+                    , height (vw 40)
+                    , width (vw 40)
+                    , top (pct 50)
+                    , left <| calc (pct 50) minus (vw 20)
+                    ]
                 ]
 
         media =
             content.cover.media
-                |> Debug.log "media"
                 |> Maybe.andThen
                     (\media ->
                         case media of
@@ -242,6 +263,7 @@ introCover content =
     in
     wrapper []
         [ media
+        , mobileImageWrapper [] [ imageDiv [ backgroundImg content.cover.mobileImage ] [] ]
         , textWrapper []
             [ title [] [ text "Uitgelicht" ]
             , richText content.cover.text

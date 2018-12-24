@@ -343,7 +343,7 @@ renderImage img =
             styled div
                 [ maxWidth (px 1080)
                 , padding2 zero (px 25)
-                , margin auto
+                , margin4 zero auto (px 35) auto
                 ]
 
         caption =
@@ -371,6 +371,7 @@ renderBackground img =
     div []
         [ image
             [ width (pct 100)
+            , margin4 zero auto (px 35) auto
             ]
             img
         ]
