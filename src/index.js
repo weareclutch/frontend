@@ -27,7 +27,10 @@ function debounce(func, wait, immediate) {
 
 app.ports.updateSlideshow.subscribe(function(data) {
   var direction = data[1]
-  var element = document.getElementById(data[0])
+
+  var element = window.innerWidth >= 780 ?
+    document.querySelector('.active-page .' + data[0]) :
+    document.querySelector('.mobile .' + data[0])
 
   if (!element) return false
 

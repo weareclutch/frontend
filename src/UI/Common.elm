@@ -282,7 +282,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
     in
     outerWrapper []
         [ wrapper
-            [ Html.Styled.Attributes.id id
+            [ Html.Styled.Attributes.class id
             ]
             [ wrapperInner []
                 (List.map
