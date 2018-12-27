@@ -325,9 +325,12 @@ column col =
                 [ position relative
                 , maxWidth (px 820)
                 , margin auto
-                , padding2 (px 40) (px 25)
                 , width (pct 100)
                 , color (hex col.theme.textColor)
+                , padding2 (px 80) (px 25)
+                , bpMedium
+                    [ padding2 (px 180) (px 40)
+                    ]
                 , bpLargeUp <|
                     [ position absolute
                     , left zero
