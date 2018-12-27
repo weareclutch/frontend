@@ -407,7 +407,6 @@ servicesPageDecoder =
 type ColumnBackground
     = CoverBackground Image
     | VideoBackground String
-    | ImageBackground { image : Image, backgroundImage : Maybe Image }
 
 
 decodeColumnBackground : D.Decoder ColumnBackground
@@ -421,12 +420,6 @@ decodeColumnBackground =
 
                     "video" ->
                         D.map VideoBackground (D.at [ "value", "url" ] D.string)
-
-                    "image" ->
-                        D.map2
-                            (\img bg -> ImageBackground { image = img, backgroundImage = bg })
-                            (D.at [ "value", "image" ] decodeImage)
-                            (D.maybe <| D.at [ "value", "background_image" ] decodeImage)
 
                     _ ->
                         D.fail "Unknow background type"

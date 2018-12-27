@@ -271,6 +271,8 @@ column col =
                 , paddingTop (pct 100)
                 , width (pct 100)
                 , backgroundSize2 (pct 100) auto
+                , backgroundPosition center
+                , backgroundSize cover
                 , bpLargeUp
                     [ position absolute
                     , height (pct 100)
@@ -297,45 +299,26 @@ column col =
 
         backgroundElement background =
             case background of
-                Wagtail.ImageBackground image ->
-                    Just <| imageWrapper [ backgroundImg image.image ] []
+                Wagtail.CoverBackground image ->
+                    imageWrapper [ backgroundImg image ] []
 
                 Wagtail.VideoBackground url ->
-                    Just <|
-                        videoWrapper
-                            []
-                            [ videoElement
-                                [ src url
-                                , autoplay True
-                                , loop True
-                                , attribute "muted" ""
-                                , attribute "playsinline" ""
-                                ]
-                                [ source
-                                    [ src url
-                                    ]
-                                    []
-                                ]
+                    videoWrapper
+                        []
+                        [ videoElement
+                            [ src url
+                            , autoplay True
+                            , loop True
+                            , attribute "muted" ""
+                            , attribute "playsinline" ""
                             ]
+                            [ source
+                                [ src url
+                                ]
+                                []
+                            ]
+                        ]
 
-                _ ->
-                    Nothing
-
-        attributes background =
-            case background of
-                Wagtail.CoverBackground url ->
-                    Just [ backgroundImg url ]
-
-                Wagtail.ImageBackground image ->
-                    case image.backgroundImage of
-                        Just url ->
-                            Just [ backgroundImg url ]
-
-                        _ ->
-                            Just []
-
-                _ ->
-                    Just []
 
         textWrapper =
             styled div
@@ -371,15 +354,13 @@ column col =
                            )
                 ]
     in
-    wrapper
-        (col.background
-            |> Maybe.andThen attributes
-            |> Maybe.withDefault []
-        )
+    wrapper []
         [ col.background
-            |> Maybe.andThen backgroundElement
-            |> Maybe.withDefault (text "")
-        , col.richText
-            |> Maybe.map (\html -> textWrapper [] [ richText html ])
-            |> Maybe.withDefault (text "")
+            |> Maybe.map backgroundElement
+            |> Maybe.withDefault
+                (col.richText
+                    |> Maybe.map (\html -> textWrapper [] [ richText html ])
+                    |> Maybe.withDefault (text "")
+                )
         ]
+

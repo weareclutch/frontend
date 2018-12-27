@@ -297,10 +297,14 @@ intro content =
                     [ description [] [ text "Periode" ]
                     , div [] [ text "Jan 2018" ]
                     ]
-                , metaSection []
-                    [ description [] [ text "Bekijken" ]
-                    , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
-                    ]
+                , if content.info.websiteUrl /= "" then
+                    ( metaSection []
+                        [ description [] [ text "Bekijken" ]
+                        , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
+                        ]
+                    ) 
+                else
+                    text ""
                 ]
             ]
         ]
