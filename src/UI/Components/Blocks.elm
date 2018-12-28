@@ -329,12 +329,12 @@ column col =
                 , color (hex col.theme.textColor)
                 , padding2 (px 80) (px 25)
                 , bpMedium
-                    [ padding2 (px 180) (px 40)
+                    [ padding2 (px 180) (px 80)
                     ]
                 , bpLargeUp <|
                     [ position absolute
                     , left zero
-                    , padding2 (px 80) (px 40)
+                    , padding2 (px 80) (px 110)
                     , zIndex (int 100)
                     ]
                         ++ (col.theme.backgroundPosition

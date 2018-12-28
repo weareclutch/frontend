@@ -257,20 +257,33 @@ post content =
                 [ backgroundColor (hex "292A32")
                 ]
 
+        intro =
+            styled div
+                [ marginBottom (px 50)
+                , bpMedium
+                    [ marginBottom (px 100)
+                    ]
+                , bpLargeUp
+                    [ marginBottom (px 160)
+                    ]
+                ]
+
     in
         wrapper []
             [ container []
                 [ innerWrapper []
                     [ siteMargins [] 
-                        [ title [] [ text content.title ]
-                        , p []
-                            [ strong []
-                                [ text
-                                    <| (toString content.readingTime)
-                                    ++ " minuten leestijd"
+                        [ intro []
+                            [ title [] [ text content.title ]
+                            , p []
+                                [ strong []
+                                    [ text
+                                        <| (toString content.readingTime)
+                                        ++ " minuten leestijd"
+                                    ]
                                 ]
+                            , p [ class "intro" ] [ text content.intro ]
                             ]
-                        , p [ class "intro" ] [ text content.intro ]
                         ]
                     , content.body
                         |> Maybe.map renderPostBlocks
@@ -343,13 +356,19 @@ renderImage img =
             styled div
                 [ maxWidth (px 1080)
                 , padding2 zero (px 25)
-                , margin4 zero auto (px 35) auto
+                , margin4 zero auto (px 48) auto
+                , bpMediumUp
+                    [ margin4 zero auto (px 80) auto
+                    ]
                 ]
 
         caption =
             styled p
                 [ color (hex "BBBBBB")
                 , marginTop (px 10)
+                , maxWidth (px 850)
+                , padding2 (px 5) (px 25)
+                , margin auto
                 ]
     in
         wrapper []
@@ -371,7 +390,10 @@ renderBackground img =
     div []
         [ image
             [ width (pct 100)
-            , margin4 zero auto (px 35) auto
+            , margin4 zero auto (px 48) auto
+            , bpMediumUp
+                [ margin4 zero auto (px 80) auto
+                ]
             ]
             img
         ]
@@ -383,8 +405,11 @@ renderContent text =
         wrapper =
             styled div
                 [ maxWidth (px 850)
-                , margin auto
                 , padding2 zero (px 25)
+                , margin4 zero auto (px 48) auto
+                , bpMediumUp
+                    [ margin4 zero auto (px 80) auto
+                    ]
                 ]
 
     in
