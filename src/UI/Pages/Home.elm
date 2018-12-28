@@ -49,7 +49,9 @@ view content =
                     ]
                 , nthChild "odd"
                     [ position relative
-                    , top (px -120)
+                    , bpMediumUp
+                        [ top (px -120)
+                        ]
                     ]
                 , nthChild "even"
                     [ bpMediumUp
@@ -71,10 +73,10 @@ view content =
         casesOuterWrapper =
             styled div
                 [ backgroundColor (hex "292A32")
+                , padding4 (px 240) zero zero zero
                 , marginBottom (px -50)
-                , paddingTop (px 240)
                 , bpMediumUp
-                    [ paddingTop (px 240)
+                    [ padding2 (px 240) zero
                     , margin zero
                     ]
                 ]
@@ -125,8 +127,8 @@ introCover content =
                     , zIndex (int 20)
                     , backgroundImage
                         <| linearGradient
-                            (stop (hex "292A32"))
                             (stop (rgba 0 0 0 0.0))
+                            (stop (hex content.theme.backgroundColor))
                             []
                     ]
                 ]
@@ -155,19 +157,25 @@ introCover content =
                 , bpMediumUp
                     [ position absolute
                     , transform (translateY (pct -50))
-                    , padding zero
                     , top (pct 50)
                     , bottom auto
                     , textAlign left
-                    , maxWidth (px 560)
                     , left (pct 50)
+                    ]
+                , bpMedium
+                    [ padding4 zero (px 40) zero zero
+                    , maxWidth (vw 40)
+                    ]
+                , bpLargeUp
+                    [ padding4 zero (px 120) zero zero
+                    , maxWidth (px 620)
                     ]
                 ]
 
         mediaWrapper =
             styled div
                 [ overflow hidden
-                , height <| calc (vh 100) plus (px 230)
+                , height (vh 100)
                 , width (vw 100)
                 , position absolute
                 , bottom zero
@@ -213,11 +221,11 @@ introCover content =
                 [ position absolute
                 , backgroundSize cover
                 , backgroundPosition center
-                , top (px 140)
+                , top (pct 30)
                 , left (pct 50)
-                , transform <| translateX (pct -50)
-                , width (px 220)
-                , height (px 220)
+                , transform <| translate2 (pct -50) (pct -50)
+                , width (px 320)
+                , height (px 320)
                 , bpMediumUp
                     [ transform <| translate2 (pct -50) (pct -50)
                     , maxHeight (px 700)
@@ -225,7 +233,12 @@ introCover content =
                     , height (vw 40)
                     , width (vw 40)
                     , top (pct 50)
-                    , left <| calc (pct 50) minus (vw 20)
+                    ]
+                , bpMedium
+                    [ left <| calc (pct 50) minus (px 180)
+                    ]
+                , bpLargeUp
+                    [ left <| calc (pct 50) minus (px 300)
                     ]
                 ]
 

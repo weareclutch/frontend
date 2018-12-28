@@ -250,9 +250,14 @@ wrapper active children =
                 [ position absolute
                 , width (pct 300)
                 , height (pct 300)
-                , left <| calc (pct -100) minus (px 300)
                 , top (pct -100)
                 , zIndex (int 500)
+                , bpMedium
+                    [ left <| calc (pct -100) minus (px 180)
+                    ]
+                , bpLargeUp
+                    [ left <| calc (pct -100) minus (px 300)
+                    ]
                 ]
 
         tagLine =

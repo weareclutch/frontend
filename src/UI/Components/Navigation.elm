@@ -176,7 +176,7 @@ view navigationTree navigationState route contactInformation =
             styled ul
                 [ listStyle none
                 , zIndex (int 100)
-                , padding4 (px 100) (px 25) (px 20) (px 25)
+                , padding4 (px 120) (px 25) (px 20) (px 25)
                 , textAlign center
                 , width (vw 100)
                 , position relative

@@ -23,6 +23,10 @@ getPageCommands page =
             [ Ports.playVideos ()
             ]
 
+        Wagtail.BlogPostPage _ ->
+            [ Ports.changeMenuState "BURGERARROW"
+            ]
+
         Wagtail.AboutUsPage _ ->
             [ Ports.bindAboutUs ()
             , Ports.pauseAllVideos ()

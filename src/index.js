@@ -164,7 +164,6 @@ fetch('/animation/animations.json')
   .then(function(json) {
     animationData = json
 
-    // set burger animation
     setupAnimation(['burger-animation', 'burger'])
   })
 
@@ -177,9 +176,10 @@ app.ports.setupNavigation.subscribe(function() {
 
 
 var lastBurgerAnimation = null
-app.ports.changeMenuState.subscribe(function(state) {
+function changeMenuState(state) {
   if (!animations['burger-animation']
       || lastBurgerAnimation === state) {
+
     return false
   }
 
@@ -198,7 +198,8 @@ app.ports.changeMenuState.subscribe(function(state) {
     animations['burger-animation'].playSegments([[410, 490]]) // cross -> burger
     window.setTimeout(function() { stopAnimation('burger-animation', 140) }, 600)
   }
-})
+}
+app.ports.changeMenuState.subscribe(changeMenuState)
 
 
 function setupAnimation(data, autoplay) {
