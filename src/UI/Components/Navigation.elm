@@ -273,20 +273,20 @@ view navigationTree navigationState route contactInformation =
                     , cursor pointer
                     , position absolute
                     , top (px 24)
-                    , left (px 70)
+                    , left (px 80)
                     , bpMediumUp
                         [ display inlineBlock
                         ]
                     , bpMedium
-                        [ left (px 100)
+                        [ left (px 110)
                         , top (px 38)
                         ]
                     , bpLarge
-                        [ left (px 100)
+                        [ left (px 110)
                         , top (px 38)
                         ]
                     , bpXLargeUp
-                        [ left (px 160)
+                        [ left (px 170)
                         , top (px 80)
                         ]
                     ]

@@ -135,7 +135,7 @@ introCover content =
 
         title =
             styled div
-                [ marginBottom (px 6)
+                [ marginBottom (px 20)
                 , display none
                 , bpMediumUp
                     [ display block
@@ -278,7 +278,7 @@ introCover content =
         [ media
         , mobileImageWrapper [] [ imageDiv [ backgroundImg content.cover.mobileImage ] [] ]
         , textWrapper []
-            [ title [] [ text "Uitgelicht" ]
+            [ title [ class "tags" ] [ text "Uitgelicht" ]
             , richText content.cover.text
             , UI.Common.link content.cover.link
                 [ UI.Common.button content.theme [] (Just "lees blog")
