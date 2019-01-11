@@ -9,6 +9,7 @@ import UI.Common exposing (link, backgroundImg, button, siteMargins, container)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
+import Regex
 
 
 view : Wagtail.HomePageContent -> Html Msg
@@ -242,6 +243,34 @@ introCover content =
                     ]
                 ]
 
+        gifDiv =
+            \imageUrl ->
+                styled div
+                    [ position absolute
+                    , backgroundSize cover
+                    , backgroundPosition center
+                    , backgroundImage (url imageUrl)
+                    , top (pct 30)
+                    , left (pct 50)
+                    , transform <| translate2 (pct -50) (pct -50)
+                    , width (px 320)
+                    , height (px 320)
+                    , bpMediumUp
+                        [ transform <| translate2 (pct -50) (pct -50)
+                        , maxHeight (px 700)
+                        , maxWidth (px 700)
+                        , height (vw 40)
+                        , width (vw 40)
+                        , top (pct 50)
+                        ]
+                    , bpMedium
+                        [ left <| calc (pct 50) minus (px 180)
+                        ]
+                    , bpLargeUp
+                        [ left <| calc (pct 50) minus (px 300)
+                        ]
+                    ]
+
         media =
             content.cover.media
                 |> Maybe.andThen
@@ -251,20 +280,23 @@ introCover content =
                                 Just <| imageDiv [ backgroundImg img ] []
 
                             Wagtail.VideoMedia url ->
-                                Just <| videoDiv []
-                                    [ videoEl
-                                        [ src url
-                                        , autoplay True
-                                        , loop True
-                                        , attribute "muted" ""
-                                        , attribute "playsinline" ""
-                                        ]
-                                        [ source
+                                if (Regex.contains (Regex.regex "gif$") url) then
+                                    Just <| gifDiv url [] []
+                                else
+                                    Just <| videoDiv []
+                                        [ videoEl
                                             [ src url
+                                            , autoplay True
+                                            , loop True
+                                            , attribute "muted" ""
+                                            , attribute "playsinline" ""
                                             ]
-                                            []
+                                            [ source
+                                                [ src url
+                                                ]
+                                                []
+                                            ]
                                         ]
-                                    ]
 
                             _ ->
                                 Nothing
