@@ -1,5 +1,10 @@
 # Frontend
 
+## setup
+```
+$ yarn
+$ cp .env.example .env
+```
 
 ## development
 ```
