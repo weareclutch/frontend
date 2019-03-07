@@ -101,6 +101,10 @@ servicesBlock isMobile (activeIndex, services) =
                     ]
                 ]
 
+        innerWrapper =
+            styled div
+                [ displayFlex
+                ]
 
         navigation =
             styled div
@@ -208,9 +212,10 @@ servicesBlock isMobile (activeIndex, services) =
 
 
     in
-        wrapper []
-            [ container []
-                [ siteMargins []
+    wrapper []
+        [ container []
+            [ siteMargins []
+                [ innerWrapper []
                     [ navigation []
                         [ title [] [ text "wat we doen" ]
                         , navigationItems []
