@@ -25,6 +25,7 @@ view content =
             styled div
                 [ marginBottom (px 25)
                 , position relative
+                , textAlign left
                 , zIndex (int 80)
                 , bpMedium
                     [ marginBottom (px 25)
@@ -48,16 +49,17 @@ view content =
                 , bpXLargeUp
                     [ width <| calc (pct 50) minus (px 60)
                     ]
+                , nthChild "even"
+                    [ position relative
+                    , bpMediumUp
+                        [ display inlineBlock
+                        ]
+                    ]
                 , nthChild "odd"
                     [ position relative
                     , bpMediumUp
-                        [ top (px -120)
-                        ]
-                    ]
-                , nthChild "even"
-                    [ bpMediumUp
                         [ position absolute
-                        , right zero
+                        , left zero
                         ]
                     , bpMedium
                         [ top (px 50)
@@ -75,6 +77,7 @@ view content =
             styled div
                 [ backgroundColor (hex "292A32")
                 , padding4 (px 240) zero zero zero
+                , textAlign right
                 , marginBottom (px -50)
                 , bpMediumUp
                     [ padding2 (px 240) zero
@@ -86,14 +89,14 @@ view content =
         [ casesOuterWrapper []
             [ container []
                 [ siteMargins []
-                    [ evenCases
+                    [ oddCases
                         |> List.map Tuple.second
                         |> List.map
                             (\x ->
                                 caseWrapper [] [ UI.Components.CasePoster.view x ]
                             )
                         |> casesWrapper []
-                    , oddCases
+                    , evenCases
                         |> List.map Tuple.second
                         |> List.map
                             (\x ->
@@ -117,6 +120,15 @@ introCover content =
                 , backgroundColor (hex content.theme.backgroundColor)
                 , position relative
                 , zIndex (int 5)
+                , bpMedium
+                    [ marginTop (px -300)
+                    ]
+                , bpLarge
+                    [ marginTop (px -340)
+                    ]
+                , bpXLargeUp
+                    [ marginTop (px -400)
+                    ]
                 , before
                     [ property "content" "''"
                     , display block
