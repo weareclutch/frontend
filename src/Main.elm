@@ -13,16 +13,11 @@ import UI.State exposing (fetchContactInformation, fetchNavigation)
 import UI.Wrapper
 
 
-view : Types.Model -> Html msg
-view model =
-    h1 [] [ text "foobar" ]
-
-
 main : Program Types.Flags Types.Model Msg
 main =
     Browser.application
         { init = init
-        , view = \model -> { title = "foo", body = [UI.Wrapper.view model |> toUnstyled ] }
+        , view = \model -> { title = "clutch - make more to love", body = [UI.Wrapper.view model |> toUnstyled ] }
         , update = update
         , subscriptions = \_ -> Sub.none
         , onUrlChange = \url -> UrlChanged url
