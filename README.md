@@ -2,16 +2,16 @@
 
 ## setup
 ```
-$ yarn
+$ npm i
 $ cp .env.example .env
 ```
 
 ## development
 ```
-$ yarn start
+$ npm start
 ```
 
 ## build
 ```
-$ yarn build
+$ npm build
 ```
