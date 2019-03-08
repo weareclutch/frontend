@@ -1,12 +1,11 @@
 module UI.Common exposing
-    ( addLink
-    , backgroundImg
+    ( backgroundImg
     , button
     , container
     , image
-    , link
     , siteMargins
     , slideshow
+    , nonAnchorLink
     )
 
 import Css exposing (..)
@@ -20,14 +19,9 @@ import Types exposing (..)
 import Wagtail exposing (Image, Theme)
 
 
-addLink : String -> List (Attribute Msg)
-addLink url =
-    [ href url ]
-
-
-link : String -> List (Html Msg) -> Html Msg
-link url children =
-    a (addLink url) children
+nonAnchorLink : String -> Attribute Msg
+nonAnchorLink url =
+    onClick <| NavigateToUrl url
 
 
 image : List Style -> Image -> Html msg

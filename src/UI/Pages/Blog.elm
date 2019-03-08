@@ -2,10 +2,10 @@ module UI.Pages.Blog exposing (collection, overview, post)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, href)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (container, image, addLink, backgroundImg, siteMargins, slideshow)
+import UI.Common exposing (container, image, backgroundImg, siteMargins, slideshow)
 import UI.Components.Blocks exposing (richText)
 import Wagtail
 
@@ -14,7 +14,7 @@ seriesPreview : Wagtail.BlogSeriesPreview -> Html Msg
 seriesPreview preview =
     let
         outerWrapper =
-            styled div
+            styled a
                 [ position relative
                 , cursor pointer
                 , marginRight (px 40)
@@ -39,10 +39,9 @@ seriesPreview preview =
 
     in
         outerWrapper
-            (
-                backgroundImg preview.image
-                :: (addLink preview.slug)
-            )
+            [ backgroundImg preview.image
+            , href preview.slug
+            ]
             [ wrapper []
                 [ content []
                     [ h3 [] [ text preview.title ]
@@ -61,7 +60,7 @@ postPreview : Wagtail.BlogPostPreview -> Html Msg
 postPreview preview =
     let
         wrapper =
-            styled div
+            styled a
                 [ width (pct 100)
                 , maxWidth (px 1360)
                 , position relative
@@ -119,7 +118,7 @@ postPreview preview =
 
     in
     wrapper
-        (addLink preview.slug)
+        [ href preview.slug ]
         [ img [ backgroundImg preview.image ] []
         , content []
             [ h3 [] [ text preview.title ]

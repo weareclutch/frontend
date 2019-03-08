@@ -9,8 +9,8 @@ import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import Style exposing (..)
 import Types exposing (..)
-import UI.Common exposing (addLink)
 import UI.State exposing (..)
+import UI.Common exposing (nonAnchorLink)
 import Wagtail exposing (..)
 
 
@@ -48,18 +48,22 @@ view navigationTree navigationState route contactInformation =
                 _ ->
                     case route of
                         WagtailRoute _ (Wagtail.CasePage _) ->
-                            addLink "/"
+                            [ nonAnchorLink "/"
+                            ]
 
                         WagtailRoute _ (Wagtail.BlogPostPage content) ->
                             case content.series of
                                 Just _ ->
-                                    addLink "../../"
+                                    [ nonAnchorLink "../../"
+                                    ]
 
                                 Nothing ->
-                                    addLink "../"
+                                    [ nonAnchorLink "../"
+                                    ]
 
                         WagtailRoute _ (Wagtail.BlogCollectionPage _) ->
-                            addLink "../"
+                            [ nonAnchorLink "../"
+                            ]
 
                         _ ->
                             []
@@ -152,7 +156,7 @@ view navigationTree navigationState route contactInformation =
                 ]
 
         logoWrapper =
-            styled div
+            styled a
                 [ position absolute
                 , zIndex (int 110)
                 , cursor pointer
@@ -173,7 +177,7 @@ view navigationTree navigationState route contactInformation =
                 ]
 
         menuWrapper =
-            styled ul
+            styled div
                 [ listStyle none
                 , zIndex (int 100)
                 , padding4 (px 120) (px 25) (px 20) (px 25)
@@ -199,7 +203,7 @@ view navigationTree navigationState route contactInformation =
 
         menuItem =
             \active hoverActive ->
-                styled li
+                styled a
                     [ width (pct 100)
                     , textAlign center
                     , display block
@@ -346,11 +350,10 @@ view navigationTree navigationState route contactInformation =
                                     _ ->
                                         False
                                 )
-                                ([ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
-                                 , class "nav"
-                                 ]
-                                    ++ addLink item.path
-                                )
+                                [ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
+                                , class "nav"
+                                , href item.path
+                                ]
                                 [ text item.title ]
                         )
                 )
@@ -401,7 +404,7 @@ view navigationTree navigationState route contactInformation =
                     text "blog"
             ]
 
-        , logoWrapper (addLink "/")
+        , logoWrapper [ href "/" ]
             [ logo <|
                 case navigationState of
                     Closed ->

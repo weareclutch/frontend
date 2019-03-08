@@ -14,6 +14,7 @@ import UI.State
 type Msg
     = UrlChanged Url.Url
     | LinkClicked Browser.UrlRequest
+    | NavigateToUrl String
     | WagtailMsg Wagtail.Msg
     | NavigationMsg UI.State.Msg
     | UpdateSlideshow String Direction

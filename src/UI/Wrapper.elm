@@ -139,6 +139,10 @@ globalStyle =
                 , letterSpacing (px 2)
                 ]
             ]
+        , selector "a"
+            [ textDecoration none
+            , color inherit
+            ]
         , selector "p"
             [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin4 zero zero (px 32) zero

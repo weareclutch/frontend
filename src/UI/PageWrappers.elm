@@ -2,11 +2,11 @@ module UI.PageWrappers exposing (createTransform, desktopView, mobileView, navig
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class)
+import Html.Styled.Attributes exposing (class, href)
 import Html.Styled.Events exposing (..)
 import Style exposing (..)
 import Types exposing (Msg(..), Route(..))
-import UI.Common exposing (addLink)
+import UI.Common exposing (nonAnchorLink)
 import UI.Pages.Blog
 import UI.Pages.Case
 import UI.Pages.Home
@@ -326,7 +326,7 @@ navigationPage navState index navItem active =
                             [ cursor pointer
                             , overflowY hidden
                             ]
-                       )
+                        )
                     ++ (if not active && navState == Closed then
                             [ visibility hidden
                             , opacity zero
@@ -336,7 +336,7 @@ navigationPage navState index navItem active =
                             [ visibility visible
                             , opacity (int 1)
                             ]
-                       )
+                        )
                     ++ transformStyle
 
         defaultAttributes =
@@ -352,8 +352,8 @@ navigationPage navState index navItem active =
         attributes =
             if navState /= Closed then
                 [ onMouseOver (NavigationMsg <| UI.State.ChangeNavigation <| Open index)
+                , nonAnchorLink navItem.path
                 ]
-                    ++ addLink navItem.path
                     ++ defaultAttributes
 
             else

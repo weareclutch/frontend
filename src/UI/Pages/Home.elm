@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, class, href, id, src, autoplay, loop)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (link, backgroundImg, button, siteMargins, container)
+import UI.Common exposing (backgroundImg, button, siteMargins, container)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
@@ -312,7 +312,7 @@ introCover content =
         , textWrapper []
             [ title [ class "tags" ] [ text "Uitgelicht" ]
             , richText content.cover.text
-            , UI.Common.link content.cover.link
+            , a [ href content.cover.link ]
                 [ UI.Common.button content.theme [] (Just "lees blog")
                 ]
             ]

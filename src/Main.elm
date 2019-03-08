@@ -138,6 +138,11 @@ update msg model =
                     , Browser.Navigation.load url
                     )
 
+        NavigateToUrl url ->
+            ( model
+            , Browser.Navigation.pushUrl model.key url
+            )
+
         UpdateSlideshow id direction ->
             ( model
             , Ports.updateSlideshow

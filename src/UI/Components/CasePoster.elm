@@ -5,7 +5,7 @@ import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (href)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (addLink, backgroundImg)
+import UI.Common exposing (backgroundImg)
 import Wagtail
 
 
@@ -105,7 +105,6 @@ view casePreview =
     wrapper
         ( [ href casePreview.url ]
         ++ wrapperAttributes
-        ++ addLink casePreview.url
         )
         [ titleWrapper []
             [ caption [] [ text casePreview.caption ]
