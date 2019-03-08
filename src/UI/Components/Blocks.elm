@@ -7,6 +7,7 @@ import Json.Encode
 import Style exposing (..)
 import UI.Common exposing (backgroundImg, image)
 import Wagtail exposing (Block(..), Column, Image, Quote, Theme)
+import Json.Encode as Encode
 
 
 streamfield : List Block -> Html msg
@@ -46,10 +47,12 @@ streamfield blockData =
 
 richText : String -> Html msg
 richText string =
-    div
-        [ Html.Styled.Attributes.property "innerHTML" (Json.Encode.string string)
-        ]
-        []
+  node "cms-html"
+    [ Html.Styled.Attributes.property
+      "content"
+      (Encode.string string)
+    ]
+    []
 
 
 quote : Quote -> Html msg

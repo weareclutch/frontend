@@ -1,5 +1,25 @@
 'use strict';
 
+customElements.define(
+  "cms-html",
+  class RenderedHtml extends HTMLElement {
+    constructor() {
+      super()
+      this._content = ""
+    }
+
+    set content(value) {
+      if (this._content === value) return
+      this._content = value
+      this.innerHTML = value
+    }
+
+    get content() {
+      return this._content
+    }
+  }
+)
+
 var { Elm } = require('./Main.elm');
 var mountNode = document.getElementById('elm-app');
 
