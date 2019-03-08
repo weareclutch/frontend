@@ -48,7 +48,7 @@ seriesPreview preview =
                     [ h3 [] [ text preview.title ]
                     , p []
                         [ text
-                            <| (toString preview.seriesSize)
+                            <| (String.fromInt preview.seriesSize)
                             ++ " artikelen"
                         ]
                     ]
@@ -125,7 +125,7 @@ postPreview preview =
             [ h3 [] [ text preview.title ]
             , time [ class "tags" ]
                 [ text
-                    <| toString preview.readingTime
+                    <| String.fromInt preview.readingTime
                     ++ " minuten"
                 ]
             , intro [] [ richText preview.intro ]
@@ -278,7 +278,7 @@ post content =
                             , p []
                                 [ strong []
                                     [ text
-                                        <| (toString content.readingTime)
+                                        <| (String.fromInt content.readingTime)
                                         ++ " minuten leestijd"
                                     ]
                                 ]

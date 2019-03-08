@@ -1,66 +1,8 @@
-module Wagtail exposing
-    ( AboutUsContent
-    , Block(..)
-    , BlogCollectionContent
-    , BlogOverviewContent
-    , BlogPostContent
-    , BlogPostPreview
-    , BlogPostSeries
-    , BlogSeriesPreview
-    , CasePageContent
-    , CasePreview
-    , Column
-    , ColumnBackground(..)
-    , Expertise
-    , HomePageContent
-    , Image
-    , Media(..)
-    , Msg(..)
-    , Page(..)
-    , Person
-    , Quote
-    , Service
-    , ServicesContent
-    , Theme
-    , Topic
-    , WagtailMetaContent
-    , aboutUsPageDecoder
-    , blogCollectionPageDecoder
-    , blogOverviewPageDecoder
-    , blogPostPageDecoder
-    , blogPostPreviewDecoder
-    , blogSeriesPreviewDecoder
-    , casePageDecoder
-    , dateDecoder
-    , decodeBackgroundBlock
-    , decodeBlocks
-    , decodeCasePreview
-    , decodeColumn
-    , decodeColumnBackground
-    , decodeColumns
-    , decodeContentBlock
-    , decodeImage
-    , decodeImageBlock
-    , decodeMedia
-    , decodePageType
-    , decodeQuote
-    , decodeTheme
-    , findPageUrl
-    , getPageDecoder
-    , getPageId
-    , getPageTheme
-    , getWagtailPage
-    , homePageDecoder
-    , metaDecoder
-    , preloadWagtailPage
-    , servicesPageDecoder
-    )
+module Wagtail exposing (..)
 
-import Date exposing (Date)
 import Http exposing (..)
 import Json.Decode as D
-import Navigation
-
+import Url
 
 findPageUrl : String -> String -> String
 findPageUrl apiUrl pathname =
@@ -125,22 +67,24 @@ getPageTheme page =
             }
 
 
-getWagtailPage : String -> Navigation.Location -> Cmd Msg
-getWagtailPage apiUrl location =
+getWagtailPage : String -> Url.Url -> Cmd Msg
+getWagtailPage apiUrl url =
     Http.request
         { method = "GET"
         , headers = [ header "Accept" "application/json" ]
-        , url = findPageUrl apiUrl location.pathname
+        , url = findPageUrl apiUrl url.path
         , body = Http.emptyBody
         , expect =
             expectStringResponse
                 (\r ->
-                    D.decodeString
-                        (decodePageType
-                            |> D.andThen getPageDecoder
-                            |> D.map (\page -> ( r, page ))
-                        )
-                        r.body
+                  (D.decodeString
+                      (decodePageType
+                          |> D.andThen getPageDecoder
+                          |> D.map (\page -> ( r, page ))
+                      )
+                      r.body
+                  )
+                    |> Result.mapError (\err -> "Decoding of page failed")
                 )
         , timeout = Nothing
         , withCredentials = False
@@ -201,10 +145,13 @@ getPageDecoder pageType =
             D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
 
 
-dateDecoder : D.Decoder Date
+
+dateDecoder : D.Decoder String
 dateDecoder =
     D.string
-        |> D.andThen (\s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
+    -- @TODO parse the Date properly, using something 0.19-ish
+    -- D.string
+    --     |> D.andThen (\s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
 
 
 type alias WagtailMetaContent =
@@ -212,7 +159,7 @@ type alias WagtailMetaContent =
     , title : String
     , type_ : String
     , slug : String
-    , published : Date
+    , published : String
     , seoTitle : String
     }
 
@@ -715,7 +662,8 @@ decodeTheme =
             ]
         )
         (D.maybe <|
-            D.map2 (,)
+            D.map2
+                (\x y -> (x, y))
                 (D.oneOf
                     [ D.field "background_position_x" D.string
                     , D.field "position" D.string

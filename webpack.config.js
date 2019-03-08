@@ -23,7 +23,6 @@ module.exports = {
         loader:  'elm-webpack-loader',
         options: {
           verbose: true,
-          warn: true
         }
       },
     ],

@@ -1,7 +1,7 @@
 module UI.Wrapper exposing (view)
 
 import Css exposing (..)
-import Css.Foreign exposing (global, selector)
+import Css.Global exposing (global, selector)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (id)
 import Style exposing (..)

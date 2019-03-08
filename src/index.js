@@ -1,10 +1,13 @@
 'use strict';
 
-var Elm = require('./Main.elm');
+var { Elm } = require('./Main.elm');
 var mountNode = document.getElementById('elm-app');
 
-var app = Elm.Main.embed(mountNode, {
-  apiUrl: process.env.API_URL
+var app = Elm.Main.init({
+  node: mountNode,
+  flags: {
+    apiUrl: process.env.API_URL
+  }
 })
 
 window.app = app

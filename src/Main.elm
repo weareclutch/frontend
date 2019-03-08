@@ -1,15 +1,91 @@
-module Main exposing (fetchSiteDependentResources, getAndDecodePage, init, main, subscriptions, update)
+module Main exposing (..)
 
+import Browser
+import Browser.Navigation
+import Url
+import Http
 import Dict
 import Html.Styled exposing (..)
-import Http
-import Navigation exposing (Location)
 import Ports
-import Types exposing (..)
+import Types exposing (Msg(..))
+import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 import UI.State exposing (fetchContactInformation, fetchNavigation)
 import UI.Wrapper
-import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 
+
+view : Types.Model -> Html msg
+view model =
+    h1 [] [ text "foobar" ]
+
+
+main : Program Types.Flags Types.Model Msg
+main =
+    Browser.application
+        { init = init
+        , view = \model -> { title = "foo", body = [UI.Wrapper.view model |> toUnstyled ] }
+        , update = update
+        , subscriptions = \_ -> Sub.none
+        , onUrlChange = \url -> UrlChanged url
+        , onUrlRequest = LinkClicked
+        }
+
+
+init : Types.Flags -> Url.Url -> Browser.Navigation.Key -> ( Types.Model, Cmd Msg )
+init flags url key =
+    let
+        defaultCommands =
+            [ getAndDecodePage flags.apiUrl url
+            ]
+
+        commands =
+            case url.path of
+                "/" ->
+                    Ports.playIntroAnimation () :: defaultCommands
+
+                _ ->
+                    defaultCommands
+    in
+    ( Types.initModel flags key, Cmd.batch commands )
+
+fetchSiteDependentResources : String -> Types.Route -> Maybe String -> Cmd Msg
+fetchSiteDependentResources apiUrl previousRoute currentIdentifier =
+    let
+        previousIdentifier =
+            case previousRoute of
+                Types.WagtailRoute identifier _ ->
+                    identifier
+
+                Types.NotFoundRoute identifier ->
+                    identifier
+
+                _ ->
+                    Nothing
+
+        fetchResourcesForSite id =
+            Cmd.batch
+                [ fetchNavigation apiUrl id
+                , fetchContactInformation apiUrl id
+                ]
+                |> Cmd.map NavigationMsg
+    in
+    case ( previousIdentifier, currentIdentifier ) of
+        ( _, Nothing ) ->
+            Cmd.none
+
+        ( Nothing, Just id ) ->
+            fetchResourcesForSite id
+
+        ( Just prevId, Just id ) ->
+            if prevId == id then
+                Cmd.none
+
+            else
+                fetchResourcesForSite id
+
+getAndDecodePage : String -> Url.Url -> Cmd Msg
+getAndDecodePage apiUrl url =
+    getWagtailPage apiUrl url
+        |> Cmd.map (\cmd -> WagtailMsg cmd)
 
 getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
@@ -44,84 +120,38 @@ getPageCommands page =
             ]
 
 
-getAndDecodePage : String -> Location -> Cmd Msg
-getAndDecodePage apiUrl location =
-    getWagtailPage apiUrl location
-        |> Cmd.map (\cmd -> WagtailMsg cmd)
-
-
-fetchSiteDependentResources : String -> Route -> Maybe String -> Cmd Msg
-fetchSiteDependentResources apiUrl previousRoute currentIdentifier =
-    let
-        previousIdentifier =
-            case previousRoute of
-                WagtailRoute identifier _ ->
-                    identifier
-
-                NotFoundRoute identifier ->
-                    identifier
-
-                _ ->
-                    Nothing
-
-        fetchResourcesForSite id =
-            Cmd.batch
-                [ fetchNavigation apiUrl id
-                , fetchContactInformation apiUrl id
-                ]
-                |> Cmd.map NavigationMsg
-    in
-    case ( previousIdentifier, currentIdentifier ) of
-        ( _, Nothing ) ->
-            Cmd.none
-
-        ( Nothing, Just id ) ->
-            fetchResourcesForSite id
-
-        ( Just prevId, Just id ) ->
-            if prevId == id then
-                Cmd.none
-
-            else
-                fetchResourcesForSite id
-
-
-init : Flags -> Location -> ( Model, Cmd Msg )
-init flags location =
-    let
-        defaultCommands =
-            [ getAndDecodePage flags.apiUrl location
-            ]
-
-        commands =
-            case location.pathname of
-                "/" ->
-                    Ports.playIntroAnimation () :: defaultCommands
-
-                _ ->
-                    defaultCommands
-    in
-    ( initModel flags, Cmd.batch commands )
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Types.Model -> ( Types.Model, Cmd Msg )
 update msg model =
-    -- let
-    --     debugger =
-    --         Debug.log "msg" msg
-    -- in
     case msg of
-        OnLocationChange location ->
-            ( model, getAndDecodePage model.flags.apiUrl location )
+        UrlChanged url ->
+            ( model, getAndDecodePage model.flags.apiUrl url )
 
-        ChangeLocation path ->
-            ( model, Navigation.newUrl path )
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model
+                    , Browser.Navigation.pushUrl model.key (Url.toString url)
+                    )
+
+                Browser.External url ->
+                    ( model
+                    , Browser.Navigation.load url
+                    )
 
         UpdateSlideshow id direction ->
-            ( model, Ports.updateSlideshow ( id, toString direction ) )
+            ( model
+            , Ports.updateSlideshow
+                ( id
+                , case direction of
+                      Types.Left ->
+                          "Left"
+                      Types.Right ->
+                          "Right"
+                )
+            )
 
-        WagtailMsg msg ->
-            case msg of
+        WagtailMsg wagtailMsg ->
+            case wagtailMsg of
                 Wagtail.PreloadPage (Ok page) ->
                     ( { model
                         | navigationTree =
@@ -132,12 +162,12 @@ update msg model =
                     )
 
                 Wagtail.PreloadPage (Err error) ->
-                    Debug.log (toString error)
-                        ( { model | route = NotFoundRoute Nothing }, Cmd.none )
+                    Debug.log "preloading page failed"
+                        ( { model | route = Types.NotFoundRoute Nothing }, Cmd.none )
 
                 Wagtail.LoadPage (Ok ( response, page )) ->
                     let
-                        ( navigationTree, overlayState ) =
+                        ( newNavigationTree, newOverlayState ) =
                             case model.navigationTree of
                                 Nothing ->
                                     ( model.navigationTree, model.overlayState )
@@ -159,7 +189,7 @@ update msg model =
                                     ( Just navTree, overlayState )
 
                         menuAction =
-                            case ( Debug.log "navstate" model.navigationState, overlayState.active ) of
+                            case ( Debug.log "navstate" model.navigationState, newOverlayState.active ) of
                                 ( UI.State.Open _, _ ) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
@@ -183,9 +213,9 @@ update msg model =
                                 ++ getPageCommands page
                     in
                     ( { model
-                        | route = WagtailRoute siteIdentifier page
-                        , overlayState = overlayState
-                        , navigationTree = navigationTree
+                        | route = Types.WagtailRoute siteIdentifier page
+                        , overlayState = newOverlayState
+                        , navigationTree = newNavigationTree
                         , navigationState = UI.State.Closed
                       }
                     , Cmd.batch commands
@@ -197,17 +227,17 @@ update msg model =
                             case error of
                                 Http.BadStatus response ->
                                     if response.status.code == 404 then
-                                        NotFoundRoute (Dict.get "x-current-site" response.headers)
+                                        Types.NotFoundRoute (Dict.get "x-current-site" response.headers)
 
                                     else
-                                        ErrorRoute
+                                        Types.ErrorRoute
 
                                 _ ->
-                                    ErrorRoute
+                                    Types.ErrorRoute
 
                         cmd =
                             case route of
-                                NotFoundRoute siteIdentifier ->
+                                Types.NotFoundRoute siteIdentifier ->
                                     fetchSiteDependentResources model.flags.apiUrl model.route siteIdentifier
 
                                 _ ->
@@ -220,7 +250,7 @@ update msg model =
 
                 Wagtail.UpdateServicesState index ->
                     case ( model.route, model.navigationTree ) of
-                        ( WagtailRoute identifier originalPage, Just originalNavigationTree ) ->
+                        ( Types.WagtailRoute identifier originalPage, Just originalNavigationTree ) ->
                             let
                                 page =
                                     case originalPage of
@@ -238,7 +268,7 @@ update msg model =
                                         |> UI.State.addPageToNavigationTree page
                             in
                             ( { model
-                                | route = WagtailRoute identifier page
+                                | route = Types.WagtailRoute identifier page
                                 , navigationTree = Just navigationTree
                               }
                             , Cmd.none
@@ -249,7 +279,7 @@ update msg model =
 
                 Wagtail.UpdateExpertisesState index ->
                     case ( model.route, model.navigationTree ) of
-                        ( WagtailRoute identifier (Wagtail.ServicesPage content), Just originalNavigationTree ) ->
+                        ( Types.WagtailRoute identifier (Wagtail.ServicesPage content), Just originalNavigationTree ) ->
                             let
                                 expertises =
                                     content.expertises
@@ -263,7 +293,7 @@ update msg model =
                                             )
 
                                 id =
-                                    "expertise-animation-" ++ toString index
+                                    "expertise-animation-" ++ String.fromInt index
 
                                 command =
                                     expertises
@@ -287,7 +317,7 @@ update msg model =
                                         |> UI.State.addPageToNavigationTree page
                             in
                             ( { model
-                                | route = WagtailRoute identifier page
+                                | route = Types.WagtailRoute identifier page
                                 , navigationTree = Just navigationTree
                               }
                             , command
@@ -296,13 +326,14 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
-        NavigationMsg msg ->
-            case msg of
+
+        NavigationMsg navigationMsg ->
+            case navigationMsg of
                 UI.State.FetchNavigation (Ok navigationTree) ->
                     let
-                        ( navTree, overlayState, commands ) =
+                        ( newNavTree, newOverlayState, commands ) =
                             case model.route of
-                                WagtailRoute _ page ->
+                                Types.WagtailRoute _ page ->
                                     let
                                         overlayState =
                                             if UI.State.isNavigationPage navigationTree page then
@@ -322,15 +353,15 @@ update msg model =
                                     ( navigationTree, model.overlayState, [] )
                     in
                     ( { model
-                        | overlayState = overlayState
-                        , navigationTree = Just navTree
+                        | overlayState = newOverlayState
+                        , navigationTree = Just newNavTree
                         , navigationState = UI.State.Closed
                       }
                     , Cmd.batch (Ports.setupNavigation () :: commands)
                     )
 
                 UI.State.FetchNavigation (Err error) ->
-                    Debug.log (toString error)
+                    Debug.log "failed to fetch navigation"
                         ( { model | navigationTree = Nothing }, Cmd.none )
 
                 UI.State.ChangeNavigation newState ->
@@ -387,23 +418,6 @@ update msg model =
                     ( { model | contactInformation = Just contactInfo }, Cmd.none )
 
                 UI.State.FetchContactInformation (Err error) ->
-                    Debug.log (toString error)
+                    Debug.log "failed to fetch contact information"
                         ( model, Cmd.none )
-
-
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    Sub.batch []
-
-
-
-
-main : Program Flags Model Msg
-main =
-    Navigation.programWithFlags OnLocationChange
-        { init = init
-        , view = UI.Wrapper.view >> toUnstyled
-        , update = update
-        , subscriptions = subscriptions
-        }
 

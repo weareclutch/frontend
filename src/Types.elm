@@ -1,15 +1,21 @@
-module Types exposing (Direction(..), Flags, Model, Msg(..), Route(..), SiteIdentifier, initModel)
+module Types exposing (..)
 
-import Navigation exposing (Location)
-import UI.State
+-- import Navigation exposing (Location)
+-- import UI.State
+
+import Browser
+import Browser.Navigation
+import Url.Parser exposing (Parser, parse, string, map, oneOf, top)
+import Url
 import Wagtail
+import UI.State
 
 
 type Msg
-    = OnLocationChange Location
-    | ChangeLocation String
-    | NavigationMsg UI.State.Msg
+    = UrlChanged Url.Url
+    | LinkClicked Browser.UrlRequest
     | WagtailMsg Wagtail.Msg
+    | NavigationMsg UI.State.Msg
     | UpdateSlideshow String Direction
 
 
@@ -20,6 +26,7 @@ type Direction
 
 type alias Model =
     { flags : Flags
+    , key : Browser.Navigation.Key
     , route : Route
     , overlayState : UI.State.OverlayState
     , navigationState : UI.State.NavigationState
@@ -28,9 +35,10 @@ type alias Model =
     }
 
 
-initModel : Flags -> Model
-initModel flags =
+initModel : Flags -> Browser.Navigation.Key ->  Model
+initModel flags key =
     { flags = flags
+    , key = key
     , route = UndefinedRoute
     , overlayState =
         { active = False

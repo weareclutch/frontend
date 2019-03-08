@@ -22,19 +22,7 @@ import Wagtail exposing (Image, Theme)
 
 addLink : String -> List (Attribute Msg)
 addLink url =
-    let
-        options =
-            { stopPropagation = False
-            , preventDefault = True
-            }
-
-        message =
-            ChangeLocation url
-
-        onLinkClick =
-            onWithOptions "click" options (Decode.succeed message)
-    in
-    [ href url, onLinkClick ]
+    [ href url ]
 
 
 link : String -> List (Html Msg) -> Html Msg
@@ -252,7 +240,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                     ]
                 ]
 
-        button =
+        slideshowButton =
             styled div
                 [ width (px 60)
                 , height (px 60)
@@ -292,12 +280,12 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
             ]
         , controls []
             [ siteMargins []
-                [ button
+                [ slideshowButton
                     [ onClick (UpdateSlideshow id Left)
                     ]
                     [ arrowWrapper True [] [ arrow "ffffff" ]
                     ]
-                , button
+                , slideshowButton
                     [ onClick (UpdateSlideshow id Right)
                     ]
                     [ arrowWrapper False [] [ arrow "ffffff" ]

@@ -448,7 +448,7 @@ clients data =
                 [ maxWidth (px 620)
                 ]
 
-        clients =
+        clientsWrapper =
             styled div
                 [ property "display" "flex"
                 , flexWrap wrap
@@ -499,7 +499,7 @@ clients data =
                         [ title [] [ text data.title ]
                         , p [] [ text data.text ]
                         ]
-                    , clients []
+                    , clientsWrapper []
                         <| List.map
                             (\c ->
                                 client [] [ image imageStyle c ]

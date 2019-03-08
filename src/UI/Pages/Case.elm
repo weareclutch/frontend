@@ -56,8 +56,8 @@ header content =
         wrapperAttributes =
             content.backgroundImage
                 |> Maybe.map
-                    (\image ->
-                        [ backgroundImg image ]
+                    (\img ->
+                        [ backgroundImg img ]
                     )
                 |> Maybe.withDefault []
 
@@ -209,8 +209,8 @@ body content =
         blocks =
             content.body
                 |> Maybe.andThen
-                    (\body ->
-                        Just <| UI.Components.Blocks.streamfield body
+                    (\b ->
+                        Just <| UI.Components.Blocks.streamfield b
                     )
                 |> Maybe.withDefault (text "")
     in

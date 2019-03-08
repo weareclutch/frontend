@@ -1,7 +1,7 @@
 module UI.Components.Navigation exposing (view)
 
 import Css exposing (..)
-import Css.Foreign exposing (global, selector)
+import Css.Global exposing (global, selector)
 import Html.Styled exposing (..)
 import Html.Styled.Events exposing (..)
 import Html.Styled.Attributes exposing (class, id, href)
@@ -311,7 +311,7 @@ view navigationTree navigationState route contactInformation =
             case route of
                 WagtailRoute _ page ->
                     navigationTree.items
-                        |> List.indexedMap (,)
+                        |> List.indexedMap (\x y -> (x,y))
                         |> List.foldl
                             (\( index, item ) acc ->
                                 if item.id == getPageId page then

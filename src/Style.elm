@@ -27,7 +27,7 @@ xLarge =
 bpSmallOnly : List Style -> Style
 bpSmallOnly styles =
     withMediaQuery
-        [ "only screen and (max-width: " ++ (toString <| small - 1) ++ "px)"
+        [ "only screen and (max-width: " ++ (String.fromInt <| small - 1) ++ "px)"
         ]
         styles
 
@@ -35,7 +35,7 @@ bpSmallOnly styles =
 bpMedium : List Style -> Style
 bpMedium styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString small ++ "px) and (max-width: " ++ (toString <| medium - 1) ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt small ++ "px) and (max-width: " ++ (String.fromInt <| medium - 1) ++ "px)"
         ]
         styles
 
@@ -43,7 +43,7 @@ bpMedium styles =
 bpMediumUp : List Style -> Style
 bpMediumUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString small ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt small ++ "px)"
         ]
         styles
 
@@ -51,7 +51,7 @@ bpMediumUp styles =
 bpLarge : List Style -> Style
 bpLarge styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString medium ++ "px) and (max-width: " ++ (toString <| large - 1) ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt medium ++ "px) and (max-width: " ++ (String.fromInt <| large - 1) ++ "px)"
         ]
         styles
 
@@ -59,7 +59,7 @@ bpLarge styles =
 bpLargeUp : List Style -> Style
 bpLargeUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString medium ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt medium ++ "px)"
         ]
         styles
 
@@ -67,7 +67,7 @@ bpLargeUp styles =
 bpXLarge : List Style -> Style
 bpXLarge styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString large ++ "px) and (max-width: " ++ (toString <| xLarge - 1) ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt large ++ "px) and (max-width: " ++ (String.fromInt <| xLarge - 1) ++ "px)"
         ]
         styles
 
@@ -75,7 +75,7 @@ bpXLarge styles =
 bpXLargeUp : List Style -> Style
 bpXLargeUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString large ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt large ++ "px)"
         ]
         styles
 
@@ -83,22 +83,22 @@ bpXLargeUp styles =
 bpXXLargeUp : List Style -> Style
 bpXXLargeUp styles =
     withMediaQuery
-        [ "only screen and (min-width: " ++ toString xLarge ++ "px)"
+        [ "only screen and (min-width: " ++ String.fromInt xLarge ++ "px)"
         ]
         styles
 
 
 transitionString : String -> Float -> Float -> String -> String
 transitionString prop duration delay easing =
-    prop ++ " " ++ toString duration ++ "s " ++ toString delay ++ "s " ++ easing
+    prop ++ " " ++ String.fromFloat duration ++ "s " ++ String.fromFloat delay ++ "s " ++ easing
 
 
-transitions : List ( String, Float, Float, String ) -> Style
-transitions transitions =
-    transitions
+transitions : List { property : String, duration : Float, delay : Float, easing: String } -> Style
+transitions list =
+    list
         |> List.map
-            (\( prop, duration, delay, easing ) ->
-                transitionString prop duration delay easing
+            (\{ property, duration, delay, easing } ->
+                transitionString property duration delay easing
             )
         |> String.join ", "
         |> property "transition"

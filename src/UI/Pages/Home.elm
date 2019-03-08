@@ -18,8 +18,8 @@ view content =
         ( evenCases, oddCases ) =
             content.cases
                 |> List.reverse
-                |> List.indexedMap (,)
-                |> List.partition (\( index, x ) -> index % 2 == 0)
+                |> List.indexedMap (\x y -> (x, y))
+                |> List.partition (\( index, x ) -> (remainderBy 2 index) == 0)
 
         caseWrapper =
             styled div
@@ -271,7 +271,7 @@ introCover content =
                         ]
                     ]
 
-        media =
+        mediaElement =
             content.cover.media
                 |> Maybe.andThen
                     (\media ->
@@ -280,7 +280,7 @@ introCover content =
                                 Just <| imageDiv [ backgroundImg img ] []
 
                             Wagtail.VideoMedia url ->
-                                if (Regex.contains (Regex.regex "gif$") url) then
+                                if (Regex.contains (Maybe.withDefault Regex.never <| Regex.fromString "gif$") url) then
                                     Just <| gifDiv url [] []
                                 else
                                     Just <| videoDiv []
@@ -307,7 +307,7 @@ introCover content =
 
     in
     wrapper []
-        [ media
+        [ mediaElement
         , mobileImageWrapper [] [ imageDiv [ backgroundImg content.cover.mobileImage ] [] ]
         , textWrapper []
             [ title [ class "tags" ] [ text "Uitgelicht" ]

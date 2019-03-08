@@ -147,7 +147,7 @@ overlayWrapper child active =
                 ]
     in
     wrapper
-        [ Html.Styled.Attributes.attribute "data-active" (toString active)
+        [ Html.Styled.Attributes.attribute "data-active" (if active then "true" else "false")
         , Html.Styled.Attributes.class "overlay"
         ]
         [ child
@@ -158,7 +158,7 @@ navigationPages : NavigationState -> List NavigationItem -> Route -> Html Msg
 navigationPages navState navItems route =
     div []
         (navItems
-            |> List.indexedMap (,)
+            |> List.indexedMap (\x y -> (x, y))
             |> List.foldr
                 (\( index, item ) acc ->
                     List.head acc
@@ -200,12 +200,12 @@ createTransform x z r =
     let
         value =
             "perspective(1000px) translate3d(0, "
-                ++ toString x
+                ++ String.fromInt x
                 ++ "vh, "
-                ++ toString z
+                ++ String.fromInt z
                 ++ "px) "
                 ++ "rotateX("
-                ++ toString r
+                ++ String.fromInt r
                 ++ "deg)"
     in
     [ property "-webkit-transform" value
@@ -285,14 +285,30 @@ navigationPage navState index navItem active =
                 , left zero
                 , zIndex (int <| 10 - index)
                 , transitions
-                    [ ("transform", 0.5, 0.0, "cubic-bezier(0.4, 0.2, 0.2, 1.05)")
-                    , ("opacity", 0.5, 0.0, "cubic-bezier(0.4, 0.2, 0.2, 1.05)")
+                    [ { property = "transform"
+                      , duration = 0.5
+                      , delay = 0.0
+                      , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                      }
+                    , { property = "opacity"
+                      , duration = 0.5
+                      , delay = 0.0
+                      , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                      }
                     , case (active, navState) of
                         (False, Closed) ->
-                            ("visibility", 0.0, 0.5, "cubic-bezier(0.4, 0.2, 0.2, 1.05)")
+                            { property = "visibility"
+                            , duration = 0.0
+                            , delay = 0.5
+                            , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                            }
 
                         _ ->
-                            ("visibility", 0.0, 0.0, "cubic-bezier(0.4, 0.2, 0.2, 1.05)")
+                            { property = "visibility"
+                            , duration = 0.0
+                            , delay = 0.0
+                            , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                            }
                     ]
                 , property "-webkit-overflow-scrolling" "touch"
                 , overflowX hidden
