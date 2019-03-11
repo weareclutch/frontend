@@ -39,7 +39,7 @@ globalStyle =
         , selector "h1"
             [ margin4 zero zero (px 32) zero
             , padding zero
-            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontFamilies [ "qanelas-extrabold" ]
             , fontWeight (int 400)
             , lineHeight (int 1)
             , fontSize (px 70)
@@ -59,7 +59,7 @@ globalStyle =
             ]
         , selector "h2"
             [ lineHeight (int 1)
-            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontFamilies [ "qanelas-extrabold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 25) zero
             , padding zero
@@ -81,7 +81,7 @@ globalStyle =
             ]
         , selector "h3"
             [ lineHeight (int 1)
-            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontFamilies [ "qanelas-extrabold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 15) zero
             , padding zero
@@ -103,7 +103,7 @@ globalStyle =
             ]
         , selector "h4"
             [ lineHeight (int 1)
-            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontFamilies [ "qanelas-extrabold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 10) zero
             , padding zero
@@ -120,7 +120,7 @@ globalStyle =
         , selector "h5"
             [ lineHeight (int 1)
             , letterSpacing (px 2)
-            , fontFamilies [ "Qanelas ExtraBold" ]
+            , fontFamilies [ "qanelas-extrabold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 32) zero
             , padding zero
@@ -179,7 +179,7 @@ globalStyle =
                 ]
             ]
         , selector ".nav, .nav p, p.nav"
-            [ fontFamilies [ "Qanelas ExtraBold" ]
+            [ fontFamilies [ "qanelas-extrabold" ]
             , lineHeight (int 1)
             , fontWeight (int 400)
             , fontSize (px 26)
