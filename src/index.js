@@ -21,10 +21,8 @@ customElements.define(
 )
 
 var { Elm } = require('./Main.elm');
-var mountNode = document.getElementById('elm-app');
 
 var app = Elm.Main.init({
-  node: mountNode,
   flags: {
     apiUrl: process.env.API_URL
   }
