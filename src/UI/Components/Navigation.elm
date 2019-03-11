@@ -188,16 +188,17 @@ view navigationTree navigationState route contactInformation =
                     [ height auto
                     , width (pct 100)
                     , position absolute
+                    , paddingBottom zero
                     ]
                 , bpMedium
-                    [ padding2 (px 38) (px 150)
+                    [ padding4 (px 38) (px 150) zero (px 150)
                     , width (pct 100)
                     ]
                 , bpLarge
-                    [ padding2 (px 40) (px 150)
+                    [ padding4 (px 40) (px 150) zero (px 150)
                     ]
                 , bpXLargeUp
-                    [ padding2 (px 82) (px 150)
+                    [ padding4 (px 82) (px 150) zero (px 150)
                     ]
                 ]
 
@@ -225,6 +226,7 @@ view navigationTree navigationState route contactInformation =
                         , width auto
                         , textAlign left
                         , marginRight (px 30)
+                        , marginBottom zero
                         ]
                     , lastChild
                         [ marginRight zero
