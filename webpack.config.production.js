@@ -4,7 +4,10 @@ const path = require('path')
 module.exports = {
   mode: 'production',
   entry: {
-    app: './src/index.js'
+    app: [
+      '@webcomponents/custom-elements',
+      './src/index.js'
+    ]
   },
   output: {
     filename: '[name].js',

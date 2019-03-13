@@ -7,6 +7,7 @@ module.exports = {
   mode: 'development',
   entry: {
     app: [
+      '@webcomponents/custom-elements',
       './src/index.js'
     ]
   },
