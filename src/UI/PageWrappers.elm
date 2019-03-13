@@ -2,7 +2,7 @@ module UI.PageWrappers exposing (createTransform, desktopView, mobileView, navig
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class, href)
+import Html.Styled.Attributes exposing (class, href, id)
 import Html.Styled.Events exposing (..)
 import Style exposing (..)
 import Types exposing (Msg(..), Route(..))
@@ -156,43 +156,55 @@ overlayWrapper child active =
 
 navigationPages : NavigationState -> List NavigationItem -> Route -> Html Msg
 navigationPages navState navItems route =
-    div []
-        (navItems
-            |> List.indexedMap (\x y -> (x, y))
-            |> List.foldr
-                (\( index, item ) acc ->
-                    List.head acc
-                        |> Maybe.map
-                            (\( lastIndex, lastItem, lastActive ) ->
-                                case navState of
-                                    Open openIndex ->
-                                        if lastIndex == openIndex then
-                                            ( index, item, False ) :: acc
+    let
+        wrapper =
+            styled div
+                [ transitions
+                    [ { property = "transform"
+                      , duration = 0.5
+                      , delay = 0.0
+                      , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
+                      }
+                    ]
+                ]
+    in
+        wrapper [ id "navigation-pages" ]
+            (navItems
+                |> List.indexedMap (\x y -> (x, y))
+                |> List.foldr
+                    (\( index, item ) acc ->
+                        List.head acc
+                            |> Maybe.map
+                                (\( lastIndex, lastItem, lastActive ) ->
+                                    case navState of
+                                        Open openIndex ->
+                                            if lastIndex == openIndex then
+                                                ( index, item, False ) :: acc
 
-                                        else
-                                            ( index, item, lastActive ) :: acc
-
-                                    _ ->
-                                        case route of
-                                            WagtailRoute _ page ->
-                                                if lastItem.active then
-                                                    ( index, item, False ) :: acc
-
-                                                else
-                                                    ( index, item, lastActive ) :: acc
-
-                                            _ ->
+                                            else
                                                 ( index, item, lastActive ) :: acc
-                            )
-                        |> Maybe.withDefault
-                            (( index, item, True ) :: acc)
-                )
-                []
-            |> List.map
-                (\( index, item, active ) ->
-                    navigationPage navState index item active
-                )
-        )
+
+                                        _ ->
+                                            case route of
+                                                WagtailRoute _ page ->
+                                                    if lastItem.active then
+                                                        ( index, item, False ) :: acc
+
+                                                    else
+                                                        ( index, item, lastActive ) :: acc
+
+                                                _ ->
+                                                    ( index, item, lastActive ) :: acc
+                                )
+                            |> Maybe.withDefault
+                                (( index, item, True ) :: acc)
+                    )
+                    []
+                |> List.map
+                    (\( index, item, active ) ->
+                        navigationPage navState index item active
+                    )
+            )
 
 
 createTransform : Int -> Int -> Int -> List Style

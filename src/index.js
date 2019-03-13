@@ -113,6 +113,49 @@ app.ports.unbindAll.subscribe(function() {
 })
 
 
+var homePageHasBeenBound = false
+app.ports.bindHomePage.subscribe(function() {
+  window.requestAnimationFrame(function() {
+    if (window.innerWidth < 780) return false
+
+    var page = document.getElementById('home')
+    if (!page) return false
+
+    var parent = page.parentElement
+    var scrollUpText = document.getElementById('scroll-up-text')
+    var navPagesWrapper = document.getElementById('navigation-pages')
+    var active = false
+
+    var handleScroll = function(e) {
+      if (parent.scrollTop < page.clientHeight - window.innerHeight) {
+        active = false
+        return
+      }
+
+      active = e.deltaY > 0
+      var degrees = active ? -8 : 0;
+
+      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(' + degrees + 'deg)'
+      scrollUpText.style.opacity = active ? 1 : 0
+      scrollUpText.style.transform = active ? 'translateY(0)' : 'translateY(24px)'
+    }
+
+    var resetAngle = function() {
+      active = false
+      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(0deg)'
+      scrollUpText.style.opacity = 0
+      scrollUpText.style.transform = 'translateY(50px)'
+    }
+
+    if (homePageHasBeenBound) return false
+    homePageHasBeenBound = true
+
+    document.body.addEventListener('click', resetAngle)
+    parent.addEventListener('wheel', handleScroll)
+  })
+})
+
+
 app.ports.bindAboutUs.subscribe(function() {
   window.requestAnimationFrame(function() {
     var page = window.innerWidth >= 780 ?

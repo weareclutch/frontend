@@ -13,6 +13,9 @@ port playVideos : () -> Cmd msg
 port changeMenuState : String -> Cmd msg
 
 
+port bindHomePage : () -> Cmd msg
+
+
 port bindAboutUs : () -> Cmd msg
 
 
@@ -41,3 +44,4 @@ port playIntroAnimation : () -> Cmd msg
 
 
 port scrollOverlayDown : () -> Cmd msg
+

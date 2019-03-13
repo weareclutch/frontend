@@ -319,7 +319,7 @@ view model =
                         navigationPages model.navigationState navigationTree.items model.route
                     , desktopView <|
                         (Maybe.map
-                            UI.Components.Contact.view
+                            (UI.Components.Contact.view model.navigationState)
                             model.contactInformation
                             |> Maybe.withDefault
                                 (text "")

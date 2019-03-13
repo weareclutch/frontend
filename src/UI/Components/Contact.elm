@@ -2,13 +2,13 @@ module UI.Components.Contact exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes
+import Html.Styled.Attributes exposing (class, href, id)
 import Style exposing (..)
-import UI.State exposing (ContactInformation)
+import UI.State exposing (ContactInformation, NavigationState(..))
 
 
-view : ContactInformation -> Html msg
-view contactInfo =
+view : NavigationState -> ContactInformation -> Html msg
+view navigationState contactInfo =
     let
         outerWrapper =
             styled div
@@ -20,6 +20,8 @@ view contactInfo =
             styled div
                 [ position relative
                 , top (pct 50)
+                , if navigationState == OpenContact then display block else display none
+                , if navigationState == OpenContact then opacity (int 1) else opacity zero
                 , transform (translateY (pct -50))
                 , color (hex "fff")
                 , transition "opacity" 0.28 0.26 "ease-in-out"
@@ -56,21 +58,34 @@ view contactInfo =
                 [ fontSize (px 80)
                 , marginBottom (px 30)
                 ]
+
+        scrollUpText =
+            styled p
+                [ position absolute
+                , bottom (vh 1)
+                , textAlign center
+                , width (pct 100)
+                , color (hex "fff")
+                , transform (translateY (px 24))
+                , transition "all" 0.3 0.0 "ease-in-out"
+                ]
     in
     outerWrapper []
         [ wrapper []
             [ title [] [ text "contact" ]
             , paragraph []
                 [ link
-                    [ Html.Styled.Attributes.href ("mailto:" ++ contactInfo.email) ]
+                    [ href ("mailto:" ++ contactInfo.email) ]
                     [ text contactInfo.email ]
                 , br [] []
                 , link
-                    [ Html.Styled.Attributes.href ("phone:" ++ contactInfo.phone) ]
+                    [ href ("phone:" ++ contactInfo.phone) ]
                     [ text contactInfo.phone ]
                 , br [] []
                 , br [] []
                 , text contactInfo.address
                 ]
             ]
+        , scrollUpText [ class "nav", id "scroll-up-text" ]
+            [ text "The only way is up"]
         ]

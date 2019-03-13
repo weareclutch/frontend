@@ -85,7 +85,7 @@ view content =
                     ]
                 ]
     in
-    div [] <|
+    div [ id "home" ] <|
         [ casesOuterWrapper []
             [ container []
                 [ siteMargins []

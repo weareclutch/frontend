@@ -88,6 +88,7 @@ getPageCommands page =
         Wagtail.HomePage _ ->
             [ Ports.playVideos ()
             , Ports.scrollOverlayDown ()
+            , Ports.bindHomePage ()
             ]
 
         Wagtail.CasePage _ ->
