@@ -102,7 +102,7 @@ globalStyle =
                 ]
             ]
         , selector "h4"
-            [ lineHeight (int 1)
+            [ property "line-height" "1.2"
             , fontFamilies [ qt "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , margin4 zero zero (px 10) zero

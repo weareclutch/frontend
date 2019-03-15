@@ -61,15 +61,9 @@ view content =
                     , bpMediumUp
                         [ position absolute
                         , left zero
-                        ]
-                    , bpMedium
-                        [ top (px 50)
-                        ]
-                    , bpLarge
-                        [ top (px 80)
-                        ]
-                    , bpXLargeUp
-                        [ top (px 160)
+                        , firstChild
+                            [ marginTop (pct 35)
+                            ]
                         ]
                     ]
                 ]
