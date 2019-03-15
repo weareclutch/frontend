@@ -18,6 +18,8 @@ type Msg
     | WagtailMsg Wagtail.Msg
     | NavigationMsg UI.State.Msg
     | UpdateSlideshow String Direction
+    | ShowNextLogo
+    | SpinLogos Int
 
 
 type Direction

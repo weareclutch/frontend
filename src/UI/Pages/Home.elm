@@ -3,8 +3,9 @@ module UI.Pages.Home exposing (view)
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, class, href, id, src, autoplay, loop)
+import Html.Styled.Events exposing (onClick)
 import Style exposing (..)
-import Types exposing (Msg)
+import Types exposing (Msg(..))
 import UI.Common exposing (backgroundImg, button, siteMargins, container)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
@@ -113,11 +114,48 @@ view content =
 introCover : Wagtail.HomePageContent -> Html Msg
 introCover content =
     let
+        activeLogo =
+            List.head content.logos
+
+        bgColor =
+            Maybe.map (\l -> l.theme.backgroundColor) activeLogo
+                |> Maybe.withDefault "fff"
+
+        textColor =
+            Maybe.map (\l -> l.theme.textColor) activeLogo
+                |> Maybe.withDefault "000"
+
+        imageWrapper =
+            styled div
+                [ position absolute
+                , cursor pointer
+                , maxWidth (px 560)
+                , width (pct 82)
+                , maxWidth (px 420)
+                , height (pct 80)
+                , left (pct 50)
+                , transform <| translateX (pct -50)
+                , bottom zero
+                , backgroundSize contain
+                , backgroundPosition top
+                , zIndex (int 0)
+                , bpMediumUp
+                    [ transform (translate2 (pct -100) (pct -50))
+                    , top (pct 50)
+                    , bottom auto
+                    , backgroundPosition center
+                    , left <| calc (pct 50) plus (px 120)
+                    , maxWidth (px 720)
+                    , width (pct 50)
+                    , height (pct 100)
+                    ]
+                ]
+
         wrapper =
             styled div
                 [ width (pct 100)
                 , height (vh 100)
-                , backgroundColor (hex content.theme.backgroundColor)
+                , backgroundColor (hex bgColor)
                 , position relative
                 , zIndex (int 5)
                 , bpMedium
@@ -141,29 +179,21 @@ introCover content =
                     , backgroundImage
                         <| linearGradient
                             (stop (rgba 0 0 0 0.0))
-                            (stop (hex content.theme.backgroundColor))
+                            (stop (hex bgColor))
                             []
-                    ]
-                ]
-
-        title =
-            styled div
-                [ marginBottom (px 20)
-                , display none
-                , bpMediumUp
-                    [ display block
                     ]
                 ]
 
         textWrapper =
             styled div
-                [ color (hex content.theme.textColor)
-                , margin auto
+                [ margin auto
+                , color (hex textColor)
                 , maxWidth (px 420)
                 , width (pct 100)
                 , padding2 zero (px 25)
                 , position absolute
                 , bottom (px 120)
+                , zIndex (int 2)
                 , left (pct 50)
                 , transform (translateX (pct -50))
                 , textAlign center
@@ -179,153 +209,82 @@ introCover content =
                     [ padding4 zero (px 40) zero zero
                     , maxWidth (vw 40)
                     ]
-                , bpLargeUp
+                , bpLarge
                     [ padding4 zero (px 120) zero zero
                     , maxWidth (px 620)
                     ]
-                ]
-
-        mediaWrapper =
-            styled div
-                [ overflow hidden
-                , height (vh 100)
-                , width (vw 100)
-                , position absolute
-                , bottom zero
-                , display none
-                , bpMediumUp
-                    [ display block
+                , bpXLargeUp
+                    [ padding4 zero (px 120) zero zero
+                    , maxWidth (px 820)
                     ]
                 ]
 
-        mobileImageWrapper =
+        title =
+            styled h4
+                [ margin zero
+                ]
+
+        refreshButton =
             styled div
-                [ display block
-                , bpMediumUp
-                    [ display none
+                [ display inlineBlock
+                , cursor pointer
+                , height (px 60)
+                , width (px 60)
+                , textAlign center
+                , backgroundColor (hex bgColor)
+                , border zero
+                , borderRadius (pct 50)
+                , paddingTop (px 18)
+                , transition "box-shadow" 0.16 0 "linear"
+                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.25)
+                , hover
+                    [ boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.45)
                     ]
                 ]
 
-        videoDiv =
-            styled div
-                [ height (pct 200)
-                , width (px 1280)
-                , top (pct 50)
-                , left (pct 50)
-                , transform <| translate2 (pct -50) (pct -50)
-                , position absolute
-                , bpMediumUp
-                    [ height (pct 200)
-                    , width (pct 200)
-                    , top <| calc (pct 50) plus (px 120)
-                    , left <| calc (pct 50) minus (px 300)
-                    , transform <| translate2 (pct -50) (pct -50)
-                    ]
+        author =
+            styled p
+                [ display inlineBlock
+                , color (hex textColor)
+                , property "opacity" "0.2"
+                , margin4 zero (px 20) zero zero
+                , fontSize (px 14)
+                , fontWeight (int 500)
                 ]
 
-        videoEl =
-            styled video
-                [ width (pct 100)
-                , height (pct 100)
-                ]
-
-        imageDiv =
+        logoInfo =
             styled div
                 [ position absolute
-                , backgroundSize cover
-                , backgroundPosition center
-                , top (pct 30)
-                , left (pct 50)
-                , transform <| translate2 (pct -50) (pct -50)
-                , width (px 320)
-                , height (px 320)
+                , bottom zero
+                , width (pct 100)
+                , textAlign center
+                , padding (px 32)
                 , bpMediumUp
-                    [ transform <| translate2 (pct -50) (pct -50)
-                    , maxHeight (px 700)
-                    , maxWidth (px 700)
-                    , height (vw 40)
-                    , width (vw 40)
-                    , top (pct 50)
-                    ]
-                , bpMedium
-                    [ left <| calc (pct 50) minus (px 180)
-                    ]
-                , bpLargeUp
-                    [ left <| calc (pct 50) minus (px 300)
+                    [ textAlign right
                     ]
                 ]
-
-        gifDiv =
-            \imageUrl ->
-                styled div
-                    [ position absolute
-                    , backgroundSize cover
-                    , backgroundPosition center
-                    , backgroundImage (url imageUrl)
-                    , top (pct 30)
-                    , left (pct 50)
-                    , transform <| translate2 (pct -50) (pct -50)
-                    , width (px 320)
-                    , height (px 320)
-                    , bpMediumUp
-                        [ transform <| translate2 (pct -50) (pct -50)
-                        , maxHeight (px 700)
-                        , maxWidth (px 700)
-                        , height (vw 40)
-                        , width (vw 40)
-                        , top (pct 50)
-                        ]
-                    , bpMedium
-                        [ left <| calc (pct 50) minus (px 180)
-                        ]
-                    , bpLargeUp
-                        [ left <| calc (pct 50) minus (px 300)
-                        ]
-                    ]
-
-        mediaElement =
-            content.cover.media
-                |> Maybe.andThen
-                    (\media ->
-                        case media of
-                            Wagtail.ImageMedia img ->
-                                Just <| imageDiv [ backgroundImg img ] []
-
-                            Wagtail.VideoMedia url ->
-                                if (Regex.contains (Maybe.withDefault Regex.never <| Regex.fromString "gif$") url) then
-                                    Just <| gifDiv url [] []
-                                else
-                                    Just <| videoDiv []
-                                        [ videoEl
-                                            [ src url
-                                            , autoplay True
-                                            , loop True
-                                            , attribute "muted" ""
-                                            , attribute "playsinline" ""
-                                            ]
-                                            [ source
-                                                [ src url
-                                                ]
-                                                []
-                                            ]
-                                        ]
-
-                            _ ->
-                                Nothing
-
-                    )
-                |> Maybe.map (\el -> mediaWrapper [] [ el ])
-                |> Maybe.withDefault (text "")
 
     in
-    wrapper []
-        [ mediaElement
-        , mobileImageWrapper [] [ imageDiv [ backgroundImg content.cover.mobileImage ] [] ]
-        , textWrapper []
-            [ title [ class "tags" ] [ text "Uitgelicht" ]
-            , richText content.cover.text
-            , a [ href content.cover.link ]
-                [ UI.Common.button content.theme [] (Just "lees blog")
-                ]
-            ]
-        ]
+        wrapper []
+            [ textWrapper []
+                  [ title [] [ text content.text ]
+                  ]
+            , activeLogo
+                |> Maybe.map
+                    (\l ->
+                      imageWrapper
+                         [ onClick <| SpinLogos <| (List.length content.logos - 1)
+                         , backgroundImg l.image
+                         ]
+                         []
+                    )
+                |> Maybe.withDefault (text "")
+            , activeLogo
+                |> Maybe.map
+                   (\logo ->
+                      logoInfo []
+                        [ author [ ] [ text <| "ontworpen door " ++ logo.author ]
+                        ]
+                   )
+                |> Maybe.withDefault (text "")
+              ]

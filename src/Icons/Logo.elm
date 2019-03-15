@@ -10,7 +10,7 @@ import Style exposing (..)
 logo : String -> Html msg
 logo color =
     let
-        logoDesktop = 
+        logoDesktop =
             styled svg
                 [ Css.display none
                 , bpMediumUp
@@ -18,7 +18,7 @@ logo color =
                     ]
                 ]
 
-        logoMobile = 
+        logoMobile =
             styled svg
                 [ Css.display block
                 , Css.top (px 5)

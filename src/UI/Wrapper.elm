@@ -159,7 +159,7 @@ globalStyle =
             [ fontFamilies [ "Roboto", "sans-serif" ]
             , margin4 zero zero (px 44) zero
             , padding zero
-            , fontWeight (int 800)
+            , fontWeight (int 500)
             , fontSize (px 18)
             , lineHeight (px 26)
             , bpLarge
@@ -191,7 +191,7 @@ globalStyle =
             ]
         , selector ".tags, .tags p, p.tags"
             [ fontFamilies [ "Roboto", "sans-serif" ]
-            , fontWeight (int 800)
+            , fontWeight (int 500)
             , fontSize (px 14)
             , letterSpacing (px 1)
             , lineHeight (px 16)
@@ -257,10 +257,10 @@ wrapper active children =
                 , top (pct -100)
                 , zIndex (int 500)
                 , bpMedium
-                    [ left <| calc (pct -100) minus (px 180)
+                    [ left <| calc (pct -100) minus (px 200)
                     ]
                 , bpLargeUp
-                    [ left <| calc (pct -100) minus (px 300)
+                    [ left <| calc (pct -100) minus (px 220)
                     ]
                 ]
 

@@ -11,6 +11,9 @@ import Types exposing (Msg(..))
 import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 import UI.State exposing (fetchContactInformation, fetchNavigation)
 import UI.Wrapper
+import Process
+import Task
+import Time
 
 
 main : Program Types.Flags Types.Model Msg
@@ -85,10 +88,11 @@ getAndDecodePage apiUrl url =
 getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
     case page of
-        Wagtail.HomePage _ ->
+        Wagtail.HomePage content ->
             [ Ports.playVideos ()
             , Ports.scrollOverlayDown ()
-            , Ports.bindHomePage ()
+            , Ports.bindHomePage
+                (content.logos |> List.map .image |> List.map .image)
             ]
 
         Wagtail.CasePage _ ->
@@ -138,6 +142,49 @@ update msg model =
             ( model
             , Browser.Navigation.pushUrl model.key url
             )
+
+        SpinLogos n ->
+            ( model
+            , case n of
+                0 ->
+                    Cmd.none
+
+                _ ->
+                    Cmd.batch
+                      [ Task.perform (\_ -> SpinLogos <| n - 1) (Process.sleep 280)
+                      , Task.perform (\_ -> ShowNextLogo) Time.now
+                      ]
+            )
+
+        ShowNextLogo ->
+            case model.route of
+                Types.WagtailRoute identifier (Wagtail.HomePage content) ->
+                    let
+                        page =
+                            Wagtail.HomePage
+                                { content | logos =
+                                      case content.logos of
+                                          x::xs ->
+                                              List.append xs [ x ]
+
+                                          xs ->
+                                              List.reverse xs
+                                }
+
+                        route =
+                           Types.WagtailRoute identifier page
+                    in
+                      ( { model
+                            | route = route
+                            , navigationTree =
+                                model.navigationTree
+                                    |> Maybe.map (UI.State.addPageToNavigationTree page)
+                        }
+                      , Cmd.none
+                      )
+
+                _ ->
+                    (model, Cmd.none)
 
         UpdateSlideshow id direction ->
             ( model

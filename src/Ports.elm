@@ -13,7 +13,7 @@ port playVideos : () -> Cmd msg
 port changeMenuState : String -> Cmd msg
 
 
-port bindHomePage : () -> Cmd msg
+port bindHomePage : List String -> Cmd msg
 
 
 port bindAboutUs : () -> Cmd msg

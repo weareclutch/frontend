@@ -53,18 +53,21 @@ getPageId page =
 
 getPageTheme : Page -> Theme
 getPageTheme page =
-    case page of
-        HomePage { theme } ->
-            theme
-
+    ( case page of
         CasePage { theme } ->
-            theme
+            Just theme
+
+        HomePage { logos } ->
+            Maybe.map .theme <| List.head logos
 
         _ ->
-            { backgroundColor = "fff"
-            , textColor = "292A32"
-            , backgroundPosition = Nothing
-            }
+            Nothing
+    )
+      |> Maybe.withDefault
+          { backgroundColor = "fff"
+          , textColor = "292A32"
+          , backgroundPosition = Nothing
+          }
 
 
 getWagtailPage : String -> Url.Url -> Cmd Msg
@@ -175,15 +178,26 @@ metaDecoder =
         (D.at [ "meta", "seo_title" ] D.string)
 
 
+
+type alias LogoDesign =
+    { author : String
+    , theme : Theme
+    , image : Image
+    }
+
+
+decodeLogoDesign : D.Decoder LogoDesign
+decodeLogoDesign =
+    D.map3 LogoDesign
+        (D.field "author" D.string)
+        decodeTheme
+        (D.field "image" decodeImage)
+
+
 type alias HomePageContent =
     { meta : WagtailMetaContent
-    , theme : Theme
-    , cover :
-        { text : String
-        , link : String
-        , media : Maybe Media
-        , mobileImage : Image
-        }
+    , text : String
+    , logos : List LogoDesign
     , cases : List CasePreview
     }
 
@@ -193,16 +207,8 @@ homePageDecoder =
     D.map HomePage <|
         D.map4 HomePageContent
             metaDecoder
-            decodeTheme
-            (D.map4
-                (\text link media image ->
-                    { text = text, link = link, media = media, mobileImage = image }
-                )
-                (D.field "text" D.string)
-                (D.at [ "link", "slug" ] D.string)
-                (D.maybe <| D.field "image" <| D.index 0 decodeMedia)
-                (D.field "mobile_image" decodeImage)
-            )
+            (D.field "text" D.string)
+            (D.field "logos" <| D.list decodeLogoDesign)
             (D.field "value" decodeCasePreview
                 |> D.list
                 |> D.field "cases"

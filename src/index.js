@@ -114,8 +114,14 @@ app.ports.unbindAll.subscribe(function() {
 
 
 var homePageHasBeenBound = false
-app.ports.bindHomePage.subscribe(function() {
+app.ports.bindHomePage.subscribe(function(logos) {
   window.requestAnimationFrame(function() {
+    // preload the logo images for the spinner
+    logos.forEach(function(url) {
+      var img = new Image();
+      img.src = url
+    })
+
     if (window.innerWidth < 780) return false
 
     var page = document.getElementById('home')
