@@ -227,7 +227,7 @@ wrapper active children =
             styled div <|
                 [ backgroundColor (hex "001AE0")
                 , transition "all" 0.4 0 "ease-in-out"
-                , backgroundImage (url "/images/big_c_shadow.png")
+                , backgroundImage (url "/public/images/big_c_shadow.png")
                 , backgroundSize cover
                 , backgroundPosition center
                 , if active then

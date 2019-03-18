@@ -227,7 +227,7 @@ function aboutUsHandleScroll(e) {
 var animations = []
 var animationData = null
 
-fetch('/animation/animations.json')
+fetch('/public/animation/animations.json')
   .then(function(res) {
     if (res.ok) return res.json()
   })
@@ -345,7 +345,7 @@ app.ports.playIntroAnimation.subscribe(function() {
     animations.forEach(function(animationPath) {
       var animation = bodymovin.loadAnimation({
         container: document.getElementById(animationPath),
-        path: '/animation/' + animationPath + '.json',
+        path: '/public/animation/' + animationPath + '.json',
         renderer: 'svg',
         loop: false,
         autoplay: false,
