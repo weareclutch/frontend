@@ -132,10 +132,16 @@ app.ports.bindHomePage.subscribe(function(logos) {
     var navPagesWrapper = document.getElementById('navigation-pages')
     var active = false
 
+    var resetAngle = function() {
+      active = false
+      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(0deg)'
+      scrollUpText.style.opacity = 0
+      scrollUpText.style.transform = 'translateY(50px)'
+    }
+
     var handleScroll = function(e) {
       if (parent.scrollTop < page.clientHeight - window.innerHeight) {
-        active = false
-        return
+        return resetAngle()
       }
 
       active = e.deltaY > 0
@@ -144,13 +150,6 @@ app.ports.bindHomePage.subscribe(function(logos) {
       navPagesWrapper.style.transform = 'perspective(1000px) rotateX(' + degrees + 'deg)'
       scrollUpText.style.opacity = active ? 1 : 0
       scrollUpText.style.transform = active ? 'translateY(0)' : 'translateY(24px)'
-    }
-
-    var resetAngle = function() {
-      active = false
-      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(0deg)'
-      scrollUpText.style.opacity = 0
-      scrollUpText.style.transform = 'translateY(50px)'
     }
 
     if (homePageHasBeenBound) return false
