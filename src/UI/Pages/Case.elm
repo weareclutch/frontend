@@ -82,7 +82,7 @@ header content =
                 , backgroundPosition center
                 , backgroundSize cover
                 , position relative
-                , height (pct 100)
+                , height (vh 150)
                 , width (pct 100)
                 , maxHeight (pct 100)
                 , maxWidth (pct 100)

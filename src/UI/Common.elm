@@ -112,7 +112,7 @@ button theme attributes maybeText =
             styled div
                 [ position absolute
                 , right (px 24)
-                , top (px 21)
+                , top zero
                 ]
     in
     wrapper attributes

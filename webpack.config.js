@@ -36,7 +36,8 @@ module.exports = {
   devServer: {
     inline: true,
     stats: { colors: true },
-    contentBase: path.join(__dirname, 'public'),
+    contentBase: __dirname,
+    publicPath: "/public",
     historyApiFallback: true,
     proxy: [{
       context: ['/media/images', '/media/documents'],
