@@ -405,13 +405,11 @@ renderExpertise index expertise =
                 [ animationWrapper [ id <| "expertise-animation-" ++ (String.fromInt index) ] []
                 , title expertise.active [] [ text expertise.title ]
                 , keywords expertise.active []
-                    [ strong []
-                        <| List.map
-                            (\keyword -> text
-                                <| String.trim keyword
-                                ++ ", "
-                            )
-                            expertise.keywords
+                    [ strong [] <|
+                          ( expertise.keywords
+                              |> List.intersperse ", "
+                              |> List.map text
+                          )
                     ]
                 ]
             , body expertise.active []

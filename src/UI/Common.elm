@@ -156,6 +156,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
         wrapperInner =
             styled div
                 [ position relative
+                , displayFlex
                 , width <|
                     pct <|
                         numSlides
@@ -252,7 +253,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 styled div
                     [ position absolute
                     , right (px 24)
-                    , top (px 21)
+                    , top (px 12)
                     , transform <|
                         rotate <|
                             if rotated then
