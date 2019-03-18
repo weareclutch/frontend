@@ -217,6 +217,9 @@ globalStyle =
                 , lineHeight (px 32)
                 ]
             ]
+        , selector "img"
+            [ display block
+            ]
         ]
 
 
