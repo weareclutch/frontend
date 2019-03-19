@@ -217,7 +217,7 @@ function aboutUsHandleScroll(e) {
       animation.style.opacity = index === activeElement ? 1 : 0;
     })
 
-    animationWrapper.style.backgroundColor = activeColor
+    animationWrapper.style.backgroundColor = '#' + activeColor
   })
 }
 
