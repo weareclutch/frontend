@@ -374,18 +374,18 @@ app.ports.pauseAllVideos.subscribe(pauseAllVideos)
 
 function playVideosOnPage() {
   window.requestAnimationFrame(function(){
+    // pause all videso
     var allVideos = Array.prototype.slice.call(
       document.querySelectorAll('video[autoplay]')
     )
-
-    // pause all videos
     allVideos.forEach(function(video) {
       video.pause()
     })
 
+    // get current active page if not mobile
     var page = window.innerWidth < 780 ?
       document.querySelector('.mobile') :
-      document.querySelector('.overlay[data-active="True"]') ||
+      document.querySelector('.overlay[data-active="true"]') ||
       document.querySelector('.active-page')
 
     if (!page) return false
