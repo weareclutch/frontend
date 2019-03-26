@@ -202,65 +202,70 @@ view navigationTree navigationState route contactInformation =
                     ]
                 ]
 
-        menuItem =
-            \active hoverActive ->
-                styled a
-                    [ width (pct 100)
-                    , textAlign center
-                    , display block
-                    , height (px 30)
-                    , top zero
-                    , transition "all" 0.26 0 "ease-in-out"
-                    , overflow hidden
-                    , color <|
+        menuItemStyle =
+            \(active, hoverActive) ->
+                [ width (pct 100)
+                , textAlign center
+                , display block
+                , height (px 30)
+                , top zero
+                , transition "all" 0.26 0 "ease-in-out"
+                , overflow hidden
+                , color <|
+                    if active then
+                        hex "00FFB0"
+                    else
+                        hex "fff"
+                , verticalAlign top
+                , cursor pointer
+                , position relative
+                , marginBottom (px 24)
+                , bpMediumUp
+                    [ display inlineBlock
+                    , width auto
+                    , textAlign left
+                    , marginRight (px 30)
+                    , marginBottom zero
+                    ]
+                , lastChild
+                    [ marginRight zero
+                    , display none
+                    , bpMediumUp
+                        [ display inlineBlock
+                        ]
+                    ]
+                , after
+                    [ property "content" "''"
+                    , backgroundColor <|
                         if active then
                             hex "00FFB0"
                         else
                             hex "fff"
-                    , verticalAlign top
-                    , cursor pointer
+                    , transition "width" 0.1 0 "ease-in-out"
+                    , opacity <|
+                        if hoverActive then
+                            int 1
+                        else
+                            int 0
+                    , borderRadius (pct 100)
+                    , width (pct 100)
+                    , height (px 3)
+                    , maxWidth (px 3)
                     , position relative
-                    , marginBottom (px 24)
+                    , bottom (px -4)
+                    , margin auto
+                    , display none
                     , bpMediumUp
-                        [ display inlineBlock
-                        , width auto
-                        , textAlign left
-                        , marginRight (px 30)
-                        , marginBottom zero
-                        ]
-                    , lastChild
-                        [ marginRight zero
-                        , display none
-                        , bpMediumUp
-                            [ display inlineBlock
-                            ]
-                        ]
-                    , after
-                        [ property "content" "''"
-                        , backgroundColor <|
-                            if active then
-                                hex "00FFB0"
-                            else
-                                hex "fff"
-                        , transition "width" 0.1 0 "ease-in-out"
-                        , opacity <|
-                            if hoverActive then
-                                int 1
-                            else
-                                int 0
-                        , borderRadius (pct 100)
-                        , width (pct 100)
-                        , height (px 3)
-                        , maxWidth (px 3)
-                        , position relative
-                        , bottom (px -4)
-                        , margin auto
-                        , display none
-                        , bpMediumUp
-                            [ display block
-                            ]
+                        [ display block
                         ]
                     ]
+                ]
+
+        menuItem =
+            styled a << menuItemStyle
+
+        menuItemSpan =
+            styled span << menuItemStyle
 
         menuButtonText =
             \visible ->
@@ -344,13 +349,14 @@ view navigationTree navigationState route contactInformation =
                     |> List.indexedMap
                         (\index item ->
                             menuItem
-                                (activeIndex == index)
-                                (case navigationState of
+                                ( (activeIndex == index)
+                                , (case navigationState of
                                     Open i ->
                                         i == index
 
                                     _ ->
                                         False
+                                  )
                                 )
                                 [ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
                                 , class "nav"
@@ -359,9 +365,10 @@ view navigationTree navigationState route contactInformation =
                                 [ text item.title ]
                         )
                 )
-                    ++ [ menuItem
-                            False
-                            (navigationState == OpenContact)
+                    ++ [ menuItemSpan
+                            ( False
+                            , (navigationState == OpenContact)
+                            )
                             [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
                             , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
                             , class "nav"

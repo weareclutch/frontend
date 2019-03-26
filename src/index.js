@@ -66,16 +66,17 @@ app.ports.updateSlideshow.subscribe(function(data) {
 
 
 app.ports.resetScrollPosition.subscribe(function(id) {
-  if (document.body.clientWidth < 670) {
-    return document.body.scrollTop = 0
-  }
-
-  var overlays = [].slice.call(document.querySelectorAll('.overlay'))
-
-  overlays.map(function(overlay) {
-    if (overlay.dataset.active == "False") {
-      overlay.scrollTop = 0
+  window.requestAnimationFrame(function() {
+    if (document.body.clientWidth < 670) {
+      return window.scrollTo(0, 0)
     }
+
+    var overlays = [].slice.call(document.querySelectorAll('.overlay'))
+    overlays.map(function(overlay) {
+      if (overlay.dataset.active === "false") {
+        overlay.scrollTo(0, 0)
+      }
+    })
   })
 })
 
