@@ -6,7 +6,7 @@
 # server "example.com", user: "deploy", roles: %w{app db web}, my_property: :my_value
 # server "example.com", user: "deploy", roles: %w{app web}, other_property: :other_value
 # server "db.example.com", user: "deploy", roles: %w{db}
-server "staging.weareclutch.nl", user: "elm", roles: %{app}
+server "staging.weareclutch.nl", user: "deploy", roles: %{app}
 
 
 # role-based syntax
@@ -31,6 +31,8 @@ server "staging.weareclutch.nl", user: "elm", roles: %{app}
 # http://capistranorb.com/documentation/getting-started/configuration/
 # Feel free to add new variables to customise your setup.
 
+set :branch, 'develop'
+set :deploy_to, "/var/www/frontend-staging"
 
 
 # Custom SSH Options
