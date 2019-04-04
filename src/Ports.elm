@@ -43,5 +43,4 @@ port stopAnimation : String -> Cmd msg
 port playIntroAnimation : () -> Cmd msg
 
 
-port scrollOverlayDown : () -> Cmd msg
-
+port scrollToCases : () -> Cmd msg

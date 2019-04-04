@@ -89,9 +89,7 @@ getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
     case page of
         Wagtail.HomePage content ->
-            [ Ports.playVideos ()
-            , Ports.scrollOverlayDown ()
-            , Ports.bindHomePage
+            [ Ports.bindHomePage
                 (content.logos |> List.map .image |> List.map .image)
             ]
 
@@ -197,6 +195,9 @@ update msg model =
                           "Right"
                 )
             )
+
+        ScrollToCases ->
+            ( model, Ports.scrollToCases () )
 
         WagtailMsg wagtailMsg ->
             case wagtailMsg of

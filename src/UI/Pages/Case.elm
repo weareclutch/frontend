@@ -37,6 +37,10 @@ view content =
             styled div
                 [ maxWidth (px 660)
                 , margin auto
+                , width (pct 100)
+                , maxHeight (px 890)
+                , height <| calc (vh 100) minus (px 160)
+                , position relative
                 ]
     in
     wrapper []
@@ -302,7 +306,7 @@ intro content =
                         [ description [] [ text "Bekijken" ]
                         , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
                         ]
-                    ) 
+                    )
                 else
                     text ""
                 ]

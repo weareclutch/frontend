@@ -19,9 +19,9 @@ view navigationState contactInfo =
         wrapper =
             styled div
                 [ position relative
-                , top (pct 50)
                 , if navigationState == OpenContact then display block else display none
                 , if navigationState == OpenContact then opacity (int 1) else opacity zero
+                , top (pct 40)
                 , transform (translateY (pct -50))
                 , color (hex "fff")
                 , transition "opacity" 0.28 0.26 "ease-in-out"

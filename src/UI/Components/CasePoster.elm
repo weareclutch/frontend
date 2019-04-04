@@ -1,8 +1,9 @@
 module UI.Components.CasePoster exposing (view)
 
 import Css exposing (..)
+import Css.Global
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (href)
+import Html.Styled.Attributes exposing (href, class)
 import Style exposing (..)
 import Types exposing (Msg)
 import UI.Common exposing (backgroundImg)
@@ -12,36 +13,58 @@ import Wagtail
 view : Wagtail.CasePreview -> Html Msg
 view casePreview =
     let
-        wrapperAttributes =
+        imageAttributes =
             casePreview.backgroundImage
                 |> Maybe.map
                     (\image ->
-                        [ backgroundImg image ]
+                        [ class "image"
+                        , backgroundImg image
+                        ]
                     )
-                |> Maybe.withDefault []
+                |> Maybe.withDefault [ class "image" ]
 
         wrapper =
-            styled a <|
+            styled a
                 [ backgroundColor (hex casePreview.theme.backgroundColor)
-                , backgroundPosition center
-                , backgroundSize cover
                 , position relative
+                , overflow hidden
                 , cursor pointer
                 , top zero
                 , left zero
                 , display block
-                , overflow hidden
                 , maxHeight (pct 100)
                 , maxWidth (pct 100)
                 , width (pct 100)
-                , height auto
+                , height (pct 100)
                 , transition "all" 0.16 0 "linear"
-                , paddingTop (pct 142.424242)
-                , boxShadow4 zero (px 16) (px 41) (rgba 0 0 0 0.5)
                 , hover
-                    [ boxShadow4 zero (px 20) (px 61) (rgba 0 0 0 0.5)
-                    , transform <| translateY (px -12)
+                    [ Css.Global.descendants
+                        [ Css.Global.typeSelector ".image"
+                              [ transform <| scale 1.03
+                              ]
+                        ]
                     ]
+                ]
+
+        imageWrapper =
+            styled div
+                [ height (pct 100)
+                , width (pct 180)
+                , left (pct -40)
+                , position relative
+                ]
+
+        imageEl =
+            styled div
+                [ backgroundPosition center
+                , backgroundSize cover
+                , position absolute
+                , top zero
+                , left zero
+                , width (pct 100)
+                , height (pct 100)
+                , transition "all" 0.26 0 "ease-in-out"
+                , transform <| scale 1.01
                 ]
 
         titleWrapper =
@@ -94,7 +117,7 @@ view casePreview =
                 ]
 
         title =
-            styled span
+            styled div
                 [ paddingRight (px 40)
                 , bpMediumUp
                     [ paddingRight zero
@@ -103,10 +126,11 @@ view casePreview =
 
     in
     wrapper
-        ( [ href casePreview.url ]
-        ++ wrapperAttributes
-        )
-        [ titleWrapper []
+        [ href casePreview.url ]
+        [ imageWrapper [ class "image-wrapper" ]
+            [ imageEl imageAttributes []
+            ]
+        , titleWrapper []
             [ caption [] [ text casePreview.caption ]
             , title [] [ text casePreview.title ]
             ]

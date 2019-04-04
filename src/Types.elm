@@ -20,6 +20,7 @@ type Msg
     | UpdateSlideshow String Direction
     | ShowNextLogo
     | SpinLogos Int
+    | ScrollToCases
 
 
 type Direction

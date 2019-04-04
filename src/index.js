@@ -81,29 +81,6 @@ app.ports.resetScrollPosition.subscribe(function(id) {
 })
 
 
-
-var hasScrolledToBottom = false
-app.ports.scrollOverlayDown.subscribe(function() {
-  window.requestAnimationFrame(function() {
-    // scroll active page to the bottom
-    var page = window.innerWidth >= 780 ?
-      document.querySelector('.active-page') :
-      document.querySelector('.mobile')
-
-    if (!page) return false
-
-    if (hasScrolledToBottom) return false
-    hasScrolledToBottom = true
-
-    if (window.innerWidth >= 780) {
-      page.scrollTop = page.scrollHeight
-    } else {
-      window.scrollTo(0, page.scrollHeight)
-    }
-  })
-})
-
-
 app.ports.unbindAll.subscribe(function() {
   var aboutUsPage = document.getElementById('about-us-page')
   if (aboutUsPage) {
@@ -123,42 +100,43 @@ app.ports.bindHomePage.subscribe(function(logos) {
       img.src = url
     })
 
-    if (window.innerWidth < 780) return false
+      var page = document.getElementById("home")
+      if (!page) return false
 
-    var page = document.getElementById('home')
-    if (!page) return false
+      var images = [].slice.call(page.querySelectorAll('.image-wrapper'))
 
-    var parent = page.parentElement
-    var scrollUpText = document.getElementById('scroll-up-text')
-    var navPagesWrapper = document.getElementById('navigation-pages')
-    var active = false
+      if (homePageHasBeenBound || window.innerWidth < 780) return false
+      homePageHasBeenBound = true
 
-    var resetAngle = function() {
-      active = false
-      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(0deg)'
-      scrollUpText.style.opacity = 0
-      scrollUpText.style.transform = 'translateY(50px)'
-    }
 
-    var handleScroll = function(e) {
-      if (parent.scrollTop < page.clientHeight - window.innerHeight) {
-        return resetAngle()
-      }
+      page.addEventListener('wheel', function(e) {
+        e.preventDefault()
+        const multiplier = e.deltaMode === 1 ? 20 : 0.5
+        page.scrollLeft += e.deltaY * multiplier
+      })
 
-      active = e.deltaY > 0
-      var degrees = active ? -8 : 0;
 
-      navPagesWrapper.style.transform = 'perspective(1000px) rotateX(' + degrees + 'deg)'
-      scrollUpText.style.opacity = active ? 1 : 0
-      scrollUpText.style.transform = active ? 'translateY(0)' : 'translateY(24px)'
-    }
+      page.addEventListener('scroll', function() {
+        window.requestAnimationFrame(function() {
+          images.forEach(function(image, index) {
+            var delta =
+              page.scrollLeft -
+              (window.innerWidth / 1.8) -
+              (window.innerHeight * index * 0.7)
 
-    if (homePageHasBeenBound) return false
-    homePageHasBeenBound = true
-
-    document.body.addEventListener('click', resetAngle)
-    parent.addEventListener('wheel', handleScroll)
+            image.style.transform = 'translateX(' + delta * 0.1 + 'px)'
+          })
+        })
+      })
   })
+})
+
+
+app.ports.scrollToCases.subscribe(function() {
+  var page = document.getElementById("home")
+  if (!page) return false
+
+  page.scrollTo({ left: window.innerWidth - 190, behavior: 'smooth' })
 })
 
 
@@ -327,6 +305,7 @@ app.ports.stopAnimation.subscribe(stopAnimation)
 
 
 app.ports.playIntroAnimation.subscribe(function() {
+  return false
   if (window.innerWidth < 780) return false
 
   window.requestAnimationFrame(function() {

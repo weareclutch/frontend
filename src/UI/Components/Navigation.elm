@@ -123,7 +123,7 @@ view navigationTree navigationState route contactInformation =
                 , height (px 50)
                 , cursor pointer
                 , left (px 15)
-                , top (px 50)
+                , top (px 12)
                 , bpMedium
                     [ left (px 40)
                     , top (px 27)
@@ -161,7 +161,7 @@ view navigationTree navigationState route contactInformation =
                 , zIndex (int 110)
                 , cursor pointer
                 , right (px 25)
-                , top (px 60)
+                , top (px 22)
                 , bpMedium
                     [ right (px 40)
                     , top (px 40)

@@ -298,7 +298,7 @@ navigationPage navState index navItem active =
                 , zIndex (int <| 10 - index)
                 , transitions
                     [ { property = "transform"
-                      , duration = 0.5
+                      , duration = 0.36
                       , delay = 0.0
                       , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
                       }

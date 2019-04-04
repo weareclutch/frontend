@@ -9,6 +9,7 @@
 
 # local fonts
 public/fonts
+fonts
 
 # deploy
 deploy/log

@@ -16,92 +16,51 @@ import Regex
 view : Wagtail.HomePageContent -> Html Msg
 view content =
     let
-        ( evenCases, oddCases ) =
-            content.cases
-                |> List.reverse
-                |> List.indexedMap (\x y -> (x, y))
-                |> List.partition (\( index, x ) -> (remainderBy 2 index) == 0)
-
         caseWrapper =
             styled div
-                [ marginBottom (px 25)
-                , position relative
+                [ position relative
                 , textAlign left
                 , zIndex (int 80)
-                , bpMedium
-                    [ marginBottom (px 25)
-                    ]
-                , bpLarge
-                    [ marginBottom (px 50)
-                    ]
-                , bpXLargeUp
-                    [ marginBottom (px 120)
+                , whiteSpace normal
+                , height (vw 100)
+                , display block
+                , bpMediumUp
+                    [ width (vh 70)
+                    , height (vh 100)
+                    , display inlineBlock
                     ]
                 ]
 
         casesWrapper =
             styled div
-                [ bpMedium
-                    [ width <| calc (pct 50) minus (px 10)
-                    ]
-                , bpLarge
-                    [ width <| calc (pct 50) minus (px 25)
-                    ]
-                , bpXLargeUp
-                    [ width <| calc (pct 50) minus (px 60)
-                    ]
-                , nthChild "even"
-                    [ position relative
-                    , bpMediumUp
-                        [ display inlineBlock
-                        ]
-                    ]
-                , nthChild "odd"
-                    [ position relative
-                    , bpMediumUp
-                        [ position absolute
-                        , left zero
-                        , firstChild
-                            [ marginTop (pct 35)
-                            ]
-                        ]
+                [ display block
+                , bpMediumUp
+                  [ display inlineBlock
+                  ]
+
+                ]
+
+        wrapper =
+            styled div
+                [ backgroundColor (hex "292A32")
+                , property "-webkit-overflow-scrolling" "touch"
+                , bpMediumUp
+                    [ overflowX scroll
+                    , overflowY hidden
+                    , whiteSpace noWrap
+                    , height (pct 100)
                     ]
                 ]
 
-        casesOuterWrapper =
-            styled div
-                [ backgroundColor (hex "292A32")
-                , padding4 (px 240) zero zero zero
-                , textAlign right
-                , marginBottom (px -50)
-                , bpMediumUp
-                    [ padding2 (px 240) zero
-                    , margin zero
-                    ]
-                ]
     in
-    div [ id "home" ] <|
-        [ casesOuterWrapper []
-            [ container []
-                [ siteMargins []
-                    [ oddCases
-                        |> List.map Tuple.second
-                        |> List.map
-                            (\x ->
-                                caseWrapper [] [ UI.Components.CasePoster.view x ]
-                            )
-                        |> casesWrapper []
-                    , evenCases
-                        |> List.map Tuple.second
-                        |> List.map
-                            (\x ->
-                                caseWrapper [] [ UI.Components.CasePoster.view x ]
-                            )
-                        |> casesWrapper []
-                    ]
-                ]
-            ]
-        , introCover content
+    wrapper [ id "home" ] <|
+        [ introCover content
+        , casesWrapper []
+            <| List.map
+                (\x ->
+                    caseWrapper [] [ UI.Components.CasePoster.view x ]
+                )
+                content.cases
         ]
 
 
@@ -126,14 +85,14 @@ introCover content =
                 , maxWidth (px 560)
                 , width (pct 82)
                 , maxWidth (px 420)
-                , height (pct 80)
+                , height (pct 92)
                 , left (pct 50)
                 , transform <| translateX (pct -50)
                 , bottom zero
                 , backgroundSize contain
                 , backgroundPosition top
                 , zIndex (int 0)
-                , bpMediumUp
+                , bpLargeUp
                     [ transform (translate2 (pct -100) (pct -50))
                     , top (pct 50)
                     , bottom auto
@@ -151,19 +110,16 @@ introCover content =
                 , height (vh 100)
                 , backgroundColor (hex bgColor)
                 , position relative
+                , whiteSpace normal
+                , display block
                 , zIndex (int 5)
-                , bpMedium
-                    [ marginTop (px -300)
-                    ]
-                , bpLarge
-                    [ marginTop (px -340)
-                    ]
-                , bpXLargeUp
-                    [ marginTop (px -400)
+                , bpMediumUp
+                    [ display inlineBlock
+                    , width <| calc (vw 100) minus (px 80)
                     ]
                 , before
                     [ property "content" "''"
-                    , display block
+                    , display none
                     , position absolute
                     , top (px -230)
                     , left zero
@@ -191,17 +147,13 @@ introCover content =
                 , left (pct 50)
                 , transform (translateX (pct -50))
                 , textAlign center
-                , bpMediumUp
+                , bpLargeUp
                     [ position absolute
                     , transform (translateY (pct -50))
                     , top (pct 50)
                     , bottom auto
                     , textAlign left
                     , left (pct 50)
-                    ]
-                , bpMedium
-                    [ padding4 zero (px 40) zero zero
-                    , maxWidth (vw 40)
                     ]
                 , bpLarge
                     [ padding4 zero (px 120) zero zero
@@ -216,24 +168,6 @@ introCover content =
         title =
             styled h4
                 [ margin zero
-                ]
-
-        refreshButton =
-            styled div
-                [ display inlineBlock
-                , cursor pointer
-                , height (px 60)
-                , width (px 60)
-                , textAlign center
-                , backgroundColor (hex bgColor)
-                , border zero
-                , borderRadius (pct 50)
-                , paddingTop (px 18)
-                , transition "box-shadow" 0.16 0 "linear"
-                , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.25)
-                , hover
-                    [ boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.45)
-                    ]
                 ]
 
         author =
@@ -253,8 +187,22 @@ introCover content =
                 , width (pct 100)
                 , textAlign center
                 , padding (px 32)
+                , bpLargeUp
+                    [ textAlign left
+                    ]
+                ]
+
+        casesTitle =
+            styled p
+                [ position absolute
+                , right zero
+                , bottom (px 120)
+                , transform <| rotate (deg -90)
+                , display none
+                , color (hex "fff")
+                , cursor pointer
                 , bpMediumUp
-                    [ textAlign right
+                    [ display block
                     ]
                 ]
 
@@ -281,4 +229,9 @@ introCover content =
                         ]
                    )
                 |> Maybe.withDefault (text "")
-              ]
+            , casesTitle
+                  [ class "nav"
+                  , onClick ScrollToCases
+                  ]
+                  [ text "ons werk" ]
+            ]
