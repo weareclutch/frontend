@@ -305,7 +305,6 @@ app.ports.stopAnimation.subscribe(stopAnimation)
 
 
 app.ports.playIntroAnimation.subscribe(function() {
-  return false
   if (window.innerWidth < 780) return false
 
   window.requestAnimationFrame(function() {
