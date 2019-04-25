@@ -95,7 +95,7 @@ button theme attributes maybeText =
                 , position relative
                 , fontSize (px 22)
                 , fontWeight (int 500)
-                , transition "all" 0.16 0 "linear"
+                , transition "box-shadow" 0.16 0 "linear"
                 , boxShadow4 zero (px 20) (px 50) (rgba 0 0 0 0.15)
                 , letterSpacing (px 2)
                 , if hasText then
