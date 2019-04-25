@@ -157,17 +157,12 @@ introCover content =
                     ]
                 , bpLarge
                     [ padding4 zero (px 120) zero zero
-                    , maxWidth (px 620)
+                    , maxWidth (px 560)
                     ]
                 , bpXLargeUp
                     [ padding4 zero (px 120) zero zero
-                    , maxWidth (px 820)
+                    , maxWidth (px 620)
                     ]
-                ]
-
-        title =
-            styled h4
-                [ margin zero
                 ]
 
         author =
@@ -209,7 +204,7 @@ introCover content =
     in
         wrapper []
             [ textWrapper []
-                  [ title [] [ text content.text ]
+                  [ richText content.text
                   ]
             , activeLogo
                 |> Maybe.map

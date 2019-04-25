@@ -197,6 +197,10 @@ decodeLogoDesign =
 type alias HomePageContent =
     { meta : WagtailMetaContent
     , text : String
+    , link :
+        { title : String
+        , url : String
+        }
     , logos : List LogoDesign
     , cases : List CasePreview
     }
@@ -205,9 +209,14 @@ type alias HomePageContent =
 homePageDecoder : D.Decoder Page
 homePageDecoder =
     D.map HomePage <|
-        D.map4 HomePageContent
+        D.map5 HomePageContent
             metaDecoder
             (D.field "text" D.string)
+            (D.map2
+                 (\title url -> { title = title, url = url })
+                 (D.field "button_text" D.string)
+                 (D.at ["button_page", "url"] D.string)
+            )
             (D.field "logos" <| D.list decodeLogoDesign)
             (D.field "value" decodeCasePreview
                 |> D.list
