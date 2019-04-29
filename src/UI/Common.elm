@@ -223,17 +223,18 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 ]
 
         controls =
-            styled div
-                [ position absolute
-                , bottom (px -30)
-                , left zero
-                , width (pct 100)
-                , textAlign right
-                , display none
-                , bpMediumUp
-                    [ display block
+            \visible ->
+                styled div
+                    [ position absolute
+                    , bottom (px -30)
+                    , left zero
+                    , width (pct 100)
+                    , textAlign right
+                    , display none
+                    , bpMediumUp
+                        [ if visible then display block else display none
+                        ]
                     ]
-                ]
 
         slideshowButton =
             styled div
@@ -273,7 +274,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                     slides
                 )
             ]
-        , controls []
+        , controls ((List.length slides) > 1) []
             [ siteMargins []
                 [ slideshowButton
                     [ onClick (UpdateSlideshow id Left)
