@@ -392,7 +392,7 @@ renderExpertise index expertise =
             \active ->
                 styled div
                     [ if active then (display block) else (display none)
-                    , marginTop (px -80)
+                    , marginTop (px -40)
                     -- , bpLargeUp
                     --     [ paddingLeft (px 180)
                     --     ]
@@ -404,15 +404,8 @@ renderExpertise index expertise =
                 -- [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
                 [ animationWrapper [ id <| "expertise-animation-" ++ (String.fromInt index) ] []
                 , title expertise.active [] [ text expertise.title ]
-                , keywords expertise.active []
-                    [ strong [] <|
-                          ( expertise.keywords
-                              |> List.intersperse ", "
-                              |> List.map text
-                          )
-                    ]
                 ]
-            , body expertise.active []
+            , body True []
                 [ richText expertise.body
                 ]
             ]
