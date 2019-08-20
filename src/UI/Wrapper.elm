@@ -42,7 +42,7 @@ globalStyle =
             , fontFamilies [ qt "Qanelas ExtraBold" ]
             , fontWeight (int 400)
             , lineHeight (int 1)
-            , fontSize (px 70)
+            , fontSize (px 50)
             , letterSpacing (px 3.5)
             , bpLarge
                 [ fontSize (px 140)
