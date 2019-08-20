@@ -7,5 +7,5 @@ import Svg.Styled.Attributes exposing (..)
 
 arrow : String -> Html msg
 arrow color =
-    svg [ width "11", height "17" ] [ Svg.Styled.path [ d "M.36 2.12L2.5 0l8.48 8.49-8.48 8.48-2.13-2.12 6.37-6.36L.36 2.12z", fill <| "#" ++ color, fillRule "nonzero" ] [] ]
+    svg [ width "11", height "17" ] [ Svg.Styled.path [ d "M.4 2.1L2.5 0 11 8.5 2.5 17 .4 14.8l6.3-6.3L.4 2z", fill <| "#" ++ color, fillRule "nonzero" ] [] ]
 

@@ -256,12 +256,12 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                     , right (px 24)
                     , top (px 12)
                     , transform <|
-                        rotate <|
+                        scaleX <|
                             if rotated then
-                                deg 180
+                                -1
 
                             else
-                                deg 0
+                                1
                     ]
     in
     outerWrapper []
