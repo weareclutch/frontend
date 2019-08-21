@@ -106,7 +106,7 @@ introCover content =
                     wrapper =
                         styled div
                             [ width (pct 100)
-                            , height (vh 100)
+                            , height (vh 95)
                             , backgroundColor (hex bgColor)
                             , position relative
                             , whiteSpace normal
