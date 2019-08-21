@@ -114,6 +114,7 @@ introCover content =
                             , zIndex (int 5)
                             , bpMediumUp
                                 [ display inlineBlock
+                                , height (vh 100)
                                 , width <| calc (vw 100) minus (px 80)
                                 ]
                             , before
@@ -141,11 +142,14 @@ introCover content =
                             , width (pct 100)
                             , padding2 zero (px 25)
                             , position absolute
-                            , bottom (px 120)
                             , zIndex (int 2)
                             , left (pct 50)
                             , transform (translateX (pct -50))
                             , textAlign center
+                            , bottom (px 60)
+                            , bpMediumUp
+                                [ bottom (px 120)
+                                ]
                             , bpLargeUp
                                 [ position absolute
                                 , transform (translateY (pct -50))
