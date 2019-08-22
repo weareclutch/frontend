@@ -249,7 +249,6 @@ intro content =
         introWrapper =
             styled div
                 [ maxWidth (px 940)
-                , fontWeight (int 500)
                 , fontSize (px 20)
                 , lineHeight (px 40)
                 , padding2 zero (px 25)
