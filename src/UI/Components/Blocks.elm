@@ -336,7 +336,6 @@ column col =
                     ]
                 , bpLargeUp <|
                     [ position absolute
-                    , left zero
                     , padding2 (px 80) (px 110)
                     , zIndex (int 100)
                     ]
@@ -346,7 +345,8 @@ column col =
                                         case pos of
                                             ( "center", _ ) ->
                                                 [ top (pct 50)
-                                                , transform <| translateY (pct -50)
+                                                , left (pct 50)
+                                                , transform <| translate2 (pct -50) (pct -50)
                                                 ]
 
                                             ( "bottom", _ ) ->
