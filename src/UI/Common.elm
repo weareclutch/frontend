@@ -254,7 +254,7 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 styled div
                     [ position absolute
                     , right (px 24)
-                    , top (px 12)
+                    , top (px 14)
                     , transform <|
                         scaleX <|
                             if rotated then

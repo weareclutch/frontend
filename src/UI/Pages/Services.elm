@@ -417,7 +417,7 @@ renderExpertise index expertise =
     wrapper []
         [ header []
             -- [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
-            [ animationWrapper [ id <| "expertise-animation-" ++ toString index ] []
+            [ animationWrapper [ id <| "expertise-animation-" ++ String.fromInt index ] []
             , title expertise.active [] [ text expertise.title ]
             , keywords expertise.active
                 []
