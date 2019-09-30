@@ -3,9 +3,9 @@ module UI.Common exposing
     , button
     , container
     , image
+    , nonAnchorLink
     , siteMargins
     , slideshow
-    , nonAnchorLink
     )
 
 import Css exposing (..)
@@ -232,7 +232,11 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                     , textAlign right
                     , display none
                     , bpMediumUp
-                        [ if visible then display block else display none
+                        [ if visible then
+                            display block
+
+                          else
+                            display none
                         ]
                     ]
 
@@ -254,7 +258,9 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                 styled div
                     [ position absolute
                     , right (px 24)
-                    , top (px 14)
+                    , top (px 21.5)
+                    , fontSize (px 0)
+                    , lineHeight (px 0)
                     , transform <|
                         scaleX <|
                             if rotated then
@@ -274,7 +280,8 @@ slideshow id ( fXLarge, fLarge, fMedium ) render slides =
                     slides
                 )
             ]
-        , controls ((List.length slides) > 1) []
+        , controls (List.length slides > 1)
+            []
             [ siteMargins []
                 [ slideshowButton
                     [ onClick (UpdateSlideshow id Left)
