@@ -2,13 +2,13 @@ module UI.Pages.Services exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Events exposing (onClick)
 import Html.Styled.Attributes exposing (class, id)
-import Types exposing (..)
+import Html.Styled.Events exposing (onClick)
 import Style exposing (..)
-import Wagtail
-import UI.Common exposing (container, slideshow, backgroundImg, siteMargins)
+import Types exposing (..)
+import UI.Common exposing (backgroundImg, container, siteMargins, slideshow)
 import UI.Components.Blocks exposing (richText)
+import Wagtail
 
 
 view : Bool -> Wagtail.ServicesContent -> Html Msg
@@ -31,7 +31,6 @@ view isMobile content =
                 , zIndex (int 1)
                 ]
 
-
         title =
             styled h1
                 [ color (hex "001AE0")
@@ -41,7 +40,6 @@ view isMobile content =
             styled div
                 [ maxWidth (px 820)
                 ]
-
     in
     wrapper []
         [ container []
@@ -55,7 +53,7 @@ view isMobile content =
         , slideshowWrapper []
             [ slideshow
                 "services-slideshow"
-                (1, 1, 1)
+                ( 1, 1, 1 )
                 slideImage
                 content.images
             ]
@@ -78,15 +76,12 @@ slideImage image =
                     , height zero
                     ]
                 ]
-
     in
-        wrapper [ backgroundImg image ] []
+    wrapper [ backgroundImg image ] []
 
 
-
-
-servicesBlock : Bool -> (Int, List Wagtail.Service) -> Html Msg
-servicesBlock isMobile (activeIndex, services) =
+servicesBlock : Bool -> ( Int, List Wagtail.Service ) -> Html Msg
+servicesBlock isMobile ( activeIndex, services ) =
     let
         wrapper =
             styled div
@@ -101,6 +96,10 @@ servicesBlock isMobile (activeIndex, services) =
                     ]
                 ]
 
+        innerWrapper =
+            styled div
+                [ displayFlex
+                ]
 
         navigation =
             styled div
@@ -158,7 +157,8 @@ servicesBlock isMobile (activeIndex, services) =
                     , bpLargeUp
                         [ if active then
                             display block
-                        else
+
+                          else
                             display none
                         ]
                     ]
@@ -188,8 +188,11 @@ servicesBlock isMobile (activeIndex, services) =
                     , fontFamilies [ "Qanelas ExtraBold" ]
                     , fontWeight (int 400)
                     , cursor pointer
-                    , if active then (backgroundColor <| hex "001AE0")
-                      else (backgroundColor transparent)
+                    , if active then
+                        backgroundColor <| hex "001AE0"
+
+                      else
+                        backgroundColor transparent
                     , position relative
                     , hover
                         [ backgroundColor (hex "001AE0")
@@ -205,22 +208,21 @@ servicesBlock isMobile (activeIndex, services) =
                         , height (pct 100)
                         ]
                     ]
-
-
     in
-        wrapper []
-            [ container []
-                [ siteMargins []
+    wrapper []
+        [ container []
+            [ siteMargins []
+                [ innerWrapper []
                     [ navigation []
                         [ title [] [ text "wat we doen" ]
-                        , navigationItems []
-                            <| List.indexedMap
+                        , navigationItems [] <|
+                            List.indexedMap
                                 (\index service ->
                                     navigationItem
                                         (index == activeIndex)
-                                        [ onClick
-                                            <| WagtailMsg
-                                            <| Wagtail.UpdateServicesState index
+                                        [ onClick <|
+                                            WagtailMsg <|
+                                                Wagtail.UpdateServicesState index
                                         ]
                                         [ text service.title ]
                                 )
@@ -238,7 +240,8 @@ servicesBlock isMobile (activeIndex, services) =
                             services
                     ]
                 ]
-             ]
+            ]
+        ]
 
 
 expertisesBlock : List Wagtail.Expertise -> Html Msg
@@ -317,24 +320,21 @@ expertisesBlock expertises =
                     [ padding4 (px 270) zero (px 270) (px 180)
                     ]
                 ]
-
     in
-        container []
-            [ siteMargins []
-                [ wrapper []
-                    [ intro []
-                        [ title [] [ text "hoe we het doen" ]
-                        , paragraph [ class "intro" ] [ richText "Goed doordachte idee&euml;n vormen de basis, maar met liefde in de executie maak je het verschil." ]
-                        ]
-                    , content []
-                        <| List.indexedMap
-                            renderExpertise
-                            expertises
+    container []
+        [ siteMargins []
+            [ wrapper []
+                [ intro []
+                    [ title [] [ text "hoe we het doen" ]
+                    , paragraph [ class "intro" ] [ richText "Goed doordachte idee&euml;n vormen de basis, maar met liefde in de executie maak je het verschil." ]
                     ]
-
+                , content [] <|
+                    List.indexedMap
+                        renderExpertise
+                        expertises
                 ]
             ]
-
+        ]
 
 
 renderExpertise : Int -> Wagtail.Expertise -> Html Msg
@@ -351,6 +351,7 @@ renderExpertise index expertise =
         header =
             styled div
                 [ padding2 (px 50) zero
+
                 -- , cursor pointer
                 , position relative
                 , bpLargeUp
@@ -368,6 +369,7 @@ renderExpertise index expertise =
                 , top (pct 50)
                 , transform <| translateY (pct -50)
                 , display none
+
                 -- , bpLargeUp
                 --     [ display block
                 --     ]
@@ -377,35 +379,60 @@ renderExpertise index expertise =
             \active ->
                 styled h4
                     [ marginBottom (px 10)
-                    , if active then (color <| hex "001AE0") else (color inherit)
+                    , if active then
+                        color <| hex "001AE0"
+
+                      else
+                        color inherit
                     ]
 
         keywords =
             \active ->
                 styled p
                     [ margin zero
-                    , opacity <| if active then (int 0) else (int 1)
+                    , opacity <|
+                        if active then
+                            int 0
+
+                        else
+                            int 1
                     , height (px 32)
                     ]
 
         body =
             \active ->
                 styled div
-                    [ if active then (display block) else (display none)
-                    , marginTop (px -40)
+                    [ if active then
+                        display block
+
+                      else
+                        display none
+                    , marginTop (px -80)
+
                     -- , bpLargeUp
                     --     [ paddingLeft (px 180)
                     --     ]
                     ]
-
     in
-        wrapper []
-            [ header []
-                -- [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
-                [ animationWrapper [ id <| "expertise-animation-" ++ (String.fromInt index) ] []
-                , title expertise.active [] [ text expertise.title ]
-                ]
-            , body True []
-                [ richText expertise.body
+    wrapper []
+        [ header []
+            -- [ onClick <| WagtailMsg <| Wagtail.UpdateExpertisesState index ]
+            [ animationWrapper [ id <| "expertise-animation-" ++ String.fromInt index ] []
+            , title expertise.active [] [ text expertise.title ]
+            , keywords expertise.active
+                []
+                [ strong [] <|
+                    List.map
+                        (\keyword ->
+                            text <|
+                                String.trim keyword
+                                    ++ ", "
+                        )
+                        expertise.keywords
                 ]
             ]
+        , body expertise.active
+            []
+            [ richText expertise.body
+            ]
+        ]
