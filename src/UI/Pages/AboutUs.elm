@@ -1,12 +1,11 @@
-module UI.Pages.AboutUs exposing (..)
-
+module UI.Pages.AboutUs exposing (bodyText, clients, person, slideImage, team, topics, view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class, id, src)
 import Style exposing (..)
 import Types exposing (Msg)
-import UI.Common exposing (container, siteMargins, slideshow, backgroundImg, image)
+import UI.Common exposing (backgroundImg, container, image, siteMargins, slideshow)
 import UI.Components.Blocks exposing (richText)
 import Wagtail
 
@@ -40,31 +39,36 @@ view isMobile content =
             styled h1
                 [ color (hex "001AE0")
                 ]
-
     in
-        wrapper [ if isMobile then id "about-us-page-mobile" else id "about-us-page" ]
-            [ container []
-                [ siteMargins []
-                    [ contentWrapper []
-                        [ title [] [ text content.title ]
-                        , p [ class "intro" ] [ text content.introduction ]
-                        ]
+    wrapper
+        [ if isMobile then
+            id "about-us-page-mobile"
+
+          else
+            id "about-us-page"
+        ]
+        [ container []
+            [ siteMargins []
+                [ contentWrapper []
+                    [ title [] [ text content.title ]
+                    , p [ class "intro" ] [ text content.introduction ]
                     ]
                 ]
-            , slideshowWrapper []
-                [ slideshow
-                    "services-slideshow"
-                    (1, 1, 1)
-                    slideImage
-                    content.images
-                ]
-            , container []
-                [ bodyText content.bodyText
-                ]
-            , topics isMobile content.topics
-            , team content.team
-            , clients content.clients
             ]
+        , slideshowWrapper []
+            [ slideshow
+                "services-slideshow"
+                ( 1, 1, 1 )
+                slideImage
+                content.images
+            ]
+        , container []
+            [ bodyText content.bodyText
+            ]
+        , topics isMobile content.topics
+        , team content.team
+        , clients content.clients
+        ]
 
 
 slideImage : Wagtail.Image -> Html msg
@@ -81,10 +85,8 @@ slideImage image =
                     , height zero
                     ]
                 ]
-
     in
-        wrapper [ backgroundImg image ] []
-
+    wrapper [ backgroundImg image ] []
 
 
 bodyText : { left : String, right : String, title : String } -> Html msg
@@ -114,17 +116,14 @@ bodyText content =
                     , width (pct 34)
                     ]
                 ]
-
     in
-        siteMargins []
-            [ left []
-                -- [ h2 [] [ text content.title ]
-                [ richText content.left
-                ]
-            , right [] [ text content.right ]
+    siteMargins []
+        [ left []
+            -- [ h2 [] [ text content.title ]
+            [ richText content.left
             ]
-
-
+        , right [] [ text content.right ]
+        ]
 
 
 topics : Bool -> List Wagtail.Topic -> Html msg
@@ -249,65 +248,67 @@ topics isMobile items =
                         ]
                     ]
                 ]
-
     in
-        container [ class "topics" ]
-            [ siteMargins []
-                [ wrapper []
-                    [ case isMobile of
-                        False -> animationWrapper [ class "animation-wrapper" ]
-                                    [ animations []
-                                        <| List.indexedMap
-                                            (\index t ->
-                                                animation
-                                                    [ id <| "about-us-animation-" ++ t.animationName
-                                                    , class "animation"
-                                                    , Html.Styled.Attributes.attribute
-                                                        "data-name"
-                                                        t.animationName
-                                                    ]
-                                                    []
-                                            )
-                                            items
-                                    ]
-                        True ->
-                            text ""
-                    , content []
-                        <| List.indexedMap
-                            (\index t ->
-                                contentBlock
-                                    [ class "topic"
-                                    , Html.Styled.Attributes.attribute
-                                        "data-color"
-                                        t.color
-                                    ]
-                                    [ case isMobile of
-                                        True ->
-                                            mobileAnimationWrapper t.color []
-                                                [ mobileAnimation
-                                                    [ id <| "about-us-mobile-animation-" ++ t.animationName
-                                                    , class "animation"
-                                                    , Html.Styled.Attributes.attribute
-                                                        "data-name"
-                                                        t.animationName
-                                                    ]
-                                                    []
-                                                , mobileTitle [] [ text t.title ]
+    container [ class "topics" ]
+        [ siteMargins []
+            [ wrapper []
+                [ case isMobile of
+                    False ->
+                        animationWrapper [ class "animation-wrapper" ]
+                            [ animations [] <|
+                                List.indexedMap
+                                    (\index t ->
+                                        animation
+                                            [ id <| "about-us-animation-" ++ t.animationName
+                                            , class "animation"
+                                            , Html.Styled.Attributes.attribute
+                                                "data-name"
+                                                t.animationName
+                                            ]
+                                            []
+                                    )
+                                    items
+                            ]
+
+                    True ->
+                        text ""
+                , content [] <|
+                    List.indexedMap
+                        (\index t ->
+                            contentBlock
+                                [ class "topic"
+                                , Html.Styled.Attributes.attribute
+                                    "data-color"
+                                    t.color
+                                ]
+                                [ case isMobile of
+                                    True ->
+                                        mobileAnimationWrapper t.color
+                                            []
+                                            [ mobileAnimation
+                                                [ id <| "about-us-mobile-animation-" ++ t.animationName
+                                                , class "animation"
+                                                , Html.Styled.Attributes.attribute
+                                                    "data-name"
+                                                    t.animationName
                                                 ]
-                                        False ->
-                                            text ""
-                                    , title [] [ text t.title ]
-                                    , richText t.description
-                                    ]
-                            )
-                            items
-                    ]
-               ]
-          ]
+                                                []
+                                            , mobileTitle [] [ text t.title ]
+                                            ]
+
+                                    False ->
+                                        text ""
+                                , title [] [ text t.title ]
+                                , richText t.description
+                                ]
+                        )
+                        items
+                ]
+            ]
+        ]
 
 
-
-team : { title : String , text : String , people : List Wagtail.Person } -> Html Msg
+team : { title : String, text : String, people : List Wagtail.Person } -> Html Msg
 team data =
     let
         wrapper =
@@ -325,23 +326,22 @@ team data =
             styled div
                 [ maxWidth (px 820)
                 ]
-
     in
-        wrapper []
-            [ container []
-                [ siteMargins []
-                    [ content []
-                        [ h2 [] [ text data.title ]
-                        , p [] [ text data.text ]
-                        ]
+    wrapper []
+        [ container []
+            [ siteMargins []
+                [ content []
+                    [ h2 [] [ text data.title ]
+                    , p [] [ text data.text ]
                     ]
                 ]
-            , slideshow
-                "services-slideshow-team"
-                (4, 3, 2)
-                person
-                data.people
             ]
+        , slideshow
+            "services-slideshow-team"
+            ( 4, 3, 2 )
+            person
+            data.people
+        ]
 
 
 person : Wagtail.Person -> Html msg
@@ -381,8 +381,8 @@ person data =
                     , left zero
                     , width (pct 100)
                     , height (px 200)
-                    , backgroundImage
-                        <| linearGradient
+                    , backgroundImage <|
+                        linearGradient
                             (stop (rgba 0 0 0 0))
                             (stop (rgba 0 0 0 0.5))
                             []
@@ -411,21 +411,18 @@ person data =
                     , letterSpacing (px 1.5)
                     ]
                 ]
-
     in
-        wrapper []
-            [ image [ backgroundImg data.image ] []
-            , content []
-                [ name []
-                    [ text <| data.firstName ++ " " ++ data.lastName ]
-                , title [ ] [ text data.jobTitle ]
-                ]
+    wrapper []
+        [ image [ backgroundImg data.image ] []
+        , content []
+            [ name []
+                [ text <| data.firstName ++ " " ++ data.lastName ]
+            , title [] [ text data.jobTitle ]
             ]
+        ]
 
 
-
-
-clients : { title : String, text : String, clients: List Wagtail.Image } -> Html msg
+clients : { title : String, text : String, clients : List Wagtail.Image } -> Html msg
 clients data =
     let
         wrapper =
@@ -476,38 +473,29 @@ clients data =
                 ]
 
         imageStyle =
-            [ maxWidth (pct 80)
+            [ maxWidth (pct 70)
             , position absolute
-            , left zero
+            , left (pct 50)
             , top (pct 50)
-            , transform
-                <| translateY (pct -50)
+            , transform <|
+                translate2 (pct -50) (pct -50)
             , bpMediumUp
-                [ transform
-                    <| translate2 (pct -50) (pct -50)
-                , left (pct 50)
-                , maxWidth (pct 90)
-                ]
+                [ maxWidth (pct 90) ]
             ]
-
-
     in
-        wrapper []
-            [ container []
-                [ siteMargins []
-                    [ content []
-                        [ title [] [ text data.title ]
-                        , p [] [ text data.text ]
-                        ]
-                    , clientsWrapper []
-                        <| List.map
-                            (\c ->
-                                client [] [ image imageStyle c ]
-                            )
-                            data.clients
+    wrapper []
+        [ container []
+            [ siteMargins []
+                [ content []
+                    [ title [] [ text data.title ]
+                    , p [] [ text data.text ]
                     ]
+                , clientsWrapper [] <|
+                    List.map
+                        (\c ->
+                            client [] [ image imageStyle c ]
+                        )
+                        data.clients
                 ]
             ]
-
-
-
+        ]
