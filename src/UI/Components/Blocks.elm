@@ -3,11 +3,10 @@ module UI.Components.Blocks exposing (backgroundBlock, column, columns, contentB
 import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (attribute, autoplay, loop, property, src)
-import Json.Encode
+import Json.Encode as Encode
 import Style exposing (..)
 import UI.Common exposing (backgroundImg, image)
 import Wagtail exposing (Block(..), Column, Image, Quote, Theme)
-import Json.Encode as Encode
 
 
 streamfield : List Block -> Html msg
@@ -47,12 +46,12 @@ streamfield blockData =
 
 richText : String -> Html msg
 richText string =
-  node "cms-html"
-    [ Html.Styled.Attributes.property
-      "content"
-      (Encode.string string)
-    ]
-    []
+    node "cms-html"
+        [ Html.Styled.Attributes.property
+            "content"
+            (Encode.string string)
+        ]
+        []
 
 
 quote : Quote -> Html msg
@@ -180,7 +179,6 @@ columns col1 col2 =
                     , width (pct 100)
                     ]
                 ]
-
     in
     wrapper []
         [ div []
@@ -211,20 +209,20 @@ videoBlock url =
                 [ width (pct 100)
                 ]
     in
-        wrapper []
-            [ videoElement
-                [ src url
-                , autoplay True
-                , loop True
-                , attribute "muted" ""
-                , attribute "playsinline" ""
-                ]
-                [ source
-                    [ src url
-                    ]
-                    []
-                ]
+    wrapper []
+        [ videoElement
+            [ src url
+            , autoplay True
+            , loop True
+            , attribute "muted" ""
+            , attribute "playsinline" ""
             ]
+            [ source
+                [ src url
+                ]
+                []
+            ]
+        ]
 
 
 column : Column -> Html msg
@@ -322,7 +320,6 @@ column col =
                             ]
                         ]
 
-
         textWrapper =
             styled div
                 [ position relative
@@ -369,4 +366,3 @@ column col =
                     |> Maybe.withDefault (text "")
                 )
         ]
-

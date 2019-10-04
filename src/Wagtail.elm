@@ -1,8 +1,9 @@
-module Wagtail exposing (..)
+module Wagtail exposing (AboutUsContent, Block(..), BlogCollectionContent, BlogOverviewContent, BlogPostContent, BlogPostPreview, BlogPostSeries, BlogSeriesPreview, CasePageContent, CasePreview, Column, ColumnBackground(..), Expertise, HomePageContent, Image, LogoDesign, Media(..), Msg(..), Page(..), Person, Quote, Service, ServicesContent, Theme, Topic, WagtailMetaContent, aboutUsPageDecoder, blogCollectionPageDecoder, blogOverviewPageDecoder, blogPostPageDecoder, blogPostPreviewDecoder, blogSeriesPreviewDecoder, casePageDecoder, dateDecoder, decodeBackgroundBlock, decodeBlocks, decodeCasePreview, decodeColumn, decodeColumnBackground, decodeColumns, decodeContentBlock, decodeImage, decodeImageBlock, decodeLogoDesign, decodeMedia, decodePageType, decodeQuote, decodeTheme, decodeVideoBlock, findPageUrl, getPageDecoder, getPageId, getPageTheme, getWagtailPage, homePageDecoder, metaDecoder, preloadWagtailPage, servicesPageDecoder)
 
 import Http exposing (..)
 import Json.Decode as D
 import Url
+
 
 findPageUrl : String -> String -> String
 findPageUrl apiUrl pathname =
@@ -53,7 +54,7 @@ getPageId page =
 
 getPageTheme : Page -> Theme
 getPageTheme page =
-    ( case page of
+    (case page of
         CasePage { theme } ->
             Just theme
 
@@ -63,11 +64,11 @@ getPageTheme page =
         _ ->
             Nothing
     )
-      |> Maybe.withDefault
-          { backgroundColor = "fff"
-          , textColor = "292A32"
-          , backgroundPosition = Nothing
-          }
+        |> Maybe.withDefault
+            { backgroundColor = "fff"
+            , textColor = "292A32"
+            , backgroundPosition = Nothing
+            }
 
 
 getWagtailPage : String -> Url.Url -> Cmd Msg
@@ -80,14 +81,13 @@ getWagtailPage apiUrl url =
         , expect =
             expectStringResponse
                 (\r ->
-                  (D.decodeString
-                      (decodePageType
-                          |> D.andThen getPageDecoder
-                          |> D.map (\page -> ( r, page ))
-                      )
-                      r.body
-                  )
-                    |> Result.mapError (\err -> "Decoding of page failed")
+                    D.decodeString
+                        (decodePageType
+                            |> D.andThen getPageDecoder
+                            |> D.map (\page -> ( r, page ))
+                        )
+                        r.body
+                        |> Result.mapError (\err -> "Decoding of page failed")
                 )
         , timeout = Nothing
         , withCredentials = False
@@ -148,13 +148,15 @@ getPageDecoder pageType =
             D.fail ("Can't find decoder for \"" ++ pageType ++ "\" type")
 
 
-
 dateDecoder : D.Decoder String
 dateDecoder =
     D.string
-    -- @TODO parse the Date properly, using something 0.19-ish
-    -- D.string
-    --     |> D.andThen (\s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
+
+
+
+-- @TODO parse the Date properly, using something 0.19-ish
+-- D.string
+--     |> D.andThen (\s -> D.succeed (Date.fromString s |> Result.withDefault (Date.fromTime 0)))
 
 
 type alias WagtailMetaContent =
@@ -176,7 +178,6 @@ metaDecoder =
         (D.at [ "meta", "slug" ] D.string)
         (D.at [ "meta", "first_published_at" ] dateDecoder)
         (D.at [ "meta", "seo_title" ] D.string)
-
 
 
 type alias LogoDesign =
@@ -213,9 +214,9 @@ homePageDecoder =
             metaDecoder
             (D.field "text" D.string)
             (D.map2
-                 (\title url -> { title = title, url = url })
-                 (D.field "button_text" D.string)
-                 (D.at ["button_page", "url"] D.string)
+                (\title url -> { title = title, url = url })
+                (D.field "button_text" D.string)
+                (D.at [ "button_page", "url" ] D.string)
             )
             (D.field "logos" <| D.list decodeLogoDesign)
             (D.field "value" decodeCasePreview
@@ -678,7 +679,7 @@ decodeTheme =
         )
         (D.maybe <|
             D.map2
-                (\x y -> (x, y))
+                (\x y -> ( x, y ))
                 (D.oneOf
                     [ D.field "background_position_x" D.string
                     , D.field "position" D.string
@@ -741,6 +742,7 @@ decodeImageBlock =
             (D.at [ "image", "url" ] D.string)
             (D.maybe <| D.field "caption" D.string)
         )
+
 
 decodeVideoBlock : D.Decoder Block
 decodeVideoBlock =

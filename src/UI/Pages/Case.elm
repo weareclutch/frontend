@@ -301,12 +301,12 @@ intro content =
                     , div [] [ text "Jan 2018" ]
                     ]
                 , if content.info.websiteUrl /= "" then
-                    ( metaSection []
+                    metaSection []
                         [ description [] [ text "Bekijken" ]
                         , a [ href content.info.websiteUrl ] [ text content.info.websiteUrl ]
                         ]
-                    )
-                else
+
+                  else
                     text ""
                 ]
             ]
