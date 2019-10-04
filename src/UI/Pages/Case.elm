@@ -134,10 +134,10 @@ header content =
                     , maxWidth (px 600)
                     ]
                 , bpLarge
-                    [ maxWidth (px 700)
+                    [ maxWidth (px 800)
                     ]
                 , bpXLargeUp
-                    [ maxWidth (px 900)
+                    [ maxWidth (px 1000)
                     ]
                 ]
 
