@@ -65,11 +65,6 @@ header content =
                     )
                 |> Maybe.withDefault []
 
-        image =
-            content.image
-                |> Maybe.map (layerImage content.theme)
-                |> Maybe.withDefault (text "")
-
         outerWrapper =
             styled div <|
                 [ backgroundColor (hex "292A32")
@@ -160,8 +155,7 @@ header content =
     in
     outerWrapper []
         [ wrapper wrapperAttributes
-            [ image
-            , titleWrapper []
+            [ titleWrapper []
                 [ caption [] [ text content.info.caption ]
                 , title [] [ text content.meta.title ]
                 ]

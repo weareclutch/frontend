@@ -400,7 +400,6 @@ type alias CasePageContent =
         }
     , intro : Maybe String
     , body : Maybe (List Block)
-    , image : Maybe Image
     , backgroundImage : Maybe Image
     }
 
@@ -408,7 +407,7 @@ type alias CasePageContent =
 casePageDecoder : D.Decoder Page
 casePageDecoder =
     D.map CasePage <|
-        D.map7 CasePageContent
+        D.map6 CasePageContent
             metaDecoder
             decodeTheme
             (D.map4
@@ -426,7 +425,6 @@ casePageDecoder =
             )
             (D.maybe <| D.field "intro" D.string)
             (D.maybe <| D.field "body" decodeBlocks)
-            (D.maybe <| D.field "image_src" decodeImage)
             (D.maybe <| D.field "background_image_src" decodeImage)
 
 
