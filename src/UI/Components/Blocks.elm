@@ -88,7 +88,11 @@ imageBlock theme imageData =
     in
     wrapper []
         [ innerWrapper []
-            [ image [ maxWidth (pct 100) ] imageData
+            [ image
+                [ maxWidth (pct 100)
+                , margin2 (px 0) auto
+                ]
+                imageData
             ]
         ]
 
