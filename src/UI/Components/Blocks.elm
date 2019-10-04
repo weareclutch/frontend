@@ -206,6 +206,7 @@ videoBlock url =
         wrapper =
             styled div
                 [ width (pct 100)
+                , lineHeight (px 0)
                 ]
 
         videoElement =
