@@ -1,14 +1,14 @@
-module Types exposing (..)
+module Types exposing (Direction(..), Flags, Model, Msg(..), Route(..), SiteIdentifier, initModel)
 
 -- import Navigation exposing (Location)
 -- import UI.State
 
 import Browser
 import Browser.Navigation
-import Url.Parser exposing (Parser, parse, string, map, oneOf, top)
-import Url
-import Wagtail
 import UI.State
+import Url
+import Url.Parser exposing (Parser, map, oneOf, parse, string, top)
+import Wagtail
 
 
 type Msg
@@ -39,7 +39,7 @@ type alias Model =
     }
 
 
-initModel : Flags -> Browser.Navigation.Key ->  Model
+initModel : Flags -> Browser.Navigation.Key -> Model
 initModel flags key =
     { flags = flags
     , key = key

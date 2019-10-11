@@ -1,4 +1,4 @@
-module Style exposing (..)
+module Style exposing (bpLarge, bpLargeUp, bpMedium, bpMediumUp, bpSmallOnly, bpXLarge, bpXLargeUp, bpXXLargeUp, large, medium, small, transition, transitionString, transitions, xLarge)
 
 import Css exposing (..)
 import Css.Media exposing (..)
@@ -93,7 +93,7 @@ transitionString prop duration delay easing =
     prop ++ " " ++ String.fromFloat duration ++ "s " ++ String.fromFloat delay ++ "s " ++ easing
 
 
-transitions : List { property : String, duration : Float, delay : Float, easing: String } -> Style
+transitions : List { property : String, duration : Float, delay : Float, easing : String } -> Style
 transitions list =
     list
         |> List.map
