@@ -1,14 +1,14 @@
-module Types exposing (..)
+module Types exposing (Direction(..), Flags, Model, Msg(..), Route(..), SiteIdentifier, initModel)
 
 -- import Navigation exposing (Location)
 -- import UI.State
 
 import Browser
 import Browser.Navigation
-import Url.Parser exposing (Parser, parse, string, map, oneOf, top)
-import Url
-import Wagtail
 import UI.State
+import Url
+import Url.Parser exposing (Parser, map, oneOf, parse, string, top)
+import Wagtail
 
 
 type Msg
@@ -21,6 +21,7 @@ type Msg
     | ShowNextLogo
     | SpinLogos Int
     | ScrollToCases
+    | RandomInt Int
 
 
 type Direction
@@ -36,10 +37,11 @@ type alias Model =
     , navigationState : UI.State.NavigationState
     , navigationTree : Maybe UI.State.NavigationTree
     , contactInformation : Maybe UI.State.ContactInformation
+    , imageIndex : Int
     }
 
 
-initModel : Flags -> Browser.Navigation.Key ->  Model
+initModel : Flags -> Browser.Navigation.Key -> Model
 initModel flags key =
     { flags = flags
     , key = key
@@ -51,6 +53,7 @@ initModel flags key =
     , navigationState = UI.State.Closed
     , navigationTree = Nothing
     , contactInformation = Nothing
+    , imageIndex = 0
     }
 
 

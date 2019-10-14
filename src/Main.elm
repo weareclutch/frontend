@@ -1,26 +1,27 @@
-module Main exposing (..)
+module Main exposing (fetchSiteDependentResources, getAndDecodePage, getPageCommands, init, main, update)
 
 import Browser
 import Browser.Navigation
-import Url
-import Http
 import Dict
 import Html.Styled exposing (..)
+import Http
 import Ports
-import Types exposing (Msg(..))
-import Wagtail exposing (getWagtailPage, preloadWagtailPage)
-import UI.State exposing (fetchContactInformation, fetchNavigation)
-import UI.Wrapper
 import Process
+import Random
 import Task
 import Time
+import Types exposing (Msg(..))
+import UI.State exposing (fetchContactInformation, fetchNavigation)
+import UI.Wrapper
+import Url
+import Wagtail exposing (getWagtailPage, preloadWagtailPage)
 
 
 main : Program Types.Flags Types.Model Msg
 main =
     Browser.application
         { init = init
-        , view = \model -> { title = "clutch - make more to love", body = [UI.Wrapper.view model |> toUnstyled ] }
+        , view = \model -> { title = "clutch - make more to love", body = [ UI.Wrapper.view model |> toUnstyled ] }
         , update = update
         , subscriptions = \_ -> Sub.none
         , onUrlChange = \url -> UrlChanged url
@@ -44,6 +45,7 @@ init flags url key =
                     defaultCommands
     in
     ( Types.initModel flags key, Cmd.batch commands )
+
 
 fetchSiteDependentResources : String -> Types.Route -> Maybe String -> Cmd Msg
 fetchSiteDependentResources apiUrl previousRoute currentIdentifier =
@@ -80,10 +82,12 @@ fetchSiteDependentResources apiUrl previousRoute currentIdentifier =
             else
                 fetchResourcesForSite id
 
+
 getAndDecodePage : String -> Url.Url -> Cmd Msg
 getAndDecodePage apiUrl url =
     getWagtailPage apiUrl url
         |> Cmd.map (\cmd -> WagtailMsg cmd)
+
 
 getPageCommands : Wagtail.Page -> List (Cmd Msg)
 getPageCommands page =
@@ -91,6 +95,9 @@ getPageCommands page =
         Wagtail.HomePage content ->
             [ Ports.bindHomePage
                 (content.logos |> List.map .image |> List.map .image)
+            , (List.length content.logos - 1)
+                |> Random.int 0
+                |> Random.generate RandomInt
             ]
 
         Wagtail.CasePage _ ->
@@ -149,10 +156,13 @@ update msg model =
 
                 _ ->
                     Cmd.batch
-                      [ Task.perform (\_ -> SpinLogos <| n - 1) (Process.sleep 280)
-                      , Task.perform (\_ -> ShowNextLogo) Time.now
-                      ]
+                        [ Task.perform (\_ -> SpinLogos <| n - 1) (Process.sleep 280)
+                        , Task.perform (\_ -> ShowNextLogo) Time.now
+                        ]
             )
+
+        RandomInt n ->
+            ( { model | imageIndex = n }, Cmd.none )
 
         ShowNextLogo ->
             case model.route of
@@ -160,39 +170,41 @@ update msg model =
                     let
                         page =
                             Wagtail.HomePage
-                                { content | logos =
-                                      case content.logos of
-                                          x::xs ->
-                                              List.append xs [ x ]
+                                { content
+                                    | logos =
+                                        case content.logos of
+                                            x :: xs ->
+                                                List.append xs [ x ]
 
-                                          xs ->
-                                              List.reverse xs
+                                            xs ->
+                                                List.reverse xs
                                 }
 
                         route =
-                           Types.WagtailRoute identifier page
+                            Types.WagtailRoute identifier page
                     in
-                      ( { model
-                            | route = route
-                            , navigationTree =
-                                model.navigationTree
-                                    |> Maybe.map (UI.State.addPageToNavigationTree page)
-                        }
-                      , Cmd.none
-                      )
+                    ( { model
+                        | route = route
+                        , navigationTree =
+                            model.navigationTree
+                                |> Maybe.map (UI.State.addPageToNavigationTree page)
+                      }
+                    , Cmd.none
+                    )
 
                 _ ->
-                    (model, Cmd.none)
+                    ( model, Cmd.none )
 
         UpdateSlideshow id direction ->
             ( model
             , Ports.updateSlideshow
                 ( id
                 , case direction of
-                      Types.Left ->
-                          "Left"
-                      Types.Right ->
-                          "Right"
+                    Types.Left ->
+                        "Left"
+
+                    Types.Right ->
+                        "Right"
                 )
             )
 
@@ -375,7 +387,6 @@ update msg model =
                         _ ->
                             ( model, Cmd.none )
 
-
         NavigationMsg navigationMsg ->
             case navigationMsg of
                 UI.State.FetchNavigation (Ok navigationTree) ->
@@ -447,10 +458,10 @@ update msg model =
                                 ( UI.State.Open _, UI.State.Closed ) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
-                                (UI.State.OpenContact, UI.State.Closed) ->
+                                ( UI.State.OpenContact, UI.State.Closed ) ->
                                     Ports.changeMenuState "CROSSBURGER"
 
-                                (UI.State.Closed, UI.State.Open _) ->
+                                ( UI.State.Closed, UI.State.Open _ ) ->
                                     Ports.changeMenuState "BURGERCROSS"
 
                                 ( UI.State.Closed, UI.State.OpenContact ) ->
@@ -469,4 +480,3 @@ update msg model =
                 UI.State.FetchContactInformation (Err error) ->
                     Debug.log "failed to fetch contact information"
                         ( model, Cmd.none )
-

@@ -35,9 +35,8 @@ view content =
             styled div
                 [ display block
                 , bpMediumUp
-                  [ display inlineBlock
-                  ]
-
+                    [ display inlineBlock
+                    ]
                 ]
 
         wrapper =
@@ -126,8 +125,8 @@ introCover content =
                                 , height (px 230)
                                 , width (pct 100)
                                 , zIndex (int 20)
-                                , backgroundImage
-                                    <| linearGradient
+                                , backgroundImage <|
+                                    linearGradient
                                         (stop (rgba 0 0 0 0.0))
                                         (stop (hex bgColor))
                                         []
@@ -203,28 +202,27 @@ introCover content =
                                 [ display block
                                 ]
                             ]
-
                 in
-                    wrapper []
-                        [ textWrapper []
-                              [ richText content.text
-                              , a [ href content.link.url ]
-                                  [ button activeLogo.theme [] (Just content.link.title)
-                                  ]
-                              ]
-                        , imageWrapper
-                            [ onClick <| SpinLogos <| (List.length content.logos - 1)
-                            , backgroundImg activeLogo.image
+                wrapper []
+                    [ textWrapper []
+                        [ richText content.text
+                        , a [ href content.link.url ]
+                            [ button activeLogo.theme [] (Just content.link.title)
                             ]
-                            []
-                        , logoInfo []
-                            [ author [ ] [ text <| "ontworpen door " ++ activeLogo.author ]
-                            ]
-                        , casesTitle
-                              [ class "nav"
-                              , onClick ScrollToCases
-                              ]
-                              [ text "ons werk" ]
                         ]
-          )
-      |> Maybe.withDefault (text "")
+                    , imageWrapper
+                        [ onClick <| SpinLogos <| (List.length content.logos - 1)
+                        , backgroundImg activeLogo.image
+                        ]
+                        []
+                    , logoInfo []
+                        [ author [] [ text <| "ontworpen door " ++ activeLogo.author ]
+                        ]
+                    , casesTitle
+                        [ class "nav"
+                        , onClick ScrollToCases
+                        ]
+                        [ text "ons werk" ]
+                    ]
+            )
+        |> Maybe.withDefault (text "")

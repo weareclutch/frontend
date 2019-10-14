@@ -286,13 +286,12 @@ navigationPage navState index navItem active =
                 , height (vh 100)
                 , width (vw 100)
                 , position absolute
-                , case (active, navState) of
-                    (False, Closed) ->
+                , case ( active, navState ) of
+                    ( False, Closed ) ->
                         visibility hidden
 
                     _ ->
                         visibility visible
-
                 , top zero
                 , left zero
                 , zIndex (int <| 10 - index)
@@ -307,8 +306,8 @@ navigationPage navState index navItem active =
                       , delay = 0.0
                       , easing = "cubic-bezier(0.4, 0.2, 0.2, 1.05)"
                       }
-                    , case (active, navState) of
-                        (False, Closed) ->
+                    , case ( active, navState ) of
+                        ( False, Closed ) ->
                             { property = "visibility"
                             , duration = 0.0
                             , delay = 0.5
@@ -338,7 +337,7 @@ navigationPage navState index navItem active =
                             [ cursor pointer
                             , overflowY hidden
                             ]
-                        )
+                       )
                     ++ (if not active && navState == Closed then
                             [ visibility hidden
                             , opacity zero
@@ -348,7 +347,7 @@ navigationPage navState index navItem active =
                             [ visibility visible
                             , opacity (int 1)
                             ]
-                        )
+                       )
                     ++ transformStyle
 
         defaultAttributes =
