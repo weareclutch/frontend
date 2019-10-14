@@ -2,19 +2,19 @@ module UI.Pages.Home exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (attribute, class, href, id, src, autoplay, loop)
+import Html.Styled.Attributes exposing (attribute, autoplay, class, href, id, loop, src)
 import Html.Styled.Events exposing (onClick)
+import Regex
 import Style exposing (..)
 import Types exposing (Msg(..))
-import UI.Common exposing (backgroundImg, button, siteMargins, container)
+import UI.Common exposing (backgroundImg, button, container, siteMargins)
 import UI.Components.Blocks exposing (richText)
 import UI.Components.CasePoster
 import Wagtail
-import Regex
 
 
-view : Wagtail.HomePageContent -> Html Msg
-view content =
+view : Wagtail.HomePageContent -> Int -> Html Msg
+view content logoIndex =
     let
         caseWrapper =
             styled div
@@ -50,12 +50,11 @@ view content =
                     , height (pct 100)
                     ]
                 ]
-
     in
     wrapper [ id "home" ] <|
-        [ introCover content
-        , casesWrapper []
-            <| List.map
+        [ introCover content logoIndex
+        , casesWrapper [] <|
+            List.map
                 (\x ->
                     caseWrapper [] [ UI.Components.CasePoster.view x ]
                 )
@@ -63,9 +62,10 @@ view content =
         ]
 
 
-introCover : Wagtail.HomePageContent -> Html Msg
-introCover content =
+introCover : Wagtail.HomePageContent -> Int -> Html Msg
+introCover content logoIndex =
     content.logos
+        |> List.drop logoIndex
         |> List.head
         |> Maybe.map
             (\activeLogo ->

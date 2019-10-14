@@ -7,20 +7,20 @@ import Html.Styled.Events exposing (..)
 import Style exposing (..)
 import Types exposing (Msg(..), Route(..))
 import UI.Common exposing (nonAnchorLink)
+import UI.Pages.AboutUs
 import UI.Pages.Blog
 import UI.Pages.Case
 import UI.Pages.Home
 import UI.Pages.Services
-import UI.Pages.AboutUs
 import UI.State exposing (NavigationItem, NavigationState(..), NavigationTree, OverlayPart, OverlayState)
 import Wagtail exposing (Page, getPageId)
 
 
-renderPage : Bool -> Page -> Html Msg
-renderPage isMobile page =
+renderPage : Bool -> Int -> Page -> Html Msg
+renderPage isMobile logoIndex page =
     case page of
         Wagtail.HomePage content ->
-            UI.Pages.Home.view content
+            UI.Pages.Home.view content logoIndex
 
         Wagtail.CasePage content ->
             UI.Pages.Case.view content
@@ -68,8 +68,8 @@ desktopView child =
     wrapper [] [ child ]
 
 
-overlays : OverlayState -> Html Msg
-overlays state =
+overlays : OverlayState -> Int -> Html Msg
+overlays state logoIndex =
     let
         wrapper =
             styled div
@@ -96,19 +96,19 @@ overlays state =
     wrapper []
         [ state.parts
             |> Tuple.first
-            |> overlayPart
+            |> overlayPart logoIndex
         , state.parts
             |> Tuple.second
-            |> overlayPart
+            |> overlayPart logoIndex
         ]
 
 
-overlayPart : Maybe OverlayPart -> Html Msg
-overlayPart part =
+overlayPart : Int -> Maybe OverlayPart -> Html Msg
+overlayPart logoIndex part =
     part
         |> Maybe.map
             (\{ page, active } ->
-                overlayWrapper (renderPage False page) active
+                overlayWrapper (renderPage False logoIndex page) active
             )
         |> Maybe.withDefault (overlayWrapper (text "") False)
 
@@ -147,15 +147,21 @@ overlayWrapper child active =
                 ]
     in
     wrapper
-        [ Html.Styled.Attributes.attribute "data-active" (if active then "true" else "false")
+        [ Html.Styled.Attributes.attribute "data-active"
+            (if active then
+                "true"
+
+             else
+                "false"
+            )
         , Html.Styled.Attributes.class "overlay"
         ]
         [ child
         ]
 
 
-navigationPages : NavigationState -> List NavigationItem -> Route -> Html Msg
-navigationPages navState navItems route =
+navigationPages : NavigationState -> List NavigationItem -> Route -> Int -> Html Msg
+navigationPages navState navItems route logoIndex =
     let
         wrapper =
             styled div
@@ -168,43 +174,43 @@ navigationPages navState navItems route =
                     ]
                 ]
     in
-        wrapper [ id "navigation-pages" ]
-            (navItems
-                |> List.indexedMap (\x y -> (x, y))
-                |> List.foldr
-                    (\( index, item ) acc ->
-                        List.head acc
-                            |> Maybe.map
-                                (\( lastIndex, lastItem, lastActive ) ->
-                                    case navState of
-                                        Open openIndex ->
-                                            if lastIndex == openIndex then
-                                                ( index, item, False ) :: acc
+    wrapper [ id "navigation-pages" ]
+        (navItems
+            |> List.indexedMap (\x y -> ( x, y ))
+            |> List.foldr
+                (\( index, item ) acc ->
+                    List.head acc
+                        |> Maybe.map
+                            (\( lastIndex, lastItem, lastActive ) ->
+                                case navState of
+                                    Open openIndex ->
+                                        if lastIndex == openIndex then
+                                            ( index, item, False ) :: acc
 
-                                            else
-                                                ( index, item, lastActive ) :: acc
+                                        else
+                                            ( index, item, lastActive ) :: acc
 
-                                        _ ->
-                                            case route of
-                                                WagtailRoute _ page ->
-                                                    if lastItem.active then
-                                                        ( index, item, False ) :: acc
+                                    _ ->
+                                        case route of
+                                            WagtailRoute _ page ->
+                                                if lastItem.active then
+                                                    ( index, item, False ) :: acc
 
-                                                    else
-                                                        ( index, item, lastActive ) :: acc
-
-                                                _ ->
+                                                else
                                                     ( index, item, lastActive ) :: acc
-                                )
-                            |> Maybe.withDefault
-                                (( index, item, True ) :: acc)
-                    )
-                    []
-                |> List.map
-                    (\( index, item, active ) ->
-                        navigationPage navState index item active
-                    )
-            )
+
+                                            _ ->
+                                                ( index, item, lastActive ) :: acc
+                            )
+                        |> Maybe.withDefault
+                            (( index, item, True ) :: acc)
+                )
+                []
+            |> List.map
+                (\( index, item, active ) ->
+                    navigationPage navState index item active logoIndex
+                )
+        )
 
 
 createTransform : Int -> Int -> Int -> List Style
@@ -227,8 +233,8 @@ createTransform x z r =
     ]
 
 
-navigationPage : NavigationState -> Int -> NavigationItem -> Bool -> Html Msg
-navigationPage navState index navItem active =
+navigationPage : NavigationState -> Int -> NavigationItem -> Bool -> Int -> Html Msg
+navigationPage navState index navItem active logoIndex =
     let
         zoomStart =
             -100
@@ -371,18 +377,16 @@ navigationPage navState index navItem active =
                 defaultAttributes
 
         emptyView =
-            (styled div
+            styled div
                 [ height (pct 100)
                 , width (pct 100)
                 , backgroundColor (hex "fff")
                 ]
                 []
                 [ text "" ]
-            )
     in
-        wrapper attributes
-            [ navItem.page
-                |> Maybe.map (renderPage False)
-                |> Maybe.withDefault emptyView
-            ]
-
+    wrapper attributes
+        [ navItem.page
+            |> Maybe.map (renderPage False logoIndex)
+            |> Maybe.withDefault emptyView
+        ]

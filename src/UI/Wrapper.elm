@@ -302,7 +302,7 @@ view model =
                                 text "page: undefined route"
 
                             WagtailRoute _ page ->
-                                renderPage True page
+                                renderPage True model.imageIndex page
 
                             NotFoundRoute _ ->
                                 text "page: not found"
@@ -317,9 +317,9 @@ view model =
                         model.route
                         model.contactInformation
                     , desktopView <|
-                        overlays model.overlayState
+                        overlays model.overlayState model.imageIndex
                     , desktopView <|
-                        navigationPages model.navigationState navigationTree.items model.route
+                        navigationPages model.navigationState navigationTree.items model.route model.imageIndex
                     , desktopView <|
                         (Maybe.map
                             (UI.Components.Contact.view model.navigationState)
