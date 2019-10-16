@@ -3,7 +3,7 @@ module UI.Components.CasePoster exposing (view)
 import Css exposing (..)
 import Css.Global
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (href, class)
+import Html.Styled.Attributes exposing (class, href)
 import Style exposing (..)
 import Types exposing (Msg)
 import UI.Common exposing (backgroundImg)
@@ -40,8 +40,8 @@ view casePreview =
                 , hover
                     [ Css.Global.descendants
                         [ Css.Global.typeSelector ".image"
-                              [ transform <| scale 1.03
-                              ]
+                            [ transform <| scale 1.03
+                            ]
                         ]
                     ]
                 ]
@@ -123,7 +123,6 @@ view casePreview =
                     [ paddingRight zero
                     ]
                 ]
-
     in
     wrapper
         [ href casePreview.url ]

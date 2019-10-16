@@ -132,6 +132,26 @@ app.ports.bindHomePage.subscribe(function(logos) {
 })
 
 
+var casePageHasBeenBound = false
+app.ports.bindCasePage.subscribe(function() {
+  requestAnimationFrame(function(){
+    var page = document.getElementById("case")
+    var overlay = document.querySelector(".overlay")
+    if (!page  || !overlay) return false
+
+    var image = page.querySelector('.image-wrapper')
+
+    if (casePageHasBeenBound || window.innerWidth < 780) return false
+    casePageHasBeenBound = true
+
+    overlay.addEventListener('scroll', function() {
+        var delta = overlay.scrollTop - (window.innerHeight / 1.8)
+        image.style.transform =  'translateY(' + delta * 0.15 + 'px)'
+    })
+  })
+})
+
+
 app.ports.scrollToCases.subscribe(function() {
   var page = document.getElementById("home")
   if (!page) return false

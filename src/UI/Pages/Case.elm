@@ -2,7 +2,7 @@ module UI.Pages.Case exposing (view)
 
 import Css exposing (..)
 import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (class, href)
+import Html.Styled.Attributes exposing (class, href, id)
 import Style exposing (..)
 import Types exposing (Msg)
 import UI.Common exposing (backgroundImg, button)
@@ -43,7 +43,7 @@ view content =
                 , position relative
                 ]
     in
-    wrapper []
+    wrapper [ id "case" ]
         [ header content
         , body content
         , nextCaseWrapper []
@@ -57,7 +57,17 @@ view content =
 header : Wagtail.CasePageContent -> Html msg
 header content =
     let
-        wrapperAttributes =
+        imageEl =
+            styled div <|
+                [ height (pct 100)
+                , backgroundPosition center
+                , backgroundSize cover
+                , bpLargeUp
+                    [ height (pct 102)
+                    ]
+                ]
+
+        imageAttributes =
             content.backgroundImage
                 |> Maybe.map
                     (\img ->
@@ -69,25 +79,20 @@ header content =
             styled div <|
                 [ backgroundColor (hex "292A32")
                 , width (pct 100)
-                , height (pct 100)
-                , bpLargeUp
-                    [ height (pct 150)
-                    ]
+                , height (vh 150)
+                , position relative
                 ]
 
         wrapper =
             styled div <|
                 [ backgroundColor (hex content.theme.backgroundColor)
-                , backgroundPosition center
-                , backgroundSize cover
                 , position relative
-                , height (vh 150)
+                , height (pct 100)
                 , width (pct 100)
                 , maxHeight (pct 100)
                 , maxWidth (pct 100)
                 , top zero
                 , left zero
-                , overflow hidden
                 ]
 
         titleWrapper =
@@ -154,11 +159,12 @@ header content =
                 ]
     in
     outerWrapper []
-        [ wrapper wrapperAttributes
-            [ titleWrapper []
-                [ caption [] [ text content.info.caption ]
-                , title [] [ text content.meta.title ]
-                ]
+        [ wrapper [ class "image-wrapper" ]
+            [ imageEl imageAttributes []
+            ]
+        , titleWrapper []
+            [ caption [] [ text content.info.caption ]
+            , title [] [ text content.meta.title ]
             ]
         ]
 

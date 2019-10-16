@@ -102,6 +102,7 @@ getPageCommands page =
 
         Wagtail.CasePage _ ->
             [ Ports.playVideos ()
+            , Ports.bindCasePage ()
             ]
 
         Wagtail.BlogPostPage _ ->
