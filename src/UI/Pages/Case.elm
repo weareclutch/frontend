@@ -81,6 +81,7 @@ header content =
                 , width (pct 100)
                 , height (vh 150)
                 , position relative
+                , overflow hidden
                 ]
 
         wrapper =
