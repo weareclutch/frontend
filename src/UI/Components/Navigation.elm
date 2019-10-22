@@ -7,6 +7,7 @@ import Html.Styled.Attributes exposing (class, href, id)
 import Html.Styled.Events exposing (..)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
+import Ports
 import Style exposing (..)
 import Types exposing (..)
 import UI.Common exposing (nonAnchorLink)

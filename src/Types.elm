@@ -22,6 +22,7 @@ type Msg
     | SpinLogos Int
     | ScrollToCases
     | RandomInt Int
+    | HoverBurger
 
 
 type Direction
