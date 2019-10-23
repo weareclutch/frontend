@@ -90,6 +90,7 @@ introCover content logoIndex =
                             , backgroundSize contain
                             , backgroundPosition top
                             , zIndex (int 0)
+                            , transition "all" 0.2 0 "linear"
                             , hover
                                 [ transforms
                                     [ translateX (pct -50)
