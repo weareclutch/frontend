@@ -119,7 +119,7 @@ introCover content logoIndex =
                     wrapper =
                         styled div
                             [ width (pct 100)
-                            , height (vh 95)
+                            , height (vh 90)
                             , backgroundColor (hex bgColor)
                             , position relative
                             , whiteSpace normal
