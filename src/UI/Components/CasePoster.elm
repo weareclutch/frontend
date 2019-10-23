@@ -65,6 +65,9 @@ view casePreview =
                 , height (pct 100)
                 , transition "all" 0.26 0 "ease-in-out"
                 , transform <| scale 1.01
+                , bpMediumUp
+                    [ left (px -150)
+                    ]
                 ]
 
         titleWrapper =

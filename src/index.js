@@ -121,8 +121,7 @@ app.ports.bindHomePage.subscribe(function(logos) {
           images.forEach(function(image, index) {
             var delta =
               page.scrollLeft -
-              (window.innerWidth / 1.8) -
-              (window.innerHeight * index * 0.7)
+              (window.innerHeight * index * 0.2)
 
             image.style.transform = 'translateX(' + delta * 0.1 + 'px)'
           })
@@ -145,7 +144,7 @@ app.ports.bindCasePage.subscribe(function() {
     casePageHasBeenBound = true
 
     overlay.addEventListener('scroll', function() {
-        var delta = overlay.scrollTop - (window.innerHeight / 1.8)
+        var delta = overlay.scrollTop - (window.innerHeight / 15.8)
         image.style.transform =  'translateY(' + delta * 0.15 + 'px)'
     })
   })
