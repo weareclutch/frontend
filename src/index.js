@@ -139,12 +139,20 @@ app.ports.bindCasePage.subscribe(function() {
     if (!page  || !overlay) return false
 
     var image = page.querySelector('.image-wrapper')
+    var index = 0
 
     if (casePageHasBeenBound || window.innerWidth < 1180) return false
     casePageHasBeenBound = true
 
     overlay.addEventListener('scroll', function() {
-        var delta = overlay.scrollTop - (window.innerHeight / 15.8)
+        
+        if (index < 5) {
+          index = index + 1 
+        } else {
+          index = 0
+        } 
+
+        var delta = overlay.scrollTop - (window.innerHeight / 16) + (index * 0.5)
         image.style.transform =  'translateY(' + delta * 0.15 + 'px)'
     })
   })
