@@ -79,9 +79,12 @@ header content =
             styled div <|
                 [ backgroundColor (hex "292A32")
                 , width (pct 100)
-                , height (vh 150)
+                , height (vh 100)
                 , position relative
                 , overflow hidden
+                , bpLargeUp
+                    [ height (vh 150)
+                    ]
                 ]
 
         wrapper =

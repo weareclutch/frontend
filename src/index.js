@@ -141,7 +141,7 @@ app.ports.bindCasePage.subscribe(function() {
 
     var image = page.querySelector('.image-wrapper')
 
-    if (casePageHasBeenBound || window.innerWidth < 780) return false
+    if (casePageHasBeenBound || window.innerWidth < 1180) return false
     casePageHasBeenBound = true
 
     overlay.addEventListener('scroll', function() {
