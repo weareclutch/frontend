@@ -210,7 +210,7 @@ function aboutUsHandleScroll(e) {
     var animations = [].slice.call(page.querySelectorAll('.animation'))
 
     // current scroll position from center of page to element
-    var current = page.parentElement.scrollTop - wrapper.offsetTop + window.innerHeight / 2
+    var current = page.parentElement.scrollTop - wrapper.offsetTop + window.innerHeight / 1.6
 
 
     var activeElement = topics.reduce(function(acc, topic, index) {
