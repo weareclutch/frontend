@@ -138,10 +138,10 @@ overlayWrapper child active =
                 , height (vh 100)
                 , property "transition" <|
                     if active then
-                        "top 0.5s ease-in-out"
+                        "top 0.7s cubic-bezier(0,0,.4,1)"
 
                     else
-                        "top 0.5s 0.5s ease-in-out"
+                        "top 1s 2s cubic-bezier(0,0,.26,1.29)"
                 , overflowY scroll
                 , property "-webkit-overflow-scrolling" "touch"
                 ]
