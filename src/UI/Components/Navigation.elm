@@ -3,14 +3,14 @@ module UI.Components.Navigation exposing (view)
 import Css exposing (..)
 import Css.Global exposing (global, selector)
 import Html.Styled exposing (..)
+import Html.Styled.Attributes exposing (class, href, id)
 import Html.Styled.Events exposing (..)
-import Html.Styled.Attributes exposing (class, id, href)
 import Icons.Logo exposing (logo)
 import Icons.Menu exposing (burger, cross)
 import Style exposing (..)
 import Types exposing (..)
-import UI.State exposing (..)
 import UI.Common exposing (nonAnchorLink)
+import UI.State exposing (..)
 import Wagtail exposing (..)
 
 
@@ -68,7 +68,6 @@ view navigationTree navigationState route contactInformation =
                         _ ->
                             []
 
-
         svgColor =
             (case route of
                 WagtailRoute _ page ->
@@ -100,8 +99,17 @@ view navigationTree navigationState route contactInformation =
                 , width (vw 100)
                 , height (vh 100)
                 , backgroundColor (hex "001AE0")
-                , opacity <| if toggleState == CloseMenu then (int 1) else (int 0)
-                , if toggleState == CloseMenu then visibility visible else visibility hidden
+                , opacity <|
+                    if toggleState == CloseMenu then
+                        int 1
+
+                    else
+                        int 0
+                , if toggleState == CloseMenu then
+                    visibility visible
+
+                  else
+                    visibility hidden
                 , transition "all" 0.2 0 "ease-in-out"
                 , overflowY scroll
                 , property "-webkit-overflow-scrolling" "touch"
@@ -147,11 +155,12 @@ view navigationTree navigationState route contactInformation =
         burgerAnimationStyle =
             global
                 [ selector "#burger-animation path"
-                    [ fill
-                        <| if toggleState == CloseMenu then
-                            (hex "fff")
+                    [ fill <|
+                        if toggleState == CloseMenu then
+                            hex "fff"
+
                         else
-                            (hex svgColor)
+                            hex svgColor
                     ]
                 ]
 
@@ -203,7 +212,7 @@ view navigationTree navigationState route contactInformation =
                 ]
 
         menuItemStyle =
-            \(active, hoverActive) ->
+            \( active, hoverActive ) ->
                 [ width (pct 100)
                 , textAlign center
                 , display block
@@ -214,6 +223,7 @@ view navigationTree navigationState route contactInformation =
                 , color <|
                     if active then
                         hex "00FFB0"
+
                     else
                         hex "fff"
                 , verticalAlign top
@@ -239,12 +249,14 @@ view navigationTree navigationState route contactInformation =
                     , backgroundColor <|
                         if active then
                             hex "00FFB0"
+
                         else
                             hex "fff"
                     , transition "width" 0.1 0 "ease-in-out"
                     , opacity <|
                         if hoverActive then
                             int 1
+
                         else
                             int 0
                     , borderRadius (pct 100)
@@ -271,9 +283,24 @@ view navigationTree navigationState route contactInformation =
             \visible ->
                 styled span
                     [ display none
-                    , maxWidth <| if visible then (px 200) else (px 0)
-                    , marginRight <| if visible then (px 30) else (px 0)
-                    , opacity <| if visible then (int 1) else (int 0)
+                    , maxWidth <|
+                        if visible then
+                            px 200
+
+                        else
+                            px 0
+                    , marginRight <|
+                        if visible then
+                            px 30
+
+                        else
+                            px 0
+                    , opacity <|
+                        if visible then
+                            int 1
+
+                        else
+                            int 0
                     , width auto
                     , height (px 30)
                     , transition "all" 0.26 0 "ease-in-out"
@@ -322,7 +349,7 @@ view navigationTree navigationState route contactInformation =
             case route of
                 WagtailRoute _ page ->
                     navigationTree.items
-                        |> List.indexedMap (\x y -> (x,y))
+                        |> List.indexedMap (\x y -> ( x, y ))
                         |> List.foldl
                             (\( index, item ) acc ->
                                 if item.id == getPageId page then
@@ -349,14 +376,13 @@ view navigationTree navigationState route contactInformation =
                     |> List.indexedMap
                         (\index item ->
                             menuItem
-                                ( (activeIndex == index)
-                                , (case navigationState of
+                                ( activeIndex == index
+                                , case navigationState of
                                     Open i ->
                                         i == index
 
                                     _ ->
                                         False
-                                  )
                                 )
                                 [ onMouseOver (NavigationMsg <| ChangeNavigation <| Open index)
                                 , class "nav"
@@ -367,7 +393,7 @@ view navigationTree navigationState route contactInformation =
                 )
                     ++ [ menuItemSpan
                             ( False
-                            , (navigationState == OpenContact)
+                            , navigationState == OpenContact
                             )
                             [ onClick (NavigationMsg <| ChangeNavigation OpenContact)
                             , onMouseOver (NavigationMsg <| ChangeNavigation <| OpenContact)
@@ -401,7 +427,6 @@ view navigationTree navigationState route contactInformation =
             , class "nav"
             ]
             [ text "contact" ]
-
         , menuButtonText
             (toggleState == Overlay)
             ([ class "nav" ] ++ toggleActions)
@@ -412,7 +437,6 @@ view navigationTree navigationState route contactInformation =
                 _ ->
                     text "blog"
             ]
-
         , logoWrapper [ href "/" ]
             [ logo <|
                 case navigationState of
@@ -423,4 +447,3 @@ view navigationTree navigationState route contactInformation =
                         "00ffb0"
             ]
         ]
-
