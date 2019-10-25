@@ -13,6 +13,9 @@ port playVideos : () -> Cmd msg
 port changeMenuState : String -> Cmd msg
 
 
+port playBurgerAnimation : ( Int, Int ) -> Cmd msg
+
+
 port bindHomePage : List String -> Cmd msg
 
 

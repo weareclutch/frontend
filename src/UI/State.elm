@@ -15,6 +15,7 @@ type Msg
     = FetchNavigation (Result Http.Error NavigationTree)
     | ChangeNavigation NavigationState
     | FetchContactInformation (Result Http.Error ContactInformation)
+    | HoverBurgerMenu
 
 
 type alias NavigationItem =

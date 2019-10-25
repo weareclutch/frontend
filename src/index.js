@@ -276,6 +276,7 @@ function changeMenuState(state) {
 }
 app.ports.changeMenuState.subscribe(changeMenuState)
 
+window.anim = animations
 
 function setupAnimation(data, autoplay) {
   if (!animationData) return false
@@ -323,6 +324,7 @@ window.playAnimation = playAnimation
 
 function stopAnimation(id, position) {
   if (!animations[id]) return false
+  console.log(position)
 
   return position !== undefined ?
     animations[id].goToAndStop(position, true) :
