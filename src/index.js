@@ -141,8 +141,8 @@ app.ports.bindCasePage.subscribe(function() {
     var image = page.querySelector('.image-wrapper')
     var index = 0
 
-    if (casePageHasBeenBound || window.innerWidth < 1180) return false
-    if (window.navigator.userAgent.indexOf('Chrome') === -1 && window.navigator.userAgent.indexOf('Firefox') === -1) return false
+    if (casePageHasBeenBound || window.innerWidth < 1180 || 
+      (window.navigator.userAgent.indexOf('Chrome') === -1 && window.navigator.userAgent.indexOf('Firefox') === -1) ) return false
     casePageHasBeenBound = true
 
     overlay.addEventListener('scroll', function() {
@@ -156,10 +156,8 @@ app.ports.bindCasePage.subscribe(function() {
         var delta = overlay.scrollTop - (window.innerHeight / 16) + (index * 0.5)
         image.style.transform =  'translateY(' + delta * 0.15 + 'px)'
     })
-    console.log(casePageHasBeenBound)
   })
 })
-console.log(casePageHasBeenBound)
 
 app.ports.scrollToCases.subscribe(function() {
   var page = document.getElementById("home")
