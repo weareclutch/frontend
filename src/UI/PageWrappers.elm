@@ -134,7 +134,7 @@ overlayWrapper child active =
                         vh 100
                     )
                 , left zero
-                , width (vw 100)
+                , width <| calc (vw 100) plus (px 16)
                 , height (vh 100)
                 , property "transition" <|
                     if active then
@@ -289,7 +289,7 @@ navigationPage navState index navItem active logoIndex =
         wrapper =
             styled div <|
                 [ boxShadow4 zero (px 0) (px 50) (rgba 0 0 0 0.2)
-                , height (vh 100)
+                , height <| calc (vh 100) plus (px 16)
                 , width (vw 100)
                 , position absolute
                 , case ( active, navState ) of
