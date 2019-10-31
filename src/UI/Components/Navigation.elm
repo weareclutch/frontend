@@ -364,7 +364,14 @@ view navigationTree navigationState route contactInformation =
                 _ ->
                     0
     in
-    outerWrapper []
+    outerWrapper
+        [ onMouseEnter <|
+            if toggleState == OpenMenu then
+                HoverBurger
+
+            else
+                NoOp
+        ]
         [ toggleWrapper toggleActions
             [ burgerAnimation
                 [ id "burger-animation" ]

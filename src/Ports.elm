@@ -1,4 +1,4 @@
-port module Ports exposing (bindAboutUs, bindCasePage, bindHomePage, bindServicesPage, changeMenuState, pauseAllVideos, playAnimation, playIntroAnimation, playVideos, resetScrollPosition, scrollToCases, setupAnimation, setupNavigation, stopAnimation, unbindAll, updateSlideshow)
+port module Ports exposing (bindAboutUs, bindCasePage, bindHomePage, bindServicesPage, changeMenuState, pauseAllVideos, playAnimation, playHoverAnimation, playIntroAnimation, playVideos, resetScrollPosition, scrollToCases, setupAnimation, setupNavigation, stopAnimation, unbindAll, updateSlideshow)
 
 
 port setupNavigation : () -> Cmd msg
@@ -47,6 +47,9 @@ port stopAnimation : String -> Cmd msg
 
 
 port playIntroAnimation : () -> Cmd msg
+
+
+port playHoverAnimation : () -> Cmd msg
 
 
 port scrollToCases : () -> Cmd msg

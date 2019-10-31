@@ -267,16 +267,24 @@ function changeMenuState(state) {
     animations['burger-animation'].playSegments([[120, 240]]) // cross -> burger
     window.setTimeout(function() { stopAnimation('burger-animation', 120) }, 700)
   } else if (state === 'BURGERARROW') {
-    animations['burger-animation'].playSegments([[240, 340]]) // cross -> burger
+    animations['burger-animation'].playSegments([[240, 340]]) // burger -> arrow
     window.setTimeout(function() { stopAnimation('burger-animation', 100) }, 1200)
   } else if (state === 'ARROWBURGER') {
-    animations['burger-animation'].playSegments([[410, 490]]) // cross -> burger
+    animations['burger-animation'].playSegments([[410, 450]]) // arrow -> burger
     window.setTimeout(function() { stopAnimation('burger-animation', 140) }, 600)
   }
 }
 app.ports.changeMenuState.subscribe(changeMenuState)
 
 window.anim = animations
+
+app.ports.playHoverAnimation.subscribe(function() {
+  if (window.innerWidth < 780) return false
+  animations['burger-animation'].playSegments([[450, 490]]) // burger -> hover
+  window.setTimeout(function() { stopAnimation('burger-animation', 120) }, 600)
+
+})
+
 
 function setupAnimation(data, autoplay) {
   if (!animationData) return false

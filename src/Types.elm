@@ -23,6 +23,7 @@ type Msg
     | ScrollToCases
     | RandomInt Int
     | HoverBurger
+    | NoOp
 
 
 type Direction

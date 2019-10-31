@@ -210,7 +210,10 @@ update msg model =
             )
 
         HoverBurger ->
-            ( model, playAnimation () )
+            ( model, Ports.playHoverAnimation () )
+
+        NoOp ->
+            ( model, Cmd.none )
 
         ScrollToCases ->
             ( model, Ports.scrollToCases () )
