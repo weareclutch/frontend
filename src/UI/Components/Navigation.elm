@@ -40,6 +40,12 @@ view navigationTree navigationState route contactInformation =
             case toggleState of
                 OpenMenu ->
                     [ onClick (NavigationMsg <| ChangeNavigation <| Open activeIndex)
+                    , onMouseEnter <|
+                        if toggleState == OpenMenu then
+                            HoverBurger
+
+                        else
+                            NoOp
                     ]
 
                 CloseMenu ->
@@ -365,13 +371,7 @@ view navigationTree navigationState route contactInformation =
                     0
     in
     outerWrapper
-        [ onMouseEnter <|
-            if toggleState == OpenMenu then
-                HoverBurger
-
-            else
-                NoOp
-        ]
+        []
         [ toggleWrapper toggleActions
             [ burgerAnimation
                 [ id "burger-animation" ]
