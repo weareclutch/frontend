@@ -4,6 +4,7 @@ import Css exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes exposing (class, id)
 import Html.Styled.Events exposing (onClick)
+import Icons.Arrow exposing (arrow)
 import Style exposing (..)
 import Types exposing (..)
 import UI.Common exposing (backgroundImg, container, siteMargins, slideshow)
@@ -137,6 +138,7 @@ servicesBlock isMobile ( activeIndex, services ) =
         content =
             styled div
                 [ display block
+                , width (pct 100)
                 , padding4 (px 120) zero (px 50) zero
                 , bpLargeUp
                     [ display inlineBlock
@@ -166,10 +168,36 @@ servicesBlock isMobile ( activeIndex, services ) =
         serviceTitle =
             styled p
                 [ display block
+                , cursor pointer
+                , position relative
                 , bpLargeUp
                     [ display none
                     ]
                 ]
+
+        arrowWrapper =
+            styled div
+                [ display inlineBlock
+                , position absolute
+                , right (px 8)
+                , margin2 auto zero
+                , transform (rotate (deg 90))
+                , bpLargeUp
+                    [ display none
+                    ]
+                ]
+
+        collapsableBlock =
+            \active ->
+                styled div <|
+                    [ if active then
+                        display block
+
+                      else
+                        display none
+                    , bpLargeUp
+                        [ display block ]
+                    ]
 
         navigationItems =
             styled ul
@@ -219,7 +247,7 @@ servicesBlock isMobile ( activeIndex, services ) =
                             List.indexedMap
                                 (\index service ->
                                     navigationItem
-                                        (index == activeIndex)
+                                        (index == activeIndex || index == 0 && activeIndex == -1)
                                         [ onClick <|
                                             WagtailMsg <|
                                                 Wagtail.UpdateServicesState index
@@ -231,10 +259,31 @@ servicesBlock isMobile ( activeIndex, services ) =
                     , content [] <|
                         List.indexedMap
                             (\index service ->
-                                serviceWrapper (index == activeIndex)
+                                let
+                                    active =
+                                        index == activeIndex || index == 0 && activeIndex == -1
+
+                                    activeMobile =
+                                        index == activeIndex
+                                in
+                                serviceWrapper
+                                    active
                                     []
-                                    [ serviceTitle [ class "nav" ] [ text service.title ]
-                                    , richText service.body
+                                    [ serviceTitle
+                                        [ class "nav"
+                                        , onClick <|
+                                            WagtailMsg <|
+                                                Wagtail.UpdateServicesState <|
+                                                    if activeMobile then
+                                                        -1
+
+                                                    else
+                                                        index
+                                        ]
+                                        [ text service.title, arrowWrapper [] [ arrow "ffffff" ] ]
+                                    , collapsableBlock activeMobile
+                                        []
+                                        [ richText service.body ]
                                     ]
                             )
                             services

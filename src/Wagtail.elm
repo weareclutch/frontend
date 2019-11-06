@@ -350,7 +350,7 @@ servicesPageDecoder =
             (D.field "introduction" D.string)
             (D.field "images" <| D.list <| D.field "image" decodeImage)
             (D.field "what_we_do" <|
-                D.map (\list -> ( 0, list )) <|
+                D.map (\list -> ( -1, list )) <|
                     D.list <|
                         D.map2 Service
                             (D.field "body_text" D.string)
