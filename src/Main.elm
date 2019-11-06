@@ -398,7 +398,8 @@ update msg model =
             case navigationMsg of
                 UI.State.HoverBurgerMenu ->
                     -- call port
-                    (model, Cmd.none)
+                    ( model, Cmd.none )
+
                 UI.State.FetchNavigation (Ok navigationTree) ->
                     let
                         ( newNavTree, newOverlayState, commands ) =

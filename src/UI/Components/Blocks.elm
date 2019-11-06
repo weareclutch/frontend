@@ -136,7 +136,7 @@ contentBlock theme text =
                 , padding2 zero (px 25)
                 , fontSize (px 20)
                 , lineHeight (px 34)
-                , textAlign (center)
+                , textAlign center
                 , bpMediumUp
                     [ fontSize (px 22)
                     ]
