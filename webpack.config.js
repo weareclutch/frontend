@@ -41,7 +41,7 @@ module.exports = {
     publicPath: "/public",
     historyApiFallback: true,
     proxy: [{
-      context: ['/media/images', '/media/documents'],
+      context: ['/media/images', '/documents'],
       target: apiUrl,
       changeOrigin: true
     }]

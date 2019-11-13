@@ -29,8 +29,8 @@ streamfield blockData =
                             BackgroundBlock image ->
                                 backgroundBlock image
 
-                            VideoBlock url ->
-                                videoBlock url
+                            VideoBlock url bgcolor ->
+                                videoBlock url bgcolor
 
                             ColumnBlock col1 col2 ->
                                 columns col1 col2
@@ -201,13 +201,14 @@ columns col1 col2 =
         ]
 
 
-videoBlock : String -> Html msg
-videoBlock url =
+videoBlock : String -> String -> Html msg
+videoBlock url bgcolor =
     let
         wrapper =
             styled div
                 [ width (pct 100)
                 , lineHeight (px 0)
+                , backgroundColor (hex bgcolor)
                 ]
 
         videoElement =
@@ -309,7 +310,7 @@ column col =
                 Wagtail.CoverBackground image ->
                     imageWrapper [ backgroundImg image ] []
 
-                Wagtail.VideoBackground url ->
+                Wagtail.VideoBackground url bgColor ->
                     videoWrapper
                         []
                         [ videoElement

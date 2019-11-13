@@ -369,7 +369,7 @@ servicesPageDecoder =
 
 type ColumnBackground
     = CoverBackground Image
-    | VideoBackground String
+    | VideoBackground String String
 
 
 decodeColumnBackground : D.Decoder ColumnBackground
@@ -382,7 +382,9 @@ decodeColumnBackground =
                         D.map CoverBackground (D.field "value" decodeImage)
 
                     "video" ->
-                        D.map VideoBackground (D.at [ "value", "url" ] D.string)
+                        D.map2 VideoBackground
+                            (D.at [ "value", "video", "url" ] D.string)
+                            (D.at [ "value", "background_color" ] D.string)
 
                     _ ->
                         D.fail "Unknow background type"
@@ -407,7 +409,8 @@ type alias CasePageContent =
 casePageDecoder : D.Decoder Page
 casePageDecoder =
     D.map CasePage <|
-        D.map6 CasePageContent
+        D.map6
+            CasePageContent
             metaDecoder
             decodeTheme
             (D.map4
@@ -613,7 +616,8 @@ decodeMedia =
             (\mediaType ->
                 case mediaType of
                     "video" ->
-                        D.map VideoMedia (D.at [ "value", "url" ] D.string)
+                        D.map VideoMedia
+                            (D.at [ "value", "url" ] D.string)
 
                     "image" ->
                         D.map ImageMedia (D.field "value" decodeImage)
@@ -697,7 +701,7 @@ type Block
     | ImageBlock Theme Image
     | ContentBlock Theme String
     | BackgroundBlock Image
-    | VideoBlock String
+    | VideoBlock String String
     | ColumnBlock Column Column
 
 
@@ -744,9 +748,9 @@ decodeImageBlock =
 
 decodeVideoBlock : D.Decoder Block
 decodeVideoBlock =
-    D.map
-        VideoBlock
-        (D.field "url" D.string)
+    D.map2 VideoBlock
+        (D.at [ "video", "url" ] D.string)
+        (D.field "background_color" D.string)
 
 
 decodeBackgroundBlock : D.Decoder Block
