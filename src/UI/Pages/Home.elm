@@ -183,7 +183,7 @@ introCover content logoIndex =
                         styled p
                             [ display inlineBlock
                             , color (hex textColor)
-                            , property "opacity" "0.2"
+                            , property "opacity" "0.4"
                             , margin4 zero (px 20) zero zero
                             , fontSize (px 14)
                             , fontWeight (int 500)
@@ -195,10 +195,15 @@ introCover content logoIndex =
                             , bottom zero
                             , width (pct 100)
                             , textAlign center
-                            , padding4 (px 32) (px 32) (px 32) (px 50)
+                            , padding (px 32)
+                            , bpXLargeUp
+                                [ padding4 (px 32) (px 32) (px 32) (px 100)
+                                ]
                             , bpLargeUp
                                 [ textAlign left
+                                , padding4 (px 32) (px 32) (px 32) (px 50)
                                 ]
+                            
                             ]
 
                     casesTitle =
