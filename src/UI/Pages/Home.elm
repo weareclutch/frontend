@@ -197,13 +197,12 @@ introCover content logoIndex =
                             , textAlign center
                             , padding (px 32)
                             , bpXLargeUp
-                                [ padding4 (px 32) (px 32) (px 32) (px 100)
+                                [ padding4 (px 32) (px 32) (px 32) (px 110)
                                 ]
                             , bpLargeUp
                                 [ textAlign left
                                 , padding4 (px 32) (px 32) (px 32) (px 50)
                                 ]
-                            
                             ]
 
                     casesTitle =
