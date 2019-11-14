@@ -195,7 +195,7 @@ introCover content logoIndex =
                             , bottom zero
                             , width (pct 100)
                             , textAlign center
-                            , padding (px 32)
+                            , padding4 (px 32) (px 32) (px 32) (px 50)
                             , bpLargeUp
                                 [ textAlign left
                                 ]
