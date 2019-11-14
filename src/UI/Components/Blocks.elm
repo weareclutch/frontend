@@ -140,6 +140,12 @@ contentBlock theme text =
                 , bpMediumUp
                     [ fontSize (px 22)
                     ]
+                , bpXLargeUp
+                    [ maxWidth (px 880)
+                    ]
+                , bpXXLargeUp
+                    [ maxWidth (px 1000)
+                    ]
                 ]
     in
     wrapper []
