@@ -87,6 +87,7 @@ servicesBlock isMobile ( activeIndex, services ) =
         wrapper =
             styled div
                 [ position relative
+                , overflow hidden
                 , zIndex (int 0)
                 , width (pct 100)
                 , backgroundColor (hex "222328")
@@ -160,7 +161,7 @@ servicesBlock isMobile ( activeIndex, services ) =
                     [ display inlineBlock
                     , width (pct 100)
                     , verticalAlign top
-                    , padding4 (px 360) zero (px 170) (px 90)
+                    , padding4 (px 360) zero (px 170) zero
                     , maxWidth (px 980)
                     ]
                 , bpXLargeUp
@@ -172,12 +173,16 @@ servicesBlock isMobile ( activeIndex, services ) =
             \active ->
                 styled div
                     [ display block
+                    , width <| calc (pct 100) plus (px 160)
+                    , marginLeft (px -80)
                     , borderBottom3 (px 1) solid (hex "000")
                     , lastChild
                         [ borderBottom3 (px 1) solid transparent
                         ]
                     , bpLargeUp
                         [ borderBottom3 (px 1) solid transparent
+                        , width (pct 100)
+                        , marginLeft zero
                         , if active then
                             display block
 
@@ -190,6 +195,7 @@ servicesBlock isMobile ( activeIndex, services ) =
             styled p
                 [ display block
                 , cursor pointer
+                , paddingLeft (px 80)
                 , margin2 (px 36) zero
                 , position relative
                 , bpLargeUp
@@ -201,7 +207,7 @@ servicesBlock isMobile ( activeIndex, services ) =
             styled div
                 [ display inlineBlock
                 , position absolute
-                , right (px 8)
+                , right (px 80)
                 , margin2 auto zero
                 , transform (rotate (deg 90))
                 , bpLargeUp
@@ -212,7 +218,8 @@ servicesBlock isMobile ( activeIndex, services ) =
         collapsableBlock =
             \active ->
                 styled div <|
-                    [ if active then
+                    [ padding2 zero (px 80)
+                    , if active then
                         display block
 
                       else
@@ -279,7 +286,7 @@ servicesBlock isMobile ( activeIndex, services ) =
                                 services
                         ]
                     , contentWrapper []
-                        [ contentTitle [] [ text "wat we doen" ]
+                        [ contentTitle [] [ text "Wat we doen" ]
                         , content [] <|
                             List.indexedMap
                                 (\index service ->
