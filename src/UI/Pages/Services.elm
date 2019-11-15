@@ -137,7 +137,10 @@ servicesBlock isMobile ( activeIndex, services ) =
 
         contentWrapper =
             styled div
-                [ width (pct 100) ]
+                [ width (pct 100)
+                , bpLargeUp
+                    [ width (pct 66) ]
+                ]
 
         contentTitle =
             styled h1
@@ -155,7 +158,7 @@ servicesBlock isMobile ( activeIndex, services ) =
                 , padding4 (px 10) zero (px 40) zero
                 , bpLargeUp
                     [ display inlineBlock
-                    , width (pct 66)
+                    , width (pct 100)
                     , verticalAlign top
                     , padding4 (px 360) zero (px 170) (px 90)
                     , maxWidth (px 980)
@@ -174,7 +177,8 @@ servicesBlock isMobile ( activeIndex, services ) =
                         [ borderBottom3 (px 1) solid transparent
                         ]
                     , bpLargeUp
-                        [ if active then
+                        [ borderBottom3 (px 1) solid transparent
+                        , if active then
                             display block
 
                           else
@@ -395,7 +399,7 @@ expertisesBlock expertises =
         [ siteMargins []
             [ wrapper []
                 [ intro []
-                    [ title [] [ text "hoe we het doen" ]
+                    [ title [] [ text "Hoe we het doen" ]
                     , paragraph [ class "intro" ] [ richText "Goed doordachte idee&euml;n vormen de basis, maar met liefde in de executie maak je het verschil." ]
                     ]
                 , content [] <|
