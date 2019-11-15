@@ -135,11 +135,24 @@ servicesBlock isMobile ( activeIndex, services ) =
                 , position relative
                 ]
 
+        contentWrapper =
+            styled div
+                [ width (pct 100) ]
+
+        contentTitle =
+            styled h1
+                [ zIndex (int 1)
+                , marginTop (px 140)
+                , fontWeight (int 700)
+                , bpLargeUp
+                    [ display none
+                    ]
+                ]
+
         content =
             styled div
                 [ display block
-                , width (pct 100)
-                , padding4 (px 120) zero (px 50) zero
+                , padding4 (px 10) zero (px 40) zero
                 , bpLargeUp
                     [ display inlineBlock
                     , width (pct 66)
@@ -156,6 +169,10 @@ servicesBlock isMobile ( activeIndex, services ) =
             \active ->
                 styled div
                     [ display block
+                    , borderBottom3 (px 1) solid (hex "000")
+                    , lastChild
+                        [ borderBottom3 (px 1) solid transparent
+                        ]
                     , bpLargeUp
                         [ if active then
                             display block
@@ -169,6 +186,7 @@ servicesBlock isMobile ( activeIndex, services ) =
             styled p
                 [ display block
                 , cursor pointer
+                , margin2 (px 36) zero
                 , position relative
                 , bpLargeUp
                     [ display none
@@ -242,7 +260,7 @@ servicesBlock isMobile ( activeIndex, services ) =
             [ siteMargins []
                 [ innerWrapper []
                     [ navigation []
-                        [ title [] [ text "wat we doen" ]
+                        [ title [] [ text "Wat we doen" ]
                         , navigationItems [] <|
                             List.indexedMap
                                 (\index service ->
@@ -256,37 +274,40 @@ servicesBlock isMobile ( activeIndex, services ) =
                                 )
                                 services
                         ]
-                    , content [] <|
-                        List.indexedMap
-                            (\index service ->
-                                let
-                                    active =
-                                        index == activeIndex || index == 0 && activeIndex == -1
+                    , contentWrapper []
+                        [ contentTitle [] [ text "wat we doen" ]
+                        , content [] <|
+                            List.indexedMap
+                                (\index service ->
+                                    let
+                                        active =
+                                            index == activeIndex || index == 0 && activeIndex == -1
 
-                                    activeMobile =
-                                        index == activeIndex
-                                in
-                                serviceWrapper
-                                    active
-                                    []
-                                    [ serviceTitle
-                                        [ class "nav"
-                                        , onClick <|
-                                            WagtailMsg <|
-                                                Wagtail.UpdateServicesState <|
-                                                    if activeMobile then
-                                                        -1
-
-                                                    else
-                                                        index
-                                        ]
-                                        [ text service.title, arrowWrapper [] [ arrow "ffffff" ] ]
-                                    , collapsableBlock activeMobile
+                                        activeMobile =
+                                            index == activeIndex
+                                    in
+                                    serviceWrapper
+                                        active
                                         []
-                                        [ richText service.body ]
-                                    ]
-                            )
-                            services
+                                        [ serviceTitle
+                                            [ class "nav"
+                                            , onClick <|
+                                                WagtailMsg <|
+                                                    Wagtail.UpdateServicesState <|
+                                                        if activeMobile then
+                                                            -1
+
+                                                        else
+                                                            index
+                                            ]
+                                            [ text service.title, arrowWrapper [] [ arrow "ffffff" ] ]
+                                        , collapsableBlock activeMobile
+                                            []
+                                            [ richText service.body ]
+                                        ]
+                                )
+                                services
+                        ]
                     ]
                 ]
             ]
