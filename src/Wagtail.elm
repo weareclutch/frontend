@@ -630,15 +630,21 @@ decodeMedia =
 type alias Quote =
     { text : String
     , name : Maybe String
+    , photo : Maybe Image
+    , quoteTextColor : String
+    , quoteBgColor : String
     }
 
 
 decodeQuote : D.Decoder Block
 decodeQuote =
     D.map QuoteBlock <|
-        D.map2 Quote
+        D.map5 Quote
             (D.field "text" D.string)
             (D.maybe <| D.field "name" D.string)
+            (D.maybe <| D.field "photo" decodeImage)
+            (D.field "text_color" D.string)
+            (D.field "background_color" D.string)
 
 
 type alias Column =

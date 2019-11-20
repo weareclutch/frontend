@@ -56,14 +56,53 @@ richText string =
 
 quote : Quote -> Html msg
 quote data =
-    div [] []
+    let
+        wrapper =
+            styled div
+                [ backgroundColor (hex data.quoteBgColor)
+                , displayFlex
+                , justifyContent center
+                ]
 
+        photoWrapper =
+            styled div
+                [ width (pct 100)
+                , height (pct 100)
+                , backgroundPosition center
+                , backgroundSize cover
+                ]
 
+        content =
+            styled h4
+                [ maxWidth (px 820)
+                , color (hex data.quoteTextColor)
+                , margin2 zero auto
+                , textAlign center
+                , fontWeight (int 700)
+                , padding2 (px 80) (px 25)
+                , bpLargeUp
+                    [ maxWidth (px 1000)
+                    , padding2 (px 180) (px 25)
+                    ]
+                ]
 
--- div []
---     [ text data.text
---     , text <| Maybe.withDefault "" data.name
---     ]
+        nameWrapper =
+            styled p
+                [ margin2 (px 24) zero ]
+
+        photoAttributes =
+            data.photo
+                |> Maybe.map (\img -> [ backgroundImg img ])
+                |> Maybe.withDefault []
+    in
+    wrapper []
+        [ photoWrapper photoAttributes
+            [ content []
+                [ div [] [ text data.text ]
+                , nameWrapper [] [ text <| Maybe.withDefault "" data.name ]
+                ]
+            ]
+        ]
 
 
 imageBlock : Theme -> Image -> Html msg
