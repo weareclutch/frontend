@@ -58,7 +58,7 @@ header : Wagtail.CasePageContent -> Html msg
 header content =
     let
         imageEl =
-            styled div <|
+            styled div
                 [ height (pct 100)
                 , backgroundPosition center
                 , backgroundSize cover
@@ -76,7 +76,7 @@ header content =
                 |> Maybe.withDefault []
 
         outerWrapper =
-            styled div <|
+            styled div
                 [ backgroundColor (hex "292A32")
                 , width (pct 100)
                 , height (vh 100)
@@ -88,7 +88,7 @@ header content =
                 ]
 
         wrapper =
-            styled div <|
+            styled div
                 [ backgroundColor (hex content.theme.backgroundColor)
                 , position relative
                 , height (pct 100)
