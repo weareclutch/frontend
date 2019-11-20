@@ -144,7 +144,7 @@ servicesBlock isMobile ( activeIndex, services ) =
                 ]
 
         contentTitle =
-            styled h1
+            styled h2
                 [ zIndex (int 1)
                 , marginTop (px 140)
                 , fontWeight (int 700)
