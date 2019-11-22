@@ -160,7 +160,7 @@ introCover content logoIndex =
                             , left (pct 50)
                             , transform (translateX (pct -50))
                             , textAlign center
-                            , bottom (px 60)
+                            , bottom (px 70)
                             , bpLargeUp
                                 [ position absolute
                                 , transform (translateY (pct -50))
