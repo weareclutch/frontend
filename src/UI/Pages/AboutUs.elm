@@ -299,7 +299,7 @@ topics isMobile items =
                                     False ->
                                         text ""
                                 , title [] [ text t.title ]
-                                , richText t.description
+                                , p [] [richText t.description]
                                 ]
                         )
                         items
