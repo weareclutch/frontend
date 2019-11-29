@@ -77,6 +77,7 @@ quote data =
                 [ maxWidth (px 820)
                 , color (hex data.quoteTextColor)
                 , margin2 zero auto
+                , marginTop (px 24)
                 , textAlign center
                 , fontWeight (int 700)
                 , padding2 (px 80) (px 25)
@@ -84,6 +85,7 @@ quote data =
                     [ maxWidth (px 1000)
                     , padding2 (px 180) (px 25)
                     ]
+                 , bpXXLargeUp [ maxWidth (px 1100)]
                 ]
 
         nameWrapper =
