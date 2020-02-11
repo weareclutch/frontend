@@ -45,15 +45,15 @@ globalStyle =
             , fontSize (px 48)
             , letterSpacing (px 3.5)
             , bpLarge
-                [ fontSize (px 140)
+                [ fontSize (px 100)
                 , letterSpacing (px 5)
                 ]
             , bpXLarge
-                [ fontSize (px 140)
+                [ fontSize (px 100)
                 , letterSpacing (px 5)
                 ]
             , bpXXLargeUp
-                [ fontSize (px 160)
+                [ fontSize (px 140)
                 , letterSpacing (px 8)
                 ]
             ]
