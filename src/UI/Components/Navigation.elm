@@ -419,7 +419,7 @@ view navigationTree navigationState route contactInformation =
                                 , link [ href <| "phone:" ++ info.phone ] [ text info.phone ]
                                 ]
                             , p []
-                                [ span [] [ text "barentszplein 4f" ]
+                                [ span [] [ text "Barentszplein 6G" ]
                                 , br [] []
                                 , span [] [ text "1013NJ" ]
                                 , br [] []
